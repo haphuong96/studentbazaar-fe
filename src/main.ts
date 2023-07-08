@@ -6,7 +6,8 @@ import MenuLayout from './layouts/MenuLayout.vue'
 import router from './router'
 import Antd from "ant-design-vue";
 import "ant-design-vue/dist/antd.css";
-console.log(import.meta.env.VITE_API_BASE);
+import "./styles/main.css";
+
 const app = createApp(App);
 
 app.use(Antd)
