@@ -1,4 +1,5 @@
 export const routeNames = {
     LOGIN: "Login",
-    SIGNUP: "Sign Up"
+    SIGNUP: "Sign Up",
+    MARKETPLACE: "Marketplace"
 }

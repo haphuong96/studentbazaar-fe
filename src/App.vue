@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { layoutNames } from './router/layout-names';
 
-const layout = "Fullscreen";
+
+const layout = layoutNames.FULLSCREEN_LAYOUT;
 
 </script>
 

@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { routeNames } from "./route-names";
-import SignupPage from "../pages/SignupPage.vue";
-import LoginPage from "../pages/LoginPage.vue";
+import SignupPage from "../views/auth/SignupPage.vue";
+import LoginPage from "../views/auth/LoginPage.vue";
+import Marketplace from "../views/item/Marketplace.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,11 @@ const router = createRouter({
         path: "/signup",
         name: routeNames.SIGNUP,
         component: SignupPage
+    },
+    {
+      path: "/marketplace",
+      name: routeNames.MARKETPLACE,
+      component: Marketplace
     }
   ],
 });

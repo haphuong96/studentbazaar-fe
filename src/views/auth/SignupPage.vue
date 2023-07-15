@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../../services/auth.service";
 import { AxiosError } from "axios";
 import { message } from "ant-design-vue";
-import { University } from "../interfaces/market.interface";
+import { University } from "../../interfaces/market.interface";
 
 const inputEmail = ref<string>();
 const inputEmailErr = ref();
