@@ -22,7 +22,7 @@ const getItems = async () => {
   <h2>Listed recently</h2>
   <a-row :gutter="[16, 16]">
     <a-col :span="6" v-for="item in itemList" v-if="itemList">
-      <div>{{ item.owner }}</div>
+      <div>{{ item.owner.username }}</div>
       <div class="p-16">
         <a-skeleton-image class="img"></a-skeleton-image>
       </div>

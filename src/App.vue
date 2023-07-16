@@ -1,16 +1,20 @@
 <script setup lang="ts">
-import { layoutNames } from './router/layout-names';
+import { ComputedRef, computed } from "vue";
+import { useRoute } from "vue-router";
 
-
-const layout = layoutNames.FULLSCREEN_LAYOUT;
+// https://router.vuejs.org/guide/advanced/composition-api.html#accessing-the-router-and-current-route-inside-setup
+// set appropriate layout based on route meta
+const route = useRoute();
+const layout: ComputedRef<string | undefined> | any = computed(() => {
+  return route.meta.layout || undefined;
+});
 
 </script>
 
 <template>
   <div>
     <Suspense>
-      <component :is="layout">
-      </component>
+      <component :is="layout"> </component>
     </Suspense>
   </div>
 </template>
