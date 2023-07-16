@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
 // import { ItemService } from "../../services/item.service";
 
 // const itemList = ref();
