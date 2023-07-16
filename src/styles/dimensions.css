@@ -1,0 +1,16 @@
+/* padding*/
+.p-16 {
+    padding: 16px;
+}
+
+.p-32 {
+    padding: 32px;
+}
+
+.py-16 {
+    padding: 16px;
+}
+
+.pl-32 {
+    padding-left: 32px;
+}
