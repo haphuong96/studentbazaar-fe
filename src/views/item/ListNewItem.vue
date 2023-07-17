@@ -1,35 +1,75 @@
-<script setup lang="ts">
-import { onMounted, ref } from "vue";
-// import { ItemService } from "../../services/item.service";
-
-// const itemList = ref();
-
-// onMounted(async () => {
-//   getItems();
-// });
-
-// const getItems = async () => {
-//   try {
-//     const data = await ItemService.getItems();
-//     itemList.value = data;
-//     console.log("itemList", itemList.value);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
-</script>
 <template>
-  <!-- <h2>Listed recently</h2>
-  <a-row :gutter="[16, 16]">
-    <a-col :span="6" v-for="item in itemList" v-if="itemList">
-      <div>{{ item.owner.username }}</div>
-      <div class="p-16">
-        <a-skeleton-image class="img"></a-skeleton-image>
-      </div>
-      <div>{{ item.itemName }}</div></a-col
-    >
-  </a-row> -->
-  List Item
+  <a-row>
+    <a-col :span="12"> test1 </a-col>
+    <a-col :span="12">
+      <h2>List your item</h2>
+      <a-form layout="vertical" :model="formState">
+        <a-form-item label="Name">
+          <a-input v-model:value="formState.name" placeholder="name" />
+        </a-form-item>
+        <a-form-item label="Price">
+          <a-input v-model:value="formState.price" placeholder="price" />
+        </a-form-item>
+        <a-form-item label="Category">
+          <a-select v-model:value="formState.categoryId">
+            <a-select-option value="demo">Demo</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="Condition">
+          <a-select
+            v-model:value="formState.conditionId"
+            :options="conditionOptions"
+          >
+            <a-select-option value="demo">Demo</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="Description">
+          <a-textarea />
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary">Upload</a-button>
+        </a-form-item>
+      </a-form>
+    </a-col>
+  </a-row>
+  <!-- List Item -->
 </template>
+<script setup lang="ts">
+import { SelectProps } from "ant-design-vue";
+import { onMounted, ref, Ref } from "vue";
+import { ItemService } from "../../services/item.service";
+
+interface FormState {
+  name: string | undefined;
+  price: number | undefined;
+  description: string | undefined;
+  categoryId: number | undefined;
+  conditionId: number | undefined;
+}
+
+const formState: Ref<FormState> = ref({
+  name: undefined,
+  price: undefined,
+  description: undefined,
+  categoryId: undefined,
+  conditionId: undefined,
+});
+
+const conditionOptions = ref<SelectProps["options"]>([]);
+
+onMounted(async () => {
+    Promise.all([getItemConditions()]);
+});
+
+const getItemConditions = async () : Promise<void> => {
+  const data = await ItemService.getItemConditions();
+  conditionOptions.value = data.map((itemCondition) => {
+    return {
+      value: itemCondition.id,
+      label: itemCondition.conditionName,
+    };
+  });
+};
+</script>
 <style></style>
 <!-- class="logo" -->
