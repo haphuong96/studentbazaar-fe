@@ -11,8 +11,21 @@
     padding: 16px;
 }
 
+.px-16 {
+    padding-right: 16px;
+}
+
 .pl-32 {
     padding-left: 32px;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+/* margin*/
+.m-auto {
+    margin: auto;
 }
 
 .w-100 {

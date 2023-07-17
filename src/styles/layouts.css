@@ -1,4 +1,4 @@
-.display-flex {
+.d-flex {
   display: flex;
 }
 
@@ -6,8 +6,20 @@
     flex-direction: row;
 }
 
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+.flex-grow-2 {
+  flex-grow: 2;
+}
+
 .justify-right {
   justify-content: flex-end;
+}
+
+.justify-space-between {
+  justify-content: space-between;
 }
 
 .align-center {
