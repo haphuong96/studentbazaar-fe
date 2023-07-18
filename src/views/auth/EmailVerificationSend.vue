@@ -1,24 +1,25 @@
 <script setup lang="ts">
-// import { ref, Ref } from "vue";
-// import { AuthService } from "../../services/auth.service";
-// import { AxiosError } from "axios";
-// import { message } from "ant-design-vue";
-// import { University } from "../../interfaces/market.interface";
-// import { EmailValidation } from "../../interfaces/email.interface";
-// import { SignUpDto, SignUpDtoErr } from "../../interfaces/signup.interface";
-// import { ArrowRightOutlined, ArrowLeftOutlined } from "@ant-design/icons-vue";
-// import router from "../../router";
+import { localStorageKeys } from "../../common/local-storage-keys";
+import { ref, Ref, computed, ComputedRef } from "vue";
 
+const emailAddress: ComputedRef<string | null> = computed(() => {
+  return localStorage.getItem(localStorageKeys.EMAIL_ADDRESS);
+});
 </script>
 
 <template>
-<div class="p-80">
-    Check email
-</div>
+  <div>
+    <h1>Check your email box!</h1>
+    <p>We sent an account verification email to {{ emailAddress }}.</p>
+    <p>
+      Please click the link in the email in order to verify your account and
+      continue. The link expires in 1 hour. If the link already expired, please
+      click the button below to resend the verification email.
+    </p>
+    <p>You can close this page now.</p>
+  </div>
+  <div class="d-flex justify-right">
+    <a-button type="link">Resend verification email</a-button>
+  </div>
 </template>
-<style>
-.signup__container {
-  min-width: 450px;
-  max-width: 50%;
-}
-</style>
+<style></style>

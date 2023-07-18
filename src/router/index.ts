@@ -5,6 +5,7 @@ import LoginPage from "../views/auth/LoginPage.vue";
 import Marketplace from "../views/item/Marketplace.vue";
 import ListNewItem from "../views/item/ListNewItem.vue";
 import EmailVerificationSend from "../views/auth/EmailVerificationSend.vue";
+import SignupAccountDetails from "../views/auth/SignupAccountDetails.vue";
 import { layoutNames } from "./layout-names";
 
 const router = createRouter({
@@ -25,6 +26,18 @@ const router = createRouter({
         layout: layoutNames.FULLSCREEN_LAYOUT,
       },
       component: SignupPage,
+      children: [
+        {
+          path: "",
+          name: routeNames.SIGNUP_ACCOUNT_DETAILS,
+          component: SignupAccountDetails,
+        },
+        {
+          path: "/email/send",
+          name: routeNames.EMAIL_VERIFICATION_SEND,
+          component: EmailVerificationSend,
+        }
+      ]
     },
     {
       path: "/marketplace",
