@@ -1,6 +1,8 @@
 <template>
   <a-row>
-    <a-col :span="12"> test1 </a-col>
+    <a-col :span="12">
+    <h2>Add images</h2>
+    </a-col>
     <a-col :span="12">
       <h2>List your item</h2>
       <a-form layout="vertical" :model="formState">
@@ -40,14 +42,20 @@
               value: 'id',
             }"
           >
-            <a-select-option value="demo">Demo</a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="Description">
-          <a-textarea v-model:value="formState.itemDescription" placeholder="Write some description" />
+          <a-textarea
+            v-model:value="formState.itemDescription"
+            placeholder="Write some description"
+          />
         </a-form-item>
         <a-form-item>
-          <a-button @click="() => {uploadItem(); router.push(routeNames.MARKETPLACE)}" type="primary">Upload</a-button>
+          <a-button
+            @click="onUpload"
+            type="primary"
+            >Upload</a-button
+          >
         </a-form-item>
       </a-form>
     </a-col>
@@ -58,7 +66,11 @@
 import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
 import { onMounted, ref, Ref } from "vue";
 import { ItemService } from "../../services/item.service";
-import { CreateItemDto, ItemCategory, ItemCondition } from "../../interfaces/item.interface";
+import {
+  CreateItemDto,
+  ItemCategory,
+  ItemCondition,
+} from "../../interfaces/item.interface";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
 
@@ -87,13 +99,18 @@ const getItemCategories = async (): Promise<void> => {
 
 const uploadItem = async (): Promise<void> => {
   try {
-    console.log(formState.value);
-  await ItemService.uploadItem(formState.value);
-  message.success("Item uploaded successfully");
-} catch (error) {
-  console.log(error);
-}
+    await ItemService.uploadItem(formState.value);
+    message.success("Item uploaded successfully");
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+const onUpload = async (): Promise<void> => {
+  uploadItem();
+  router.push({ name: routeNames.MARKETPLACE });
+};
+
 </script>
 <style></style>
 <!-- class="logo" -->

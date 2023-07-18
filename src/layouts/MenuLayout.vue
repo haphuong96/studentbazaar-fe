@@ -1,7 +1,6 @@
 <template>
   <a-layout class="layout">
     <a-layout-header>
-      <!-- <div class="logo" /> -->
       <!-- <a-menu
         v-model:selectedKeys="selectedKeys"
         theme="dark"
@@ -14,7 +13,12 @@
       <!-- <a-avatar src=""></a-avatar> -->
       <!-- </a-menu> -->
       <div class="d-flex">
-        <a @click="() => router.push(routeNames.MARKETPLACE)"><h3 class="logo">Student Bazaar</h3></a>
+        <a @click="() => router.push({ name: routeNames.MARKETPLACE })"
+          >
+          <!-- <h3 class="logo">Student Bazaar</h3> -->
+          <img src="@/assets/logo.jpg" alt="logo" class="logo" />
+          </a
+        >
         <div class="d-flex flex-grow-1 align-center">
           <a-input-search
             v-model:value="value"
@@ -27,9 +31,7 @@
             </template>
           </a-input-search>
         </div>
-        <div
-          class="d-flex header-menu"
-        >
+        <div class="d-flex header-menu">
           <a><bell-filled /></a>
           <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
             ><plus-circle-filled
@@ -43,26 +45,31 @@
       </div>
     </a-layout-header>
     <a-layout-content style="padding: 0 50px">
-      <a-breadcrumb style="margin: 16px 0">
-        <a-breadcrumb-item>Home</a-breadcrumb-item>
-        <a-breadcrumb-item>List</a-breadcrumb-item>
-        <a-breadcrumb-item>App</a-breadcrumb-item>
-      </a-breadcrumb>
+      <div class="navbar__back my-16" v-if="canBack" @click="() => router.go(-1)"> <left-outlined /> Back</div>
+      <h3 class="my-16">{{ pageTitle }}</h3>
       <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
         <router-view />
       </div>
     </a-layout-content>
     <a-layout-footer style="text-align: center">
-      Ant Design ©2018 Created by Ant UED
+       Student Bazaar ©2023 Created by Phuong Nguyen
     </a-layout-footer>
   </a-layout>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-import { PlusCircleFilled, BellFilled } from "@ant-design/icons-vue";
+import { computed, ComputedRef } from "vue";
+import { PlusCircleFilled, BellFilled, LeftOutlined } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";
 import router from "../router";
-const selectedKeys = ref<string[]>(["2"]);
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+const pageTitle: ComputedRef<string | undefined> | any = computed(() => {
+  return route.meta.pageTitle || "";
+});
+const canBack: ComputedRef<boolean> | any = computed(() => {
+  return route.meta.canBack || false;
+});
 </script>
 <style scoped>
 .site-layout-content {
@@ -72,6 +79,7 @@ const selectedKeys = ref<string[]>(["2"]);
 }
 #components-layout-demo-top .logo {
   float: left;
+  max-width: 100%;
   width: 120px;
   height: 31px;
   margin: 16px 24px 16px 0;
@@ -95,6 +103,12 @@ const selectedKeys = ref<string[]>(["2"]);
 .logo {
   color: #fff;
   font-size: 20px;
-  margin: 0px 20px;
+  margin-right: 20px;
+  max-width: 120px;
+}
+
+.navbar__back {
+  cursor: pointer; 
+  width: fit-content;
 }
 </style>

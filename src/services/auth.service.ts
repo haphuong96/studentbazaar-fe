@@ -1,4 +1,5 @@
 import { University } from "../interfaces/market.interface";
+import { SignUpDto } from "../interfaces/signup.interface";
 import { axiosInstance } from "./base.service";
 
 const checkEmailAddress = async (emailAddress: string | undefined) : Promise<University> => {
@@ -23,7 +24,18 @@ const login = async (usernameOrEmail: string, password: string) => {
 
   return data;
 }
+
+const register = async (signUpDto: SignUpDto) => {
+  const axiosRes = await axiosInstance.post("auth/signup", {
+    ...signUpDto
+  });
+
+  const data = axiosRes.data;
+
+  return data;
+}
 export const AuthService = {
   checkEmailAddress,
-  login
+  login,
+  register
 };

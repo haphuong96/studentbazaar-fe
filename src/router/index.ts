@@ -4,6 +4,7 @@ import SignupPage from "../views/auth/SignupPage.vue";
 import LoginPage from "../views/auth/LoginPage.vue";
 import Marketplace from "../views/item/Marketplace.vue";
 import ListNewItem from "../views/item/ListNewItem.vue";
+import EmailVerificationSend from "../views/auth/EmailVerificationSend.vue";
 import { layoutNames } from "./layout-names";
 
 const router = createRouter({
@@ -29,6 +30,7 @@ const router = createRouter({
       path: "/marketplace",
       name: routeNames.MARKETPLACE,
       meta: {
+        pageTitle: "Marketplace",
         layout: layoutNames.MENU_LAYOUT,
       },
       component: Marketplace,
@@ -37,6 +39,16 @@ const router = createRouter({
       path: "/items/new",
       name: routeNames.LIST_ITEM,
       meta: {
+        canBack: true,
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: ListNewItem,
+    },
+    {
+      path: "//new",
+      name: routeNames.LIST_ITEM,
+      meta: {
+        canBack: true,
         layout: layoutNames.MENU_LAYOUT,
       },
       component: ListNewItem,

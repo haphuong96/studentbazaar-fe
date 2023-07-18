@@ -23,9 +23,37 @@
     padding: 0;
 }
 
+.p-auto {
+    padding: auto;
+}
+
+.pl-80 {
+    padding-left: 80px;
+}
+
+.pt-80 {
+    padding-top: 80px;
+}
+
+.p-80 {
+    padding: 80px;
+}
+
+.pb-32 {
+    padding-bottom: 32px;
+}
+
 /* margin*/
 .m-auto {
     margin: auto;
+}
+
+.mx-auto {
+    margin: 0 auto;
+}
+
+.my-16 {
+    margin: 16px 0px;
 }
 
 .w-100 {

@@ -6,6 +6,10 @@
     flex-direction: row;
 }
 
+.flex-col {
+    flex-direction: column;
+}
+
 .flex-grow-1 {
   flex-grow: 1;
 }
@@ -20,6 +24,10 @@
 
 .justify-space-between {
   justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .align-center {
