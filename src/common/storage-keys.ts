@@ -4,5 +4,10 @@ export const localStorageKeys = {
   USER_AVATAR: "USER_AVATAR",
   USER_ID: "USER_ID",
   EMAIL_ADDRESS: "EMAIL_ADDRESS",
-  REFRESH_TOKEN: "REFRESH_TOKEN"
+  REFRESH_TOKEN: "REFRESH_TOKEN",
+  USER_FULLNAME: "USER_FULLNAME",
 };
+
+export const sessionStorageKeys = {
+  EMAIL_ADDRESS: "EMAIL_ADDRESS"
+}

@@ -1,41 +1,63 @@
+import { LoginDto } from "../interfaces/login.interface";
 import { University } from "../interfaces/market.interface";
 import { SignUpDto } from "../interfaces/signup.interface";
-import { axiosInstance } from "./base.service";
+import { axiosInstance, axiosInstanceLogin } from "./base.service";
 
-const checkEmailAddress = async (emailAddress: string | undefined) : Promise<University> => {
+const checkEmailAddress = async (
+  emailAddress: string | undefined
+): Promise<University> => {
   const axiosRes = await axiosInstance.get("auth/signup", {
     params: {
       email: emailAddress,
     },
   });
 
-  const data : University = axiosRes.data;
+  const data: University = axiosRes.data;
 
   return data;
 };
 
-const login = async (usernameOrEmail: string, password: string) => {
-  const axiosRes = await axiosInstance.post("auth/login", {
-    usernameOrEmail,
-    password,
+const login = async (loginDto : LoginDto) => {
+  const axiosRes = await axiosInstanceLogin.post("auth/login", {
+    ...loginDto,
   });
 
   const data = axiosRes.data;
 
   return data;
-}
+};
 
 const register = async (signUpDto: SignUpDto) => {
   const axiosRes = await axiosInstance.post("auth/signup", {
-    ...signUpDto
+    ...signUpDto,
   });
 
   const data = axiosRes.data;
 
   return data;
+};
+
+const verifyEmailToken = async (token: string) => {
+  const axiosRes = await axiosInstance.get("auth/email/verify", {
+    params: {
+      token,
+    },
+  });
+
+  const data = axiosRes.data;
+
+  return data;
+};
+
+const resendVerificationEmail = async (email: string) : Promise<void> => {
+  await axiosInstance.post("auth/email/resend-verification", {
+    email,
+  });
 }
 export const AuthService = {
   checkEmailAddress,
   login,
-  register
+  register,
+  verifyEmailToken,
+  resendVerificationEmail
 };

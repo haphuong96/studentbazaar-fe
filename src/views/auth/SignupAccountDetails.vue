@@ -9,7 +9,7 @@ import { SignUpDto, SignUpDtoErr } from "../../interfaces/signup.interface";
 import { ArrowRightOutlined, ArrowLeftOutlined } from "@ant-design/icons-vue";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
-import { localStorageKeys } from "../../common/local-storage-keys";
+import { sessionStorageKeys } from "../../common/storage-keys";
 
 const emailValidation = ref<EmailValidation>({
   isVerified: false,
@@ -66,7 +66,10 @@ const goBackToCheckEmailAddress = () => {
 const register = async () => {
   try {
     const newUser = await AuthService.register(signUpForm.value);
-    localStorage.setItem(localStorageKeys.EMAIL_ADDRESS, newUser.emailAddress);
+    sessionStorage.setItem(
+      sessionStorageKeys.EMAIL_ADDRESS,
+      newUser.emailAddress
+    );
     router.push({ name: routeNames.EMAIL_VERIFICATION_SEND });
     message.success(`Registered successfully!`);
   } catch (e) {
@@ -134,6 +137,14 @@ const register = async () => {
     /> -->
     <div v-if="emailValidation.inputEmailErr" class="error-label">
       {{ emailValidation.inputEmailErr.message }}
+    </div>
+    <div class="pt-80">
+      Already have an account? Click 
+      <a
+        type="link"
+        @click="() => router.push({ name: routeNames.LOGIN })"
+        >here</a
+      > to login!
     </div>
   </div>
   <div v-else>

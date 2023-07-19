@@ -1,70 +1,88 @@
 <template>
-    <a-form
-      :model="formState"
-      name="basic"
-      :label-col="{ span: 8 }"
-      :wrapper-col="{ span: 16 }"
-      autocomplete="off"
-      @submit="login"
-      @finishFailed="onFinishFailed"
-    >
-      <a-form-item
-        label="Username"
-        name="username"
-        :rules="[{ required: true, message: 'Please input your username!' }]"
-      >
-        <a-input v-model:value="formState.usernameOrEmail" />
+  <div class="p-80 d-flex flex-col align-center login__container">
+    <h2>Login</h2>
+    <div v-if="credentialsError" class="error-label">
+      {{ credentialsError }}
+    </div>
+    <a-form layout="vertical" :model="loginDto">
+      <a-form-item label="Username or email" name="Username or email">
+        <a-input
+          v-model:value="loginDto.usernameOrEmail"
+          @change="
+            () => {
+              if (credentialsError) credentialsError = undefined;
+            }
+          "
+        />
       </a-form-item>
-  
-      <a-form-item
-        label="Password"
-        name="password"
-        :rules="[{ required: true, message: 'Please input your password!' }]"
-      >
-        <a-input-password v-model:value="formState.password" />
+
+      <a-form-item label="Password" name="Password">
+        <a-input-password
+          v-model:value="loginDto.password"
+          @change="
+            () => {
+              if (credentialsError) credentialsError = undefined;
+            }
+          "
+        />
       </a-form-item>
-  
-      <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
-        <a-checkbox v-model:checked="formState.remember">Remember me</a-checkbox>
+
+      <a-form-item name="remember">
+        <a-checkbox v-model:checked="loginDto.remember">Remember me</a-checkbox>
       </a-form-item>
-  
-      <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-        <a-button type="primary" html-type="submit">Submit</a-button>
+
+      <a-form-item>
+        <a-button type="primary" html-type="submit" @click="login"
+          >Submit</a-button
+        >
       </a-form-item>
     </a-form>
-  </template>
-  <script lang="ts" setup>
-  import { ref } from 'vue';
-  import { localStorageKeys } from '../../common/local-storage-keys';
-import { AuthService } from '../../services/auth.service';
-  interface FormState {
-    usernameOrEmail: string;
-    password: string;
-    remember: boolean;
-  }
-  
-  const formState = ref<FormState>({
-    usernameOrEmail: '',
-    password: '',
-    remember: true,
-  });
-//   const onFinish = (values: any) => {
-//     localStorage.setItem(localStorageKeys.ACCESS_TOKEN, values.username);
-//   };
-  
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
+    <div>
+      Don't have an account yet? <a @click="() => {router.push({name: routeNames.SIGNUP})}">Sign Up!</a>
+    </div>
+  </div>
+</template>
+<script lang="ts" setup>
+import { ref } from "vue";
+import { localStorageKeys } from "../../common/storage-keys";
+import { AuthService } from "../../services/auth.service";
+import { routeNames } from "../../router/route-names";
+import router from "../../router";
+import { AxiosError } from "axios";
+import { LoginDto } from "../../interfaces/login.interface";
 
-  const login = async () => {
+const loginDto = ref<LoginDto>({
+  usernameOrEmail: "",
+  password: "",
+  remember: true,
+});
+
+const credentialsError = ref<string | undefined>(undefined);
+
+const login = async () => {
+  if (loginDto.value.usernameOrEmail && loginDto.value.password) {
     try {
-      const data = await AuthService.login(formState.value.usernameOrEmail, formState.value.password);
+      const data = await AuthService.login(loginDto.value);
       localStorage.setItem(localStorageKeys.ACCESS_TOKEN, data.accessToken);
       localStorage.setItem(localStorageKeys.REFRESH_TOKEN, data.refreshToken);
+      localStorage.setItem(localStorageKeys.USER_FULLNAME, data.fullname);
+      localStorage.setItem(localStorageKeys.USERNAME, data.username);
+      router.push({ name: routeNames.MARKETPLACE });
+      console.log("check error");
     } catch (err) {
-      console.log(err);
+      if (err instanceof AxiosError && err.response?.status === 401) {
+        credentialsError.value =
+          "Invalid username/email or password. Please try again.";
+      } else {
+        console.log(err);
+      }
     }
-  };
-  </script>
-  
-  
+  }
+};
+</script>
+<style>
+/* .login__container { */
+/* min-width: 450px;
+  max-width: 50%; */
+/* } */
+</style>

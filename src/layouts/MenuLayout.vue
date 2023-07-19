@@ -33,14 +33,21 @@
         </div>
         <div class="d-flex header-menu">
           <a><bell-filled /></a>
+          <a><message-filled /></a>
           <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
-            ><plus-circle-filled
-          /></a>
-          <a class="ant-dropdown-link" @click.prevent>
-            <a-avatar style="color: #f56a00; background-color: #fde3cf"
-              >P</a-avatar
-            >
+            ><tags-filled />
           </a>
+          <a>
+          <a-dropdown placement="bottomRight">
+            <a-avatar style="color: #f56a00; background-color: #fde3cf"
+              >{{ userFullname?.charAt(0).toUpperCase() }}</a-avatar
+            > 
+            <template #overlay>
+              <a-menu>
+                <a-menu-item @click="logOut"> Logout </a-menu-item>
+              </a-menu>
+            </template>
+          </a-dropdown></a>
         </div>
       </div>
     </a-layout-header>
@@ -58,10 +65,11 @@
 </template>
 <script lang="ts" setup>
 import { computed, ComputedRef } from "vue";
-import { PlusCircleFilled, BellFilled, LeftOutlined } from "@ant-design/icons-vue";
+import { PlusCircleFilled, BellFilled, LeftOutlined, UserOutlined, MessageFilled, TagsFilled } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";
 import router from "../router";
 import { useRoute } from "vue-router";
+import { localStorageKeys } from "../common/storage-keys";
 
 const route = useRoute();
 const pageTitle: ComputedRef<string | undefined> | any = computed(() => {
@@ -70,6 +78,15 @@ const pageTitle: ComputedRef<string | undefined> | any = computed(() => {
 const canBack: ComputedRef<boolean> | any = computed(() => {
   return route.meta.canBack || false;
 });
+
+const userFullname = computed(() => {
+  return localStorage.getItem(localStorageKeys.USER_FULLNAME) || localStorage.getItem(localStorageKeys.USERNAME);
+});
+
+const logOut = () => {
+  localStorage.clear();
+  router.push({ name: routeNames.LOGIN });
+};
 </script>
 <style scoped>
 .site-layout-content {
