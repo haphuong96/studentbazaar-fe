@@ -1,7 +1,7 @@
 import { RouteLocationNormalized } from "vue-router";
 import { localStorageKeys } from "../../common/storage-keys";
 import { routeNames } from "../route-names";
-import { message } from "ant-design-vue";
+// import { message } from "ant-design-vue";
 
 export const globalGuard = (
   to: RouteLocationNormalized,
@@ -14,7 +14,6 @@ export const globalGuard = (
     return { name: routeNames.MARKETPLACE };
   }
   if (!accessToken && !to.meta.isAuthRoute) {
-    message.error("You don't have access to this page. Please login first.");
     return { name: routeNames.LOGIN };
   }
 };

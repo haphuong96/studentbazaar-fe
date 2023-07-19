@@ -38,18 +38,31 @@
       </a-form-item>
     </a-form>
     <div>
-      Don't have an account yet? <a @click="() => {router.push({name: routeNames.SIGNUP})}">Sign Up!</a>
+      Don't have an account yet?
+      <a
+        @click="
+          () => {
+            router.push({ name: routeNames.SIGNUP });
+          }
+        "
+        >Sign Up!</a
+      >
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
-import { localStorageKeys } from "../../common/storage-keys";
-import { AuthService } from "../../services/auth.service";
+import {
+  localStorageKeys,
+  sessionStorageKeys,
+} from "../../common/storage-keys";
+import { UserService } from "../../services/user.service";
 import { routeNames } from "../../router/route-names";
 import router from "../../router";
 import { AxiosError } from "axios";
 import { LoginDto } from "../../interfaces/login.interface";
+import { User } from "../../interfaces/user.interface";
+import { AuthService } from "../../services/auth.service";
 
 const loginDto = ref<LoginDto>({
   usernameOrEmail: "",
@@ -62,17 +75,31 @@ const credentialsError = ref<string | undefined>(undefined);
 const login = async () => {
   if (loginDto.value.usernameOrEmail && loginDto.value.password) {
     try {
-      const data = await AuthService.login(loginDto.value);
-      localStorage.setItem(localStorageKeys.ACCESS_TOKEN, data.accessToken);
-      localStorage.setItem(localStorageKeys.REFRESH_TOKEN, data.refreshToken);
-      localStorage.setItem(localStorageKeys.USER_FULLNAME, data.fullname);
-      localStorage.setItem(localStorageKeys.USERNAME, data.username);
+      const { accessToken, refreshToken } = await AuthService.login(
+        loginDto.value
+      );
+
+      // if successful, store tokens in local storage
+      localStorage.setItem(localStorageKeys.ACCESS_TOKEN, accessToken);
+      localStorage.setItem(localStorageKeys.REFRESH_TOKEN, refreshToken);
+      // get user info and store in local storage
+      const me: User = await UserService.getMyProfile();
+      localStorage.setItem(localStorageKeys.USER_FULLNAME, me.fullname);
+      localStorage.setItem(localStorageKeys.USERNAME, me.username);
       router.push({ name: routeNames.MARKETPLACE });
-      console.log("check error");
     } catch (err) {
-      if (err instanceof AxiosError && err.response?.status === 401) {
-        credentialsError.value =
-          "Invalid username/email or password. Please try again.";
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 401) {
+          credentialsError.value =
+            "Invalid username/email or password. Please try again.";
+        } else if (err.response?.status === 403) {
+          const emailAddress: string = err.response?.data.emailAddress;
+          sessionStorage.setItem(
+            sessionStorageKeys.EMAIL_ADDRESS,
+            emailAddress
+          );
+          router.push({ name: routeNames.EMAIL_VERIFICATION_SEND });
+        }
       } else {
         console.log(err);
       }

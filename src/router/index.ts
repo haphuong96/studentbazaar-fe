@@ -14,6 +14,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: "",
+      redirect: { name: routeNames.MARKETPLACE },
+    },
+    {
       path: "/login",
       name: routeNames.LOGIN,
       meta: {
@@ -75,4 +79,5 @@ const router = createRouter({
 });
 
 router.beforeEach(globalGuard);
+
 export default router;

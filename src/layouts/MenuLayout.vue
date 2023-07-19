@@ -44,7 +44,7 @@
             > 
             <template #overlay>
               <a-menu>
-                <a-menu-item @click="logOut"> Logout </a-menu-item>
+                <a-menu-item @click="AuthService.logOut"> Logout </a-menu-item>
               </a-menu>
             </template>
           </a-dropdown></a>
@@ -65,11 +65,12 @@
 </template>
 <script lang="ts" setup>
 import { computed, ComputedRef } from "vue";
-import { PlusCircleFilled, BellFilled, LeftOutlined, UserOutlined, MessageFilled, TagsFilled } from "@ant-design/icons-vue";
+import { BellFilled, LeftOutlined, MessageFilled, TagsFilled } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";
 import router from "../router";
 import { useRoute } from "vue-router";
 import { localStorageKeys } from "../common/storage-keys";
+import { AuthService } from "../services/auth.service";
 
 const route = useRoute();
 const pageTitle: ComputedRef<string | undefined> | any = computed(() => {
@@ -83,10 +84,6 @@ const userFullname = computed(() => {
   return localStorage.getItem(localStorageKeys.USER_FULLNAME) || localStorage.getItem(localStorageKeys.USERNAME);
 });
 
-const logOut = () => {
-  localStorage.clear();
-  router.push({ name: routeNames.LOGIN });
-};
 </script>
 <style scoped>
 .site-layout-content {

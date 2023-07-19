@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { envConfigs } from "../configs/env-configs";
 import { localStorageKeys } from "../common/storage-keys";
+import { AuthService } from "./auth.service";
 
 export const axiosInstanceLogin = axios.create({
   baseURL: envConfigs.BASE_API,
@@ -49,7 +50,7 @@ const handleResponseError = async (error: any) => {
 
     if (res.status === 401) {
       // refresh token expired
-      localStorage.clear();
+      AuthService.logOut();
     }
 
     if (res.status === 201) {
