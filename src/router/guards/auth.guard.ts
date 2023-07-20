@@ -25,7 +25,7 @@ export const emailSendGuard = (
   if (to.name === routeNames.EMAIL_VERIFICATION_SEND) {
     const emailAddress = localStorage.getItem(localStorageKeys.EMAIL_ADDRESS);
     if (!emailAddress) {
-      return { name: routeNames.SIGNUP };
+      return { name: routeNames.SIGNUP_ACCOUNT_DETAILS };
     }
   }
 };

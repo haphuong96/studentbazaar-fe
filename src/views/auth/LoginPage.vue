@@ -42,7 +42,7 @@
       <a
         @click="
           () => {
-            router.push({ name: routeNames.SIGNUP });
+            router.push({ name: routeNames.SIGNUP_ACCOUNT_DETAILS });
           }
         "
         >Sign Up!</a

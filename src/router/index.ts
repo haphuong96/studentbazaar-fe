@@ -14,7 +14,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "",
+      path: "/",
       redirect: { name: routeNames.MARKETPLACE },
     },
     {
@@ -28,7 +28,6 @@ const router = createRouter({
     },
     {
       path: "/signup",
-      name: routeNames.SIGNUP,
       meta: {
         isAuthRoute: true,
         layout: layoutNames.FULLSCREEN_LAYOUT,
