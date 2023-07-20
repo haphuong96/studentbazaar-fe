@@ -93,7 +93,7 @@ const login = async () => {
           credentialsError.value =
             "Invalid username/email or password. Please try again.";
         } else if (err.response?.status === 403) {
-          const emailAddress: string = err.response?.data.emailAddress;
+          const emailAddress: string = err.response?.data.data.emailAddress;
           sessionStorage.setItem(
             sessionStorageKeys.EMAIL_ADDRESS,
             emailAddress

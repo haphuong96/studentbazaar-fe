@@ -10,6 +10,7 @@ import { ArrowRightOutlined, ArrowLeftOutlined } from "@ant-design/icons-vue";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
 import { sessionStorageKeys } from "../../common/storage-keys";
+import { ErrorCode } from "../../common/error-code";
 
 const emailValidation = ref<EmailValidation>({
   isVerified: false,
@@ -43,7 +44,7 @@ const checkEmailAddress = async () => {
     signUpForm.value.emailAddress = emailValidation.value.inputEmail;
     message.success(`Valid email!`);
   } catch (e) {
-    if (e instanceof AxiosError) {
+    if (e instanceof AxiosError && e.response?.status === 403) {
       emailValidation.value.inputEmailErr = e.response?.data;
     } else {
       console.log(e);
@@ -75,26 +76,14 @@ const register = async () => {
   } catch (e) {
     if (e instanceof AxiosError) {
       const err = e.response?.data;
-      if (e.response?.status === 400) {
-        switch (err.fieldCode) {
-          case "EMAIL_ADDRESS":
-            signUpFormErr.value.emailAddress = err.errMessage;
-            break;
-          case "USERNAME":
+      if (e.response?.status === 403) {
+        switch (err.errorCode) {
+          case ErrorCode.FORBIDDEN_INVALID_USERNAME:
             signUpFormErr.value.username = err.errMessage;
-            break;
-          case "PASSWORD":
-            signUpFormErr.value.password = err.errMessage;
-            break;
-          case "FULLNAME":
-            signUpFormErr.value.fullname = err.errMessage;
             break;
           default:
             console.log(e);
         }
-      } else {
-        message.error(err.message);
-        console.log(e);
       }
     } else {
       console.log(e);
@@ -139,12 +128,11 @@ const register = async () => {
       {{ emailValidation.inputEmailErr.message }}
     </div>
     <div class="pt-80">
-      Already have an account? Click 
-      <a
-        type="link"
-        @click="() => router.push({ name: routeNames.LOGIN })"
+      Already have an account? Click
+      <a type="link" @click="() => router.push({ name: routeNames.LOGIN })"
         >here</a
-      > to login!
+      >
+      to login!
     </div>
   </div>
   <div v-else>
