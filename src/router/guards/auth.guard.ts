@@ -11,7 +11,7 @@ export const globalGuard = (
     localStorageKeys.ACCESS_TOKEN
   );
   if (accessToken && to.meta.isAuthRoute) {
-    return { name: routeNames.MARKETPLACE };
+    return { name: routeNames.MARKETPLACE_HOME };
   }
   if (!accessToken && !to.meta.isAuthRoute) {
     return { name: routeNames.LOGIN };
@@ -23,7 +23,7 @@ export const emailSendGuard = (
   _from: RouteLocationNormalized
 ) => {
   if (to.name === routeNames.EMAIL_VERIFICATION_SEND) {
-    const emailAddress = localStorage.getItem(localStorageKeys.EMAIL_ADDRESS);
+    const emailAddress: string | null = localStorage.getItem(localStorageKeys.EMAIL_ADDRESS);
     if (!emailAddress) {
       return { name: routeNames.SIGNUP_ACCOUNT_DETAILS };
     }

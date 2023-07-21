@@ -6,4 +6,6 @@ export const routeNames = {
     EMAIL_VERIFICATION_SEND: "Email Verification Send",
     SIGNUP_ACCOUNT_DETAILS: "Signup Account Details",
     EMAIL_VERIFICATION_VERIFY: "Email Verification Verify",
+    MARKETPLACE_HOME: "Marketplace Home",
+    MARKETPLACE_BY_CATEGORY: "Marketplace By Category",
 }

@@ -86,7 +86,7 @@ const login = async () => {
       const me: User = await UserService.getMyProfile();
       localStorage.setItem(localStorageKeys.USER_FULLNAME, me.fullname);
       localStorage.setItem(localStorageKeys.USERNAME, me.username);
-      router.push({ name: routeNames.MARKETPLACE });
+      router.push({ name: routeNames.MARKETPLACE_HOME });
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {

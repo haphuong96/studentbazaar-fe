@@ -1,10 +1,10 @@
 <template>
   <a-layout class="layout">
     <!-- <div :style="{ position: 'fixed', zIndex: 1, width: '100%'}"> -->
-    <a-layout-header class="nav-bar-header" >
+    <a-layout-header class="nav-bar-header">
       <div class="d-flex">
-        <a @click="() => router.push({ name: routeNames.MARKETPLACE })">
-          <img src="@/assets/logo.jpg" alt="logo" class="logo" />
+        <a @click="() => router.push({ name: routeNames.MARKETPLACE_HOME })">
+          <img src="@/assets/logo.png" alt="logo" class="logo" />
         </a>
         <div class="d-flex flex-grow-1 align-center">
           <a-input-search
@@ -44,11 +44,12 @@
     </a-layout-header>
     <!-- <a-layout-header class="nav-bar-header"> -->
     <a-menu
-      v-model:selectedKeys="selectedKeys"
+      v-model:selectedKeys="categorySelected"
       mode="horizontal"
       theme="dark"
       :style="{ lineHeight: '30px' }"
       class="px-50"
+      @click="goToBrowseByCategory"
     >
       <div v-for="category in itemCategories" :key="category.id">
         <a-menu-item :key="category.id">{{
@@ -57,7 +58,7 @@
       </div>
     </a-menu>
     <!-- </a-layout-header> -->
-  <!-- </div> -->
+    <!-- </div> -->
     <a-layout-content style="padding: 0 50px">
       <div
         class="navbar__back my-16"
@@ -68,7 +69,7 @@
       </div>
       <h3 class="my-16">{{ pageTitle }}</h3>
       <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
-        <router-view />
+        <router-view/>
       </div>
     </a-layout-content>
     <a-layout-footer style="text-align: center">
@@ -80,15 +81,9 @@
 <script lang="ts" setup>
 import { computed, ComputedRef, ref, Ref, onMounted } from "vue";
 import {
-  BellFilled,
-  BellOutlined,
   BellTwoTone,
   LeftOutlined,
-  MessageFilled,
-  MessageOutlined,
   MessageTwoTone,
-  TagsFilled,
-  TagsOutlined,
   TagsTwoTone,
 } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";
@@ -98,6 +93,7 @@ import { localStorageKeys } from "../common/storage-keys";
 import { AuthService } from "../services/auth.service";
 import { ItemCategory } from "../interfaces/item.interface";
 import { ItemService } from "../services/item.service";
+import { MenuProps } from "ant-design-vue";
 
 const route = useRoute();
 const pageTitle: ComputedRef<string | undefined> | any = computed(() => {
@@ -125,6 +121,14 @@ const getItemCategories = async () => {
 onMounted(() => {
   getItemCategories();
 });
+
+const categorySelected = ref<string[]>(["1"]);
+const goToBrowseByCategory: MenuProps["onClick"] = (menuInfo) =>
+  router.push({
+    name: routeNames.MARKETPLACE_BY_CATEGORY,
+    params: { categoryId: [menuInfo.key] },
+  });
+
 </script>
 <style scoped>
 .header-menu > a {
@@ -135,9 +139,9 @@ onMounted(() => {
 
 .logo {
   color: #fff;
-  font-size: 20px;
+  /* font-size: 20px; */
   margin-right: 20px;
-  max-width: 120px;
+  max-width: 70px;
 }
 
 .navbar__back {

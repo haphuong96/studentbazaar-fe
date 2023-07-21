@@ -1,17 +1,19 @@
 // import { University } from "../interfaces/market.interface";
 import { AxiosResponse } from "axios";
-import { CreateItemDto, ItemCategory, ItemCondition } from "../interfaces/item.interface";
+import {
+  CreateItemDto,
+  ItemCategory,
+  ItemCondition,
+} from "../interfaces/item.interface";
 import { axiosInstance } from "./base.service";
+import { ComputedRef } from "vue";
 
-const getItems = async () => {
-  const axiosRes = await axiosInstance.get(
-    "items"
-    //   , {
-    //     params: {
-    //       email: emailAddress,
-    //     },
-    //   }
-  );
+const getItems = async (search?: { categoryId?: number }) => {
+  const axiosRes = await axiosInstance.get("items", {
+    params: {
+      categoryId: search?.categoryId,
+    },
+  });
 
   const data = axiosRes.data;
 
@@ -19,29 +21,25 @@ const getItems = async () => {
 };
 
 const getItemConditions = async (): Promise<ItemCondition[]> => {
-  const axiosRes: AxiosResponse<ItemCondition[], any> = await axiosInstance.get(
-    "item-conditions"
-  );
-  const data: ItemCondition[] = axiosRes.data;
-
-  return data;
+  return (await axiosInstance.get("item-conditions")).data;
 };
 
 const getItemCategories = async (): Promise<ItemCategory[]> => {
-  const axiosRes = await axiosInstance.get("item-categories");
+  return (await axiosInstance.get("item-categories")).data;
+};
 
-  const data : ItemCategory[] = axiosRes.data;
-
-  return data;
-}
+const getItemCategoryById = async (id: number): Promise<ItemCategory> => {
+  return (await axiosInstance.get(`item-categories/${id}`)).data;
+};
 
 const uploadItem = async (item: CreateItemDto): Promise<void> => {
   await axiosInstance.post("items", item);
-}
+};
 
 export const ItemService = {
   getItems,
   getItemConditions,
   getItemCategories,
-  uploadItem
+  getItemCategoryById,
+  uploadItem,
 };

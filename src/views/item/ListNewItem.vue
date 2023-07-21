@@ -108,9 +108,8 @@ const uploadItem = async (): Promise<void> => {
 
 const onUpload = async (): Promise<void> => {
   uploadItem();
-  router.push({ name: routeNames.MARKETPLACE });
+  router.push({ name: routeNames.MARKETPLACE_HOME });
 };
-
 </script>
 <style></style>
 <!-- class="logo" -->
