@@ -2,24 +2,30 @@
 import { RouteLocationNormalizedLoaded } from "vue-router";
 import { useRoute } from "vue-router";
 import { ItemService } from "../../services/item.service";
-import { ComputedRef, computed, onMounted, ref, watch } from "vue";
+import { ComputedRef, computed, onMounted, ref, toRefs, watch } from "vue";
 import { ItemCategory } from "../../interfaces/item.interface";
+import { routeNames } from "../../router/route-names";
+import router from "../../router";
 
 const route: RouteLocationNormalizedLoaded = useRoute();
-const categoryHierarchy: number[] = route.params.categoryId;
+// const categoryHierarchy: number[] = route.params.categoryId;
 // const categoryId: number = categoryHierarchy[categoryHierarchy.length - 1];
-const categoryId : ComputedRef<number> = computed(() => {
+const categoryId: ComputedRef<number> = computed(() => {
   return +route.params.categoryId;
 });
 
 const itemList = ref();
-const itemCategory = ref<ItemCategory>();
+const itemCategory = ref<ItemCategory>( {
+  id: categoryId.value,
+  categoryName: "",
+  parent: undefined,
+  children: []
+});
 
 const getItemsByCategory = async () => {
   try {
     const data = await ItemService.getItems({ categoryId: categoryId.value });
     itemList.value = data;
-    console.log("itemList", itemList.value);
   } catch (err) {
     console.log(err);
   }
@@ -34,23 +40,73 @@ const getSelectedItemCategory = async () => {
   }
 };
 
-watch(
-  categoryId,
-  async () => {
-    console.log(categoryId.value);
-    getSelectedItemCategory();
-    getItemsByCategory();
-  }
-);
+watch(categoryId, async () => {
+  getSelectedItemCategory();
+  getItemsByCategory();
+});
 
 onMounted(async () => {
   getSelectedItemCategory();
   getItemsByCategory();
 });
+
+interface Route {
+  path: string,
+  breadcrumbName: string,
+}
+
+
+const routes : ComputedRef<Route[]> = computed(() => {
+
+  let temp : ItemCategory = itemCategory.value;
+
+  const routeList: Route[] = [{
+    path: temp.id.toString(),
+    breadcrumbName: temp.categoryName,
+  }]
+  while (temp.parent) {
+    temp = temp.parent;
+    routeList.unshift({
+      path: temp.id.toString(),
+      breadcrumbName: temp.categoryName,
+    });
+  }
+
+  // routeList.unshift({
+  //   path: '',
+  //   breadcrumbName: routeNames.MARKETPLACE
+  // })
+  console.log(routeList);
+  return routeList;
+})
 </script>
 <template>
+  <a-breadcrumb :routes="routes">
+    <template #itemRender="{ route, paths }">
+      <span v-if="routes.indexOf(route) === routes.length - 1">{{route.breadcrumbName}}</span>
+      <router-link v-else :to="paths.join('/')">{{route.breadcrumbName}}</router-link>
+    </template>
+  </a-breadcrumb>
   <h2>{{ itemCategory?.categoryName }}</h2>
-  <a-divider></a-divider>
+  <a-divider />
+  <div v-if="itemCategory && itemCategory?.children.length > 0">
+    <a-row>
+      <a-col :span="8" v-for="category in itemCategory?.children" class="py-8">
+        <a
+          @click="
+            () => {
+              router.push({
+                name: routeNames.MARKETPLACE_BY_CATEGORY,
+                params: { categoryId: category.id },
+              });
+            }
+          "
+          >{{ category.categoryName }}</a
+        ></a-col
+      >
+    </a-row>
+    <a-divider />
+  </div>
   <div></div>
   <a-row :gutter="[16, 16]">
     <a-col :span="6" v-for="item in itemList" v-if="itemList">

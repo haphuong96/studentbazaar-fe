@@ -59,6 +59,14 @@ const router = createRouter({
       component: EmailVerificationVerify,
     },
     {
+      path: "/test",
+      name: routeNames.MARKETPLACE,
+      meta: {
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: Marketplace
+    },
+    {
       path: "/marketplace",
       name: routeNames.MARKETPLACE_HOME,
       meta: {
