@@ -28,8 +28,8 @@ const getItemCategories = async (): Promise<ItemCategory[]> => {
   return (await axiosInstance.get("item-categories")).data;
 };
 
-const getItemCategoryById = async (id: number): Promise<ItemCategory> => {
-  return (await axiosInstance.get(`item-categories/${id}`)).data;
+const getItemCategoryByPath = async (categoryPath: string): Promise<ItemCategory> => {
+  return (await axiosInstance.get(`item-categories/${categoryPath}`)).data;
 };
 
 const uploadItem = async (item: CreateItemDto): Promise<void> => {
@@ -40,6 +40,6 @@ export const ItemService = {
   getItems,
   getItemConditions,
   getItemCategories,
-  getItemCategoryById,
+  getItemCategoryByPath,
   uploadItem,
 };

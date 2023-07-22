@@ -8,23 +8,23 @@ import { routeNames } from "../../router/route-names";
 import router from "../../router";
 
 const route: RouteLocationNormalizedLoaded = useRoute();
-// const categoryHierarchy: number[] = route.params.categoryId;
-// const categoryId: number = categoryHierarchy[categoryHierarchy.length - 1];
-const categoryId: ComputedRef<number> = computed(() => {
-  return +route.params.categoryId;
+const categoryPath: ComputedRef<string> = computed(() => {
+  return route.params.categoryPath as string;
 });
 
 const itemList = ref();
-const itemCategory = ref<ItemCategory>( {
-  id: categoryId.value,
+const itemCategory = ref<ItemCategory>({
   categoryName: "",
-  parent: undefined,
-  children: []
+  // parent: undefined,
+  children: [],
+  path: categoryPath.value,
 });
 
 const getItemsByCategory = async () => {
   try {
-    const data = await ItemService.getItems({ categoryId: categoryId.value });
+    const data = await ItemService.getItems({
+      categoryId: itemCategory.value.id,
+    });
     itemList.value = data;
   } catch (err) {
     console.log(err);
@@ -33,58 +33,59 @@ const getItemsByCategory = async () => {
 
 const getSelectedItemCategory = async () => {
   try {
-    const data = await ItemService.getItemCategoryById(categoryId.value);
+    const data = await ItemService.getItemCategoryByPath(categoryPath.value);
     itemCategory.value = data;
   } catch (err) {
+    console.log("itemList", itemList);
     console.log(err);
   }
 };
 
-watch(categoryId, async () => {
-  getSelectedItemCategory();
-  getItemsByCategory();
-});
+const dataLoad = async () => {
+  Promise.all([getSelectedItemCategory()]).then(() => {
+    getItemsByCategory();
+  });
+};
 
-onMounted(async () => {
-  getSelectedItemCategory();
-  getItemsByCategory();
-});
+watch(categoryPath, dataLoad);
+
+onMounted(dataLoad);
 
 interface Route {
-  path: string,
-  breadcrumbName: string,
+  path: string;
+  breadcrumbName: string;
 }
 
+const routes: ComputedRef<Route[]> = computed(() => {
+  let temp: ItemCategory = itemCategory.value;
 
-const routes : ComputedRef<Route[]> = computed(() => {
-
-  let temp : ItemCategory = itemCategory.value;
-
-  const routeList: Route[] = [{
-    path: temp.id.toString(),
-    breadcrumbName: temp.categoryName,
-  }]
+  const routeList: Route[] = [
+    {
+      path: temp.path,
+      breadcrumbName: temp.categoryName,
+    },
+  ];
   while (temp.parent) {
     temp = temp.parent;
     routeList.unshift({
-      path: temp.id.toString(),
+      path: temp.path,
       breadcrumbName: temp.categoryName,
     });
   }
 
-  // routeList.unshift({
-  //   path: '',
-  //   breadcrumbName: routeNames.MARKETPLACE
-  // })
   console.log(routeList);
   return routeList;
-})
+});
 </script>
 <template>
   <a-breadcrumb :routes="routes">
     <template #itemRender="{ route, paths }">
-      <span v-if="routes.indexOf(route) === routes.length - 1">{{route.breadcrumbName}}</span>
-      <router-link v-else :to="paths.join('/')">{{route.breadcrumbName}}</router-link>
+      <span v-if="routes.indexOf(route) === routes.length - 1">{{
+        route.breadcrumbName
+      }}</span>
+      <router-link v-else :to="route.path">{{
+        route.breadcrumbName
+      }}</router-link>
     </template>
   </a-breadcrumb>
   <h2>{{ itemCategory?.categoryName }}</h2>
@@ -97,7 +98,7 @@ const routes : ComputedRef<Route[]> = computed(() => {
             () => {
               router.push({
                 name: routeNames.MARKETPLACE_BY_CATEGORY,
-                params: { categoryId: category.id },
+                params: { categoryPath: category.path },
               });
             }
           "

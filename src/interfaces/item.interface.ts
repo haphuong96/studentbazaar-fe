@@ -4,10 +4,11 @@ export interface ItemCondition {
 }
 
 export interface ItemCategory {
-  id: number;
+  id?: number;
   categoryName: string;
-  parent: ItemCategory | number | any;
-  children: ItemCategory[] | any;
+  parent?: ItemCategory | number | any;
+  children?: ItemCategory[] | any;
+  path: string;
 }
 
 export interface CreateItemDto {

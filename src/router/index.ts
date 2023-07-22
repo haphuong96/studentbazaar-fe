@@ -76,14 +76,14 @@ const router = createRouter({
       component: MarketplaceHome,
     },
     {
-      path: "/marketplace/:categoryId+",
+      path: "/marketplace/:categoryPath",
       name: routeNames.MARKETPLACE_BY_CATEGORY,
       meta: {
         canBack: true,
         layout: layoutNames.MENU_LAYOUT,
       },
       component: MarketplaceByCategory,
-      props: true,
+      // props: true,
     },
     {
       path: "/items/new",

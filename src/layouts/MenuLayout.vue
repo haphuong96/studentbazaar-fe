@@ -51,8 +51,8 @@
       class="px-50"
       @click="goToBrowseByCategory"
     >
-      <div v-for="category in itemCategories" :key="category.id">
-        <a-menu-item :key="category.id">{{
+      <div v-for="category in itemCategories" :key="category.path">
+        <a-menu-item :key="category.path">{{
           category.categoryName
         }}</a-menu-item>
       </div>
@@ -69,7 +69,7 @@
       </div>
       <h3 class="my-16">{{ pageTitle }}</h3>
       <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
-        <router-view/>
+        <router-view />
       </div>
     </a-layout-content>
     <a-layout-footer style="text-align: center">
@@ -123,12 +123,13 @@ onMounted(() => {
 });
 
 const categorySelected = ref<string[]>(["1"]);
-const goToBrowseByCategory: MenuProps["onClick"] = (menuInfo) =>
+const goToBrowseByCategory: MenuProps["onClick"] = (menuInfo) => {
+  console.log(menuInfo.key);
   router.push({
     name: routeNames.MARKETPLACE_BY_CATEGORY,
-    params: { categoryId: [menuInfo.key] },
+    params: { categoryPath: menuInfo.key },
   });
-
+};
 </script>
 <style scoped>
 .header-menu > a {
