@@ -9,4 +9,5 @@ export const routeNames = {
     MARKETPLACE_HOME: "Marketplace Home",
     MARKETPLACE_BY_CATEGORY: "Marketplace By Category",
     MARKETPLACE_SEARCH: "Marketplace Search",
+    MARKETPLACE_ITEMS_ITEM_DETAILS: "View Item Details",
 }

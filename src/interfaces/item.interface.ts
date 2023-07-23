@@ -18,3 +18,17 @@ export interface CreateItemDto {
   conditionId: number | undefined;
   price: number | undefined;
 }
+
+export interface Item {
+  id: number;
+  owner: any;
+  category: ItemCategory;
+  condition: ItemCondition;
+  status: string;
+  itemName: string;
+  itemDescription: string;
+  itemPrice: number;
+  createdDatetime: string;
+  lastUpdatedDatetime: string;
+  img: string[]
+}

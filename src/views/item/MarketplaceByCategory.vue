@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { RouteLocationNormalizedLoaded } from "vue-router";
-import { useRoute } from "vue-router";
+// import { RouteLocationNormalizedLoaded } from "vue-router";
+// import { useRoute } from "vue-router";
 import { ItemService } from "../../services/item.service";
-import { ComputedRef, computed, onMounted, ref, toRefs, watch } from "vue";
+import { ComputedRef, computed, onMounted, ref, watch } from "vue";
 import { ItemCategory } from "../../interfaces/item.interface";
 import { routeNames } from "../../router/route-names";
 import router from "../../router";
-import {SearchOutlined} from "@ant-design/icons-vue";
-
-const route: RouteLocationNormalizedLoaded = useRoute();
+import { SearchOutlined } from "@ant-design/icons-vue";
+import { getCategoryPath, Route } from "../../utils/get-category-path.util";
+// const route: RouteLocationNormalizedLoaded = useRoute();
 // const categoryPath: ComputedRef<string> = computed(() => {
 //   return route.params.categoryPath as string;
 // });
@@ -36,9 +36,12 @@ const searchItems = async () => {
 };
 
 const getSelectedItemCategory = async () => {
-  if (props.categoryPath) {
+  if (props.categoryPath || props.categoryId) {
     try {
-      const data = await ItemService.getItemCategoryByPath(props.categoryPath);
+      const data = await ItemService.getOneItemCategory({
+        categoryPath: props.categoryPath,
+        id: props.categoryId,
+      });
       itemCategory.value = data;
       emit("browse-category", itemCategory.value);
     } catch (err) {
@@ -71,50 +74,20 @@ watch(props, dataLoad);
 
 onMounted(dataLoad);
 
-interface Route {
-  path: string;
-  breadcrumbName: string;
-}
-
 const routes: ComputedRef<Route[]> = computed(() => {
-  if (!itemCategory.value) return [];
-
-  let temp: ItemCategory = itemCategory.value;
-
-  const routeList: Route[] = [
-    {
-      path: temp.path,
-      breadcrumbName: temp.categoryName,
-    },
-  ];
-  while (temp.parent) {
-    temp = temp.parent;
-    routeList.unshift({
-      path: temp.path,
-      breadcrumbName: temp.categoryName,
-    });
-  }
-
-  // add marketplace breadcrumb
-  routeList.unshift({
-    path: "/marketplace/search",
-    breadcrumbName: "Marketplace",
-  });
-
-  console.log(routeList);
-  return routeList;
+  return getCategoryPath(itemCategory.value);
 });
 </script>
 <template>
-  <a-breadcrumb :routes="routes" v-if="itemCategory?.id">
-    <template #itemRender="{ route, paths }">
-      <span v-if="routes.indexOf(route) === routes.length - 1">{{
-        route.breadcrumbName
-      }}</span>
-      <router-link v-else :to="route.path">{{
-        route.breadcrumbName
-      }}</router-link>
-    </template>
+  <a-breadcrumb v-if="itemCategory?.id">
+    <span v-for="route in routes">
+      <span v-if="routes.indexOf(route) === routes.length - 1">
+        <a-breadcrumb-item>{{ route.breadcrumbName }}</a-breadcrumb-item></span
+      >
+      <span v-else class="link" @click="router.push(route.path)"
+        ><a-breadcrumb-item>{{ route.breadcrumbName }}</a-breadcrumb-item></span
+      >
+    </span>
   </a-breadcrumb>
   <h2>{{ itemCategory?.categoryName }}</h2>
 
@@ -144,11 +117,22 @@ const routes: ComputedRef<Route[]> = computed(() => {
   <a-row :gutter="[16, 16]">
     <a-col :span="6" v-for="item in itemList" v-if="itemList">
       <div>{{ item.owner.username }}</div>
-      <div class="p-16">
-        <a-skeleton-image class="img"></a-skeleton-image>
+      <div
+        class="link"
+        @click="
+          () =>
+            router.push({
+              name: routeNames.MARKETPLACE_ITEMS_ITEM_DETAILS,
+              params: { itemId: item.id },
+            })
+        "
+      >
+        <div class="p-16">
+          <a-skeleton-image class="img"></a-skeleton-image>
+        </div>
+        <div>{{ item.itemName }}</div>
       </div>
-      <div>{{ item.itemName }}</div></a-col
-    >
+    </a-col>
   </a-row>
 </template>
 <style></style>

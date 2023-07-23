@@ -5,6 +5,7 @@ import LoginPage from "../views/auth/LoginPage.vue";
 import Marketplace from "../views/item/Marketplace.vue";
 import MarketplaceHome from "../views/item/MarketplaceHome.vue";
 import MarketplaceByCategory from "../views/item/MarketplaceByCategory.vue";
+import ItemDetails from "../views/item/ItemDetails.vue";
 import ListNewItem from "../views/item/ListNewItem.vue";
 import EmailVerificationSend from "../views/auth/EmailVerificationSend.vue";
 import SignupAccountDetails from "../views/auth/SignupAccountDetails.vue";
@@ -86,6 +87,16 @@ const router = createRouter({
       },
       component: MarketplaceByCategory,
       props: route => ({ searchKeyword: route.query.q, categoryId: route.query.category }),
+    },
+    {
+      path: "/marketplace/items/:itemId",
+      name: routeNames.MARKETPLACE_ITEMS_ITEM_DETAILS,
+      meta: {
+        canBack: true,
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: ItemDetails,
+      props: true
     },
     {
       path: "/items/new",
