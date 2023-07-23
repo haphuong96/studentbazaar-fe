@@ -8,11 +8,18 @@
         </a>
         <div class="d-flex flex-grow-1 align-center">
           <a-input-search
-            v-model:value="value"
-            placeholder="Search for items"
+            v-model:value="searchKeyword"
+            :placeholder="
+              searchInCategory
+                ? `Search in ${searchInCategory.categoryName}`
+                : 'Search for items'
+            "
             size="large"
             @search="onSearch"
           >
+            <template #prefix>
+              <search-outlined />
+            </template>
             <template #enterButton>
               <a-button>Search</a-button>
             </template>
@@ -44,7 +51,6 @@
     </a-layout-header>
     <!-- <a-layout-header class="nav-bar-header"> -->
     <a-menu
-      v-model:selectedKeys="categorySelected"
       mode="horizontal"
       theme="dark"
       :style="{ lineHeight: '30px' }"
@@ -69,7 +75,7 @@
       </div>
       <h3 class="my-16">{{ pageTitle }}</h3>
       <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
-        <router-view />
+        <router-view @browse-category="defineSearchScope" />
       </div>
     </a-layout-content>
     <a-layout-footer style="text-align: center">
@@ -79,12 +85,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ComputedRef, ref, Ref, onMounted } from "vue";
+import { computed, ComputedRef, ref, Ref, onMounted, watch } from "vue";
 import {
   BellTwoTone,
   LeftOutlined,
   MessageTwoTone,
   TagsTwoTone,
+  SearchOutlined,
 } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";
 import router from "../router";
@@ -122,12 +129,34 @@ onMounted(() => {
   getItemCategories();
 });
 
-const categorySelected = ref<string[]>(["1"]);
 const goToBrowseByCategory: MenuProps["onClick"] = (menuInfo) => {
   console.log(menuInfo.key);
   router.push({
     name: routeNames.MARKETPLACE_BY_CATEGORY,
     params: { categoryPath: menuInfo.key },
+  });
+};
+
+const searchInCategory = ref<ItemCategory>();
+const defineSearchScope = (category: ItemCategory) => {
+  searchInCategory.value = category;
+};
+
+watch(
+  () => route.name,
+  () => {
+    if (route.name != routeNames.MARKETPLACE_BY_CATEGORY) {
+      searchInCategory.value = undefined;
+    }
+  }
+);
+
+const searchKeyword = ref<string>();
+
+const onSearch = (value: string, _event: any) => {
+  router.push({
+    name: routeNames.MARKETPLACE_SEARCH,
+    query: { q: value, category: searchInCategory.value?.id },
   });
 };
 </script>

@@ -6,24 +6,28 @@ import { ComputedRef, computed, onMounted, ref, toRefs, watch } from "vue";
 import { ItemCategory } from "../../interfaces/item.interface";
 import { routeNames } from "../../router/route-names";
 import router from "../../router";
+import {SearchOutlined} from "@ant-design/icons-vue";
 
 const route: RouteLocationNormalizedLoaded = useRoute();
-const categoryPath: ComputedRef<string> = computed(() => {
-  return route.params.categoryPath as string;
+// const categoryPath: ComputedRef<string> = computed(() => {
+//   return route.params.categoryPath as string;
+// });
+
+const emit = defineEmits(["browse-category"]);
+const props = defineProps({
+  categoryPath: String,
+  categoryId: Number,
+  searchKeyword: String,
 });
 
 const itemList = ref();
-const itemCategory = ref<ItemCategory>({
-  categoryName: "",
-  // parent: undefined,
-  children: [],
-  path: categoryPath.value,
-});
+const itemCategory = ref<ItemCategory | undefined>();
 
-const getItemsByCategory = async () => {
+const searchItems = async () => {
   try {
     const data = await ItemService.getItems({
-      categoryId: itemCategory.value.id,
+      categoryId: props.categoryId || itemCategory.value?.id,
+      q: props.searchKeyword,
     });
     itemList.value = data;
   } catch (err) {
@@ -32,22 +36,38 @@ const getItemsByCategory = async () => {
 };
 
 const getSelectedItemCategory = async () => {
-  try {
-    const data = await ItemService.getItemCategoryByPath(categoryPath.value);
-    itemCategory.value = data;
-  } catch (err) {
-    console.log("itemList", itemList);
-    console.log(err);
+  if (props.categoryPath) {
+    try {
+      const data = await ItemService.getItemCategoryByPath(props.categoryPath);
+      itemCategory.value = data;
+      emit("browse-category", itemCategory.value);
+    } catch (err) {
+      console.log(err);
+      router.push({ name: routeNames.MARKETPLACE_HOME });
+    }
+  } else {
+    try {
+      const data = await ItemService.getItemCategories();
+      itemCategory.value = {
+        id: undefined,
+        categoryName: "Marketplace",
+        path: "",
+        children: data,
+      };
+    } catch (err) {
+      console.log(err);
+      router.push({ name: routeNames.MARKETPLACE_HOME });
+    }
   }
 };
 
 const dataLoad = async () => {
   Promise.all([getSelectedItemCategory()]).then(() => {
-    getItemsByCategory();
+    searchItems();
   });
 };
 
-watch(categoryPath, dataLoad);
+watch(props, dataLoad);
 
 onMounted(dataLoad);
 
@@ -57,6 +77,8 @@ interface Route {
 }
 
 const routes: ComputedRef<Route[]> = computed(() => {
+  if (!itemCategory.value) return [];
+
   let temp: ItemCategory = itemCategory.value;
 
   const routeList: Route[] = [
@@ -73,12 +95,18 @@ const routes: ComputedRef<Route[]> = computed(() => {
     });
   }
 
+  // add marketplace breadcrumb
+  routeList.unshift({
+    path: "/marketplace/search",
+    breadcrumbName: "Marketplace",
+  });
+
   console.log(routeList);
   return routeList;
 });
 </script>
 <template>
-  <a-breadcrumb :routes="routes">
+  <a-breadcrumb :routes="routes" v-if="itemCategory?.id">
     <template #itemRender="{ route, paths }">
       <span v-if="routes.indexOf(route) === routes.length - 1">{{
         route.breadcrumbName
@@ -89,6 +117,7 @@ const routes: ComputedRef<Route[]> = computed(() => {
     </template>
   </a-breadcrumb>
   <h2>{{ itemCategory?.categoryName }}</h2>
+
   <a-divider />
   <div v-if="itemCategory && itemCategory?.children.length > 0">
     <a-row>
@@ -108,7 +137,10 @@ const routes: ComputedRef<Route[]> = computed(() => {
     </a-row>
     <a-divider />
   </div>
-  <div></div>
+  <div v-if="props.searchKeyword" class="pb-32">
+    <search-outlined></search-outlined>
+    Search results for keyword: {{ props.searchKeyword }}
+  </div>
   <a-row :gutter="[16, 16]">
     <a-col :span="6" v-for="item in itemList" v-if="itemList">
       <div>{{ item.owner.username }}</div>

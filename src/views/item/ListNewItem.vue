@@ -1,7 +1,7 @@
 <template>
   <a-row>
     <a-col :span="12">
-    <h2>Add images</h2>
+      <h2>Add images</h2>
     </a-col>
     <a-col :span="12">
       <h2>List your item</h2>
@@ -51,11 +51,7 @@
           />
         </a-form-item>
         <a-form-item>
-          <a-button
-            @click="onUpload"
-            type="primary"
-            >Upload</a-button
-          >
+          <a-button @click="onUpload" type="primary">Upload</a-button>
         </a-form-item>
       </a-form>
     </a-col>
@@ -66,11 +62,7 @@
 import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
 import { onMounted, ref, Ref } from "vue";
 import { ItemService } from "../../services/item.service";
-import {
-  CreateItemDto,
-  ItemCategory,
-  ItemCondition,
-} from "../../interfaces/item.interface";
+import { CreateItemDto } from "../../interfaces/item.interface";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
 

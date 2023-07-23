@@ -8,10 +8,12 @@ import {
 import { axiosInstance } from "./base.service";
 import { ComputedRef } from "vue";
 
-const getItems = async (search?: { categoryId?: number }) => {
+const getItems = async (search?: { categoryId?: number, q?: string }) => {
+  console.log(search);
   const axiosRes = await axiosInstance.get("items", {
     params: {
       categoryId: search?.categoryId,
+      q: search?.q
     },
   });
 

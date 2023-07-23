@@ -59,14 +59,6 @@ const router = createRouter({
       component: EmailVerificationVerify,
     },
     {
-      path: "/test",
-      name: routeNames.MARKETPLACE,
-      meta: {
-        layout: layoutNames.MENU_LAYOUT,
-      },
-      component: Marketplace
-    },
-    {
       path: "/marketplace",
       name: routeNames.MARKETPLACE_HOME,
       meta: {
@@ -83,7 +75,17 @@ const router = createRouter({
         layout: layoutNames.MENU_LAYOUT,
       },
       component: MarketplaceByCategory,
-      // props: true,
+      props: true,
+    },
+    {
+      path: "/marketplace/search",
+      name: routeNames.MARKETPLACE_SEARCH,
+      meta: {
+        canBack: true,
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: MarketplaceByCategory,
+      props: route => ({ searchKeyword: route.query.q, categoryId: route.query.category }),
     },
     {
       path: "/items/new",
