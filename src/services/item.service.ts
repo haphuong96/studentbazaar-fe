@@ -49,6 +49,17 @@ const getOneItemCategory = async (search: {
   }
 };
 
+const uploadItemImages = async (form: FormData): Promise<string[]> => {
+  console.log('form', form);
+  const axiosRes = await axiosInstance.post("items/images", form, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return axiosRes.data;
+}
+
 const uploadItem = async (item: CreateItemDto): Promise<void> => {
   await axiosInstance.post("items", item);
 };
@@ -63,4 +74,5 @@ export const ItemService = {
   getOneItemCategory,
   uploadItem,
   getItemDetails,
+  uploadItemImages
 };

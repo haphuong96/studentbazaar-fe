@@ -107,6 +107,15 @@ const router = createRouter({
       },
       component: ListNewItem,
     },
+    {
+      path: "/test",
+      name: routeNames.MARKETPLACE,
+      meta: {
+        canBack: true,
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: Marketplace,
+    },
   ],
 });
 

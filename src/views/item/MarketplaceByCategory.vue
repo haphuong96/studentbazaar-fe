@@ -80,6 +80,11 @@ const routes: ComputedRef<Route[]> = computed(() => {
 </script>
 <template>
   <a-breadcrumb v-if="itemCategory?.id">
+    <!-- <template #itemRender="{ route, params, routes, paths }">
+      <span v-if="routes.indexOf(route) === routes.length - 1">{{route.breadcrumbName}}</span>
+      <router-link v-else :to="(route.path as string)">{{route.breadcrumbName}}</router-link>
+    </template> -->
+
     <span v-for="route in routes">
       <span v-if="routes.indexOf(route) === routes.length - 1">
         <a-breadcrumb-item>{{ route.breadcrumbName }}</a-breadcrumb-item></span
