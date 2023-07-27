@@ -1,7 +1,31 @@
 <template>
   <a-row>
-    <a-col :span="12">
+    <a-col :span="12" class="pr-32">
       <h2>Add images</h2>
+      <!-- <img src="https://studentbazaar.blob.core.windows.net/item-images/354076998_171323875771236_7388431690475966556_n.jpg"/> -->
+      <div class="clearfix">
+        <a-upload-dragger
+          v-model:file-list="fileList"
+          class="my-16"
+          list-type="picture-card"
+          @preview="handlePreview"
+          :before-upload="beforeUpload"
+          @remove="handleRemove"
+        >
+          <div v-if="fileList ? fileList.length < 4 : false">
+            <plus-outlined />
+            <div style="margin-top: 8px">Upload</div>
+          </div>
+        </a-upload-dragger>
+        <a-modal
+          v-model:visible="previewVisible"
+          :title="previewTitle"
+          :footer="null"
+          @cancel="handleCancel"
+        >
+          <img alt="example" style="width: 100%" :src="previewImage" />
+        </a-modal>
+      </div>
     </a-col>
     <a-col :span="12">
       <h2>List your item</h2>
@@ -51,7 +75,9 @@
           />
         </a-form-item>
         <a-form-item>
-          <a-button @click="onUpload" type="primary">Upload</a-button>
+          <a-button :loading="uploading" @click="onUpload" type="primary"
+            >Upload</a-button
+          >
         </a-form-item>
       </a-form>
     </a-col>
@@ -63,6 +89,8 @@ import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
 import { onMounted, ref, Ref } from "vue";
 import { ItemService } from "../../services/item.service";
 import { CreateItemDto } from "../../interfaces/item.interface";
+import { PlusOutlined } from "@ant-design/icons-vue";
+import type { UploadProps } from "ant-design-vue";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
 
@@ -72,6 +100,7 @@ const formState: Ref<CreateItemDto> = ref({
   price: undefined,
   categoryId: undefined,
   conditionId: undefined,
+  img: undefined,
 });
 
 const conditionOptions = ref<SelectProps["options"]>([]);
@@ -99,8 +128,73 @@ const uploadItem = async (): Promise<void> => {
 };
 
 const onUpload = async (): Promise<void> => {
+  uploading.value = true;
+  // upload item images
+  await uploadItemImages();
+  
+  //upload item
   uploadItem();
+  uploading.value = false;
+
   router.push({ name: routeNames.MARKETPLACE_HOME });
+};
+
+const uploadItemImages = async () => {
+  const formData = new FormData();
+  fileList.value?.forEach((file: UploadProps["fileList"][number]) => {
+    formData.append("files", file.originFileObj);
+  });
+  formData.set("test", "testvalue");
+  try {
+    const { imgUrls } = await ItemService.uploadItemImages(formData);
+
+    formState.value.img = imgUrls;
+    message.success("Item images uploaded successfully");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//
+
+function getBase64(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
+const previewVisible = ref(false);
+const previewImage = ref("");
+const previewTitle = ref("");
+const handleCancel = () => {
+  previewVisible.value = false;
+  previewTitle.value = "";
+};
+const handlePreview = async (file: UploadProps["fileList"][number]) => {
+  if (!file.url && !file.preview) {
+    file.preview = (await getBase64(file.originFileObj)) as string;
+  }
+  previewImage.value = file.url || file.preview;
+  previewVisible.value = true;
+  previewTitle.value =
+    file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
+  console.log(fileList.value);
+  console.log(previewVisible.value);
+};
+const fileList = ref<UploadProps["fileList"]>([]);
+const uploading = ref<boolean>(false);
+const handleRemove: UploadProps["onRemove"] = (file) => {
+  const index: number | undefined = fileList.value?.indexOf(file);
+  const newFileList = fileList.value?.slice();
+  newFileList?.splice(index, 1);
+  fileList.value = newFileList;
+};
+const beforeUpload: UploadProps["beforeUpload"] = (file) => {
+  console.log(file);
+  fileList.value = [...(fileList.value || []), file];
+  return false;
 };
 </script>
 <style></style>

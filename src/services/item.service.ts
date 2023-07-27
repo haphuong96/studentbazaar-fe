@@ -56,6 +56,17 @@ const uploadItem = async (item: CreateItemDto): Promise<void> => {
 const getItemDetails = async (itemId: number | undefined) : Promise<Item> => {
   return (await axiosInstance.get(`items/${itemId}`)).data;
 };
+
+const uploadItemImages = async (form: FormData): Promise<{imgUrls: string[]}> => {
+  console.log('form', form);
+  const axiosRes = await axiosInstance.post("items/images", form, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return axiosRes.data;
+}
 export const ItemService = {
   getItems,
   getItemConditions,
@@ -63,4 +74,5 @@ export const ItemService = {
   getOneItemCategory,
   uploadItem,
   getItemDetails,
+  uploadItemImages
 };

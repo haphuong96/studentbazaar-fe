@@ -15,6 +15,17 @@
           >
         </span>
       </a-breadcrumb>
+
+      <div class="d-flex">
+        <div class="d-flex flex-col" v-for="img in itemDetails.img">
+          <a-image :src="img.imgPath" :width="100"></a-image>
+        </div>
+
+        <div>
+          <a-image :src="itemDetails.img[0].imgPath" :width="400">
+          </a-image>
+        </div>
+      </div>
     </a-col>
     <a-col :span="12">
       <div class="d-flex align-center">
@@ -69,6 +80,7 @@ const itemDetails = ref<Item>();
 const getItemDetails = async () => {
   try {
     itemDetails.value = await ItemService.getItemDetails(props.itemId);
+    console.log(itemDetails.value)
   } catch (err) {
     console.log(err);
   }
