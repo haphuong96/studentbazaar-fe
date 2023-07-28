@@ -59,7 +59,8 @@ const resendVerificationEmail = async (email: string): Promise<void> => {
   });
 };
 
-const logOut = () => {
+const logOut = async() => {
+  axiosInstance.post("auth/logout");
   localStorage.clear();
   router.push({ name: routeNames.LOGIN });
 };

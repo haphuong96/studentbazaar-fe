@@ -1,0 +1,77 @@
+<template>
+  <!-- Your component's template -->
+  <div class="gallery-view-container">
+    <div class="gallery-view-container__list-img">
+      <img
+        class="gallery-view-container__list-img__item"  
+        v-for="(item, index) in sources" :key="index"
+        :src="item.imgPath"
+        @click="selectPhoto = item.imgPath"
+      />
+    </div>
+    <a-image
+      :src="selectPhoto"
+      class="gallery-view-container__preview-photo"
+    ></a-image>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { ItemImage } from "../interfaces/item.interface";
+
+interface GalleryViewProps {
+  sources: ItemImage[];
+}
+// Define props
+const props = defineProps<GalleryViewProps>();
+const selectPhoto = ref<string>(props.sources[0]?.imgPath || "");
+watch(props, () => {
+  selectPhoto.value = props.sources[0]?.imgPath || "";
+  console.log("vap day ne");
+});
+</script>
+<style lang="css" scoped>
+.gallery-view-container {
+  border: 1px solid black;
+  display: flex;
+  width: 600px;
+  height: 400px;
+}
+
+.gallery-view-container__preview-photo {
+  width: calc(100% - 112px);
+  height: 100%;
+  object-fit: cover;
+  align-items: center;
+  margin-left: 16px;
+}
+
+.gallery-view-container__list-img {
+  width: 96px;
+  height: 100%;
+  margin-bottom: 8px;
+  overflow: scroll;
+}
+
+.gallery-view-container__list-img__item {
+  width: 96px;
+  height: 64px;
+  margin-bottom: 16px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.gallery-view-container__preview-photo .ant-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Set your desired object-fit behavior (e.g., cover, contain, etc.) */
+}
+
+:deep(.ant-image .ant-image-img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
+}
+</style>

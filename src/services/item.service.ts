@@ -1,5 +1,5 @@
 // import { University } from "../interfaces/market.interface";
-import { AxiosResponse } from "axios";
+// import { AxiosResponse } from "axios";
 import {
   CreateItemDto,
   Item,
@@ -7,9 +7,9 @@ import {
   ItemCondition,
 } from "../interfaces/item.interface";
 import { axiosInstance } from "./base.service";
-import { ComputedRef } from "vue";
+// import { ComputedRef } from "vue";
 
-const getItems = async (search?: { categoryId?: number; q?: string }) => {
+const getItems = async (search?: { categoryId?: number; q?: string }) : Promise<Item[]> => {
   const axiosRes = await axiosInstance.get("items", {
     params: {
       categoryId: search?.categoryId,

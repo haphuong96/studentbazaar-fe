@@ -1,17 +1,12 @@
 <script setup lang="ts">
-// import { RouteLocationNormalizedLoaded } from "vue-router";
-// import { useRoute } from "vue-router";
 import { ItemService } from "../../services/item.service";
-import { ComputedRef, computed, onMounted, ref, watch } from "vue";
-import { ItemCategory } from "../../interfaces/item.interface";
+import { ComputedRef, Ref, computed, onMounted, ref, watch } from "vue";
+import { Item, ItemCategory } from "../../interfaces/item.interface";
 import { routeNames } from "../../router/route-names";
 import router from "../../router";
 import { SearchOutlined } from "@ant-design/icons-vue";
 import { getCategoryPath, Route } from "../../utils/get-category-path.util";
-// const route: RouteLocationNormalizedLoaded = useRoute();
-// const categoryPath: ComputedRef<string> = computed(() => {
-//   return route.params.categoryPath as string;
-// });
+import ItemPost from "./components/ItemPost.vue";
 
 const emit = defineEmits(["browse-category"]);
 const props = defineProps({
@@ -20,7 +15,7 @@ const props = defineProps({
   searchKeyword: String,
 });
 
-const itemList = ref();
+const itemList : Ref<Item[] | undefined> = ref();
 const itemCategory = ref<ItemCategory | undefined>();
 
 const searchItems = async () => {
@@ -116,23 +111,9 @@ const routes: ComputedRef<Route[]> = computed(() => {
   </div>
   <a-row :gutter="[16, 16]">
     <a-col :span="6" v-for="item in itemList" v-if="itemList">
-      <div>{{ item.owner.username }}</div>
-      <div
-        class="link"
-        @click="
-          () =>
-            router.push({
-              name: routeNames.MARKETPLACE_ITEMS_ITEM_DETAILS,
-              params: { itemId: item.id },
-            })
-        "
-      >
-        <div class="p-16">
-          <a-skeleton-image class="img"></a-skeleton-image>
-        </div>
-        <div>{{ item.itemName }}</div>
-      </div>
+      <ItemPost :item="item"></ItemPost>
     </a-col>
   </a-row>
 </template>
-<style></style>
+<style>
+</style>

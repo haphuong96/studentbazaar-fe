@@ -16,7 +16,7 @@
         </span>
       </a-breadcrumb>
 
-      <div class="d-flex">
+      <!-- <div class="d-flex">
         <div class="d-flex flex-col" v-for="img in itemDetails.img">
           <a-image :src="img.imgPath" :width="100"></a-image>
         </div>
@@ -25,7 +25,8 @@
           <a-image :src="itemDetails.img[0].imgPath" :width="400">
           </a-image>
         </div>
-      </div>
+      </div> -->
+      <GalleryView :sources="itemDetails.img" />
     </a-col>
     <a-col :span="12">
       <div class="d-flex align-center">
@@ -67,10 +68,11 @@ import { ComputedRef, computed, onMounted, ref } from "vue";
 import { ItemService } from "../../services/item.service";
 import { Item } from "../../interfaces/item.interface";
 import { Route, getCategoryPath } from "../../utils/get-category-path.util";
-import { routeNames } from "../../router/route-names";
+// import { routeNames } from "../../router/route-names";
 import { formatFromNow } from "../../utils/datetime.util";
 
 import router from "../../router";
+import GalleryView from "../../components/GalleryView.vue";
 
 const props = defineProps({
   itemId: Number,
