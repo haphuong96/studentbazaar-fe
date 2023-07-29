@@ -4,9 +4,9 @@
     <div class="gallery-view-container__list-img">
       <img
         class="gallery-view-container__list-img__item"  
-        v-for="(item, index) in sources" :key="index"
-        :src="item.imgPath"
-        @click="selectPhoto = item.imgPath"
+        v-for="(img, index) in sources" :key="index"
+        :src="img.imgPath"
+        @click="selectPhoto = img.imgPath"
       />
     </div>
     <a-image
@@ -18,10 +18,11 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { ItemImage } from "../interfaces/item.interface";
+import { Image } from "../interfaces/image.interface";
+
 
 interface GalleryViewProps {
-  sources: ItemImage[];
+  sources: Image[];
 }
 // Define props
 const props = defineProps<GalleryViewProps>();

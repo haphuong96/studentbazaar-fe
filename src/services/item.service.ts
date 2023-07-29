@@ -1,5 +1,6 @@
 // import { University } from "../interfaces/market.interface";
 // import { AxiosResponse } from "axios";
+import { Image } from "../interfaces/image.interface";
 import {
   CreateItemDto,
   Item,
@@ -57,7 +58,7 @@ const getItemDetails = async (itemId: number | undefined) : Promise<Item> => {
   return (await axiosInstance.get(`items/${itemId}`)).data;
 };
 
-const uploadItemImages = async (form: FormData): Promise<{imgUrls: string[]}> => {
+const uploadItemImages = async (form: FormData): Promise<Image[]> => {
   console.log('form', form);
   const axiosRes = await axiosInstance.post("items/images", form, {
     headers: {

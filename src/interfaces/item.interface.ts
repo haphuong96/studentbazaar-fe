@@ -1,3 +1,5 @@
+import { Image } from "./image.interface";
+
 export interface ItemCondition {
   id: number;
   conditionName: string;
@@ -17,7 +19,7 @@ export interface CreateItemDto {
   categoryId: number | undefined;
   conditionId: number | undefined;
   price: number | undefined;
-  img?: string[];
+  img?: Image[];
 }
 
 export interface Item {
@@ -31,10 +33,10 @@ export interface Item {
   itemPrice: number;
   createdDatetime: string;
   lastUpdatedDatetime: string;
-  img: ItemImage[]
+  img: Image[]
 }
 
 export interface ItemImage {
   id: number;
-  imgPath: string;
+  image: Image;
 }

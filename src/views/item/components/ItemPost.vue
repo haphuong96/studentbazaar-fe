@@ -17,7 +17,7 @@
         class="thumbnail"
       />
 
-      <a-skeleton-image v-else class="img"></a-skeleton-image>
+      <a-skeleton-image v-else></a-skeleton-image>
     </div>
     <div>{{ item.itemName }}</div>
   </div>

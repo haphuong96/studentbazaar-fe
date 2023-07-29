@@ -93,6 +93,7 @@ import { PlusOutlined } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
+// import { Image } from "../../interfaces/image.interface";
 
 const formState: Ref<CreateItemDto> = ref({
   itemName: undefined,
@@ -131,7 +132,7 @@ const onUpload = async (): Promise<void> => {
   uploading.value = true;
   // upload item images
   await uploadItemImages();
-  
+
   //upload item
   uploadItem();
   uploading.value = false;
@@ -146,9 +147,7 @@ const uploadItemImages = async () => {
   });
   formData.set("test", "testvalue");
   try {
-    const { imgUrls } = await ItemService.uploadItemImages(formData);
-
-    formState.value.img = imgUrls;
+    formState.value.img = await ItemService.uploadItemImages(formData);
     message.success("Item images uploaded successfully");
   } catch (error) {
     console.log(error);
