@@ -13,6 +13,9 @@ import EmailVerificationVerify from "../views/auth/EmailVerificationVerify.vue";
 import { layoutNames } from "./layout-names";
 import { emailSendGuard, globalGuard } from "./guards/auth.guard";
 
+import MyPage from "../views/me/MyPage.vue";
+import Inbox from "../views/chat/Inbox.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -86,7 +89,10 @@ const router = createRouter({
         layout: layoutNames.MENU_LAYOUT,
       },
       component: MarketplaceByCategory,
-      props: route => ({ searchKeyword: route.query.q, categoryId: route.query.category }),
+      props: (route) => ({
+        searchKeyword: route.query.q,
+        categoryId: route.query.category,
+      }),
     },
     {
       path: "/marketplace/items/:itemId",
@@ -96,7 +102,7 @@ const router = createRouter({
         layout: layoutNames.MENU_LAYOUT,
       },
       component: ItemDetails,
-      props: true
+      props: true,
     },
     {
       path: "/items/new",
@@ -106,6 +112,21 @@ const router = createRouter({
         layout: layoutNames.MENU_LAYOUT,
       },
       component: ListNewItem,
+    },
+    {
+      path: "/me",
+      meta: {
+        pageTitle: "Personal Details",
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: MyPage,
+      children: [
+        {
+          path: "inbox",
+          name: routeNames.INBOX,
+          component: Inbox,
+        },
+      ],
     },
   ],
 });

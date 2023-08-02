@@ -27,7 +27,7 @@
         </div>
         <div class="d-flex header-menu">
           <a><bell-two-tone /></a>
-          <a><message-two-tone /></a>
+          <router-link :to="{name: routeNames.INBOX}"><message-two-tone /></router-link>
           <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
             ><tags-two-tone />
           </a>
