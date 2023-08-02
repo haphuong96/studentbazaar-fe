@@ -75,13 +75,8 @@ const credentialsError = ref<string | undefined>(undefined);
 const login = async () => {
   if (loginDto.value.usernameOrEmail && loginDto.value.password) {
     try {
-      const { accessToken, refreshToken } = await AuthService.login(
-        loginDto.value
-      );
+      await AuthService.login(loginDto.value);
 
-      // if successful, store tokens in local storage
-      localStorage.setItem(localStorageKeys.ACCESS_TOKEN, accessToken);
-      localStorage.setItem(localStorageKeys.REFRESH_TOKEN, refreshToken);
       // get user info and store in local storage
       const me: User = await UserService.getMyProfile();
       localStorage.setItem(localStorageKeys.USER_FULLNAME, me.fullname);

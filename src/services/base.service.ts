@@ -54,27 +54,32 @@ const handleResponseError = async (error: any) => {
     if (error.response.data.errorCode === ErrorCode.UNAUTHORIZED) {
       if (localStorage.getItem(localStorageKeys.ACCESS_TOKEN)) {
         //meaning expired token, now refresh
-        const refreshToken = localStorage.getItem(
-          localStorageKeys.REFRESH_TOKEN
-        );
+        const isRefreshSuccess : boolean = await AuthService.refreshToken();
 
-        const res = await axiosInstance.post("auth/refresh-token", {
-          refreshToken,
-        });
-
-        if (res.status === 201) {
-          // refresh token success
-          localStorage.setItem(
-            localStorageKeys.ACCESS_TOKEN,
-            res.data.accessToken
-          );
-          localStorage.setItem(
-            localStorageKeys.REFRESH_TOKEN,
-            res.data.refreshToken
-          );
-
+        if (isRefreshSuccess) {
           return axiosInstance(originalRequest); //resend request with new token
         }
+        // const refreshToken = localStorage.getItem(
+        //   localStorageKeys.REFRESH_TOKEN
+        // );
+
+        // const res = await axiosInstance.post("auth/refresh-token", {
+        //   refreshToken,
+        // });
+
+        // if (res.status === 201) {
+        //   // refresh token success
+        //   localStorage.setItem(
+        //     localStorageKeys.ACCESS_TOKEN,
+        //     res.data.accessToken
+        //   );
+        //   localStorage.setItem(
+        //     localStorageKeys.REFRESH_TOKEN,
+        //     res.data.refreshToken
+        //   );
+
+          
+        // }
       } else {
         router.push({ name: routeNames.LOGIN });
       }

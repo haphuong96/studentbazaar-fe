@@ -1,3 +1,4 @@
+import { localStorageKeys } from "../common/storage-keys";
 import { LoginDto } from "../interfaces/login.interface";
 import { University } from "../interfaces/market.interface";
 import { SignUpDto } from "../interfaces/signup.interface";
@@ -26,7 +27,11 @@ const login = async (
     ...loginDto,
   });
 
-  const data = axiosRes.data;
+  const data : {accessToken: string, refreshToken: string} = axiosRes.data;
+
+  // if successful, store tokens in local storage
+  localStorage.setItem(localStorageKeys.ACCESS_TOKEN, data.accessToken);
+  localStorage.setItem(localStorageKeys.REFRESH_TOKEN, data.refreshToken);
 
   return data;
 };
@@ -59,11 +64,36 @@ const resendVerificationEmail = async (email: string): Promise<void> => {
   });
 };
 
-const logOut = async() => {
+const logOut = async () => {
   axiosInstance.post("auth/logout");
   localStorage.clear();
   router.push({ name: routeNames.LOGIN });
 };
+
+const refreshToken = async () : Promise<boolean> => {
+  const refreshToken = localStorage.getItem(
+    localStorageKeys.REFRESH_TOKEN
+  );
+
+  const res = await axiosInstance.post("auth/refresh-token", {
+    refreshToken,
+  });
+
+  if (res.status === 201) {
+    // refresh token success
+    localStorage.setItem(
+      localStorageKeys.ACCESS_TOKEN,
+      res.data.accessToken
+    );
+    localStorage.setItem(
+      localStorageKeys.REFRESH_TOKEN,
+      res.data.refreshToken
+    );
+    return true;
+  }
+
+  return false;
+}
 
 export const AuthService = {
   checkEmailAddress,
@@ -72,4 +102,5 @@ export const AuthService = {
   register,
   verifyEmailToken,
   resendVerificationEmail,
+  refreshToken
 };
