@@ -1,5 +1,5 @@
 <template>
-  <a-layout class="layout">
+  <a-layout class="layout menu-layout-container">
     <!-- <div :style="{ position: 'fixed', zIndex: 1, width: '100%'}"> -->
     <a-layout-header class="nav-bar-header">
       <div class="d-flex">
@@ -36,10 +36,11 @@
           <a>
             <!-- #f56a00 -->
             <a-dropdown placement="bottomRight">
-              <router-link :to="{name: routeNames.MY_PROFILE}">
-              <a-avatar style="color: #f56a00; background-color: #fde3cf">{{
-                userFullname?.charAt(0).toUpperCase()
-              }}</a-avatar></router-link>
+              <router-link :to="{ name: routeNames.MY_PROFILE }">
+                <a-avatar style="color: #f56a00; background-color: #fde3cf">{{
+                  userFullname?.charAt(0).toUpperCase()
+                }}</a-avatar></router-link
+              >
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="AuthService.logOut">
@@ -49,8 +50,9 @@
               </template>
             </a-dropdown></a
           >
-          <router-link :to="{name: routeNames.LIST_ITEM}">
-          <a-button>Sell Now</a-button></router-link>
+          <router-link :to="{ name: routeNames.LIST_ITEM }">
+            <a-button>Sell Now</a-button></router-link
+          >
         </div>
       </div>
     </a-layout-header>
@@ -155,6 +157,10 @@ const onSearch = (value: string, _event: any) => {
 };
 </script>
 <style scoped>
+.menu-layout-container {
+  height: calc(100vh);
+}
+
 .header-menu > a {
   margin-left: 15px;
   font-size: 20px;

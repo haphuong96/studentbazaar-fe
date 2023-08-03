@@ -13,4 +13,5 @@ export const routeNames = {
     INBOX: "Inbox",
     MY_PROFILE: "My Profile",
     WELCOME_PAGE: "Welcome Page",
+    USER_PROFILE: "User Profile"
 }

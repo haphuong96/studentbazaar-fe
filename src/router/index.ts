@@ -1,21 +1,21 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { routeNames } from "./route-names";
-import SignupPage from "../views/auth/SignupPage.vue";
+import EmailVerificationSend from "../views/auth/EmailVerificationSend.vue";
+import EmailVerificationVerify from "../views/auth/EmailVerificationVerify.vue";
 import LoginPage from "../views/auth/LoginPage.vue";
-import Marketplace from "../views/item/Marketplace.vue";
-import MarketplaceHome from "../views/item/MarketplaceHome.vue";
-import MarketplaceByCategory from "../views/item/MarketplaceByCategory.vue";
+import SignupAccountDetails from "../views/auth/SignupAccountDetails.vue";
+import SignupPage from "../views/auth/SignupPage.vue";
+import Welcome from "../views/auth/Welcome.vue";
+import Inbox from "../views/chat/Inbox.vue";
 import ItemDetails from "../views/item/ItemDetails.vue";
 import ListNewItem from "../views/item/ListNewItem.vue";
-import EmailVerificationSend from "../views/auth/EmailVerificationSend.vue";
-import SignupAccountDetails from "../views/auth/SignupAccountDetails.vue";
-import EmailVerificationVerify from "../views/auth/EmailVerificationVerify.vue";
-import { layoutNames } from "./layout-names";
-import { WelcomeGuard, emailSendGuard, globalGuard } from "./guards/auth.guard";
+import MarketplaceByCategory from "../views/item/MarketplaceByCategory.vue";
+import MarketplaceHome from "../views/item/MarketplaceHome.vue";
 import MyPage from "../views/me/MyPage.vue";
 import MyProfile from "../views/me/MyProfile.vue";
-import Inbox from "../views/chat/Inbox.vue";
-import Welcome from "../views/auth/Welcome.vue";
+import UserProfile from "../views/me/UserProfile.vue";
+import { emailSendGuard, globalGuard } from "./guards/auth.guard";
+import { layoutNames } from "./layout-names";
+import { routeNames } from "./route-names";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -146,6 +146,16 @@ const router = createRouter({
       },
       name: routeNames.INBOX,
       component: Inbox,
+    },
+    {
+      path: "/user/:userId",
+      name: routeNames.USER_PROFILE,
+      meta: {
+        canBack: true,
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: UserProfile,
+      props: true,
     },
   ],
 });
