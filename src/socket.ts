@@ -36,17 +36,27 @@ socket.on("disconnect", (reason) => {
   }
 });
 
-socket.on("message", (data) => {
-    console.log("message: ", data)
-})
+// socket.on("message", (data) => {
+//     console.log("message: ", data)
+// })
 
 socket.on("exception", (response) => {
     if (response.message = ErrorCode.UNAUTHORIZED) {
         console.log("exception: ", response)
     }
-    
 })
 
-socket.onAny((event, ...args) => {
-    console.log(event, args)
-})
+socket.on("message", ({ message, from }) => {
+  console.log('inside message')
+  console.log({message, from});
+
+  // displayUsers.value.forEach((user: any) => {
+  //   if (user.userID === from) {
+  //     user.messages.push(message);
+  //   }
+  // });
+});
+
+// socket.onAny((event, ...args) => {
+//     console.log(event, args)
+// })
