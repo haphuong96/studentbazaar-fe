@@ -5,8 +5,8 @@
       <img
         class="gallery-view-container__list-img__item"  
         v-for="(img, index) in sources" :key="index"
-        :src="img.imgPath"
-        @click="selectPhoto = img.imgPath"
+        :src="img.thumbnailUrl"
+        @click="selectPhoto = img.url"
       />
     </div>
     <a-image
@@ -18,17 +18,17 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import { Image } from "../interfaces/image.interface";
+import { GetItemImage } from "../interfaces/item.interface";
 
 
 interface GalleryViewProps {
-  sources: Image[];
+  sources: GetItemImage[];
 }
 // Define props
 const props = defineProps<GalleryViewProps>();
-const selectPhoto = ref<string>(props.sources[0]?.imgPath || "");
+const selectPhoto = ref<string>(props.sources[0]?.url || "");
 watch(props, () => {
-  selectPhoto.value = props.sources[0]?.imgPath || "";
+  selectPhoto.value = props.sources[0]?.url || "";
   console.log("vap day ne");
 });
 </script>

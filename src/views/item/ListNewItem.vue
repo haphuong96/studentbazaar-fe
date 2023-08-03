@@ -134,7 +134,7 @@ const onUpload = async (): Promise<void> => {
   await uploadItemImages();
 
   //upload item
-  uploadItem();
+  await uploadItem();
   uploading.value = false;
 
   router.push({ name: routeNames.MARKETPLACE_HOME });

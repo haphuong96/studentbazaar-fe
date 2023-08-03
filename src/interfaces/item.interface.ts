@@ -19,7 +19,7 @@ export interface CreateItemDto {
   categoryId: number | undefined;
   conditionId: number | undefined;
   price: number | undefined;
-  img?: Image[];
+  img?: ItemImage[];
 }
 
 export interface Item {
@@ -33,10 +33,15 @@ export interface Item {
   itemPrice: number;
   createdDatetime: string;
   lastUpdatedDatetime: string;
-  img: Image[]
+  img: GetItemImage[];
+}
+
+export interface GetItemImage {
+  url: string;
+  thumbnailUrl: string;
 }
 
 export interface ItemImage {
-  id: number;
   image: Image;
+  thumbnail: Image;
 }

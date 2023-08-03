@@ -13,7 +13,7 @@
     <div class="py-16">
       <img
         v-if="item.img.length > 0"
-        :src="item.img[0].imgPath"
+        :src="item.img[0].thumbnailUrl"
         class="thumbnail"
       />
 

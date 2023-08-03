@@ -27,7 +27,9 @@
         </div>
         <div class="d-flex header-menu">
           <a><bell-two-tone /></a>
-          <router-link :to="{name: routeNames.INBOX}"><message-two-tone /></router-link>
+          <router-link :to="{ name: routeNames.INBOX }"
+            ><message-two-tone
+          /></router-link>
           <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
             ><tags-two-tone />
           </a>
@@ -49,20 +51,35 @@
         </div>
       </div>
     </a-layout-header>
+    <div class="item-category">
+      <ul>
+        <li v-for="category in itemCategories" :key="category.path">
+          <router-link
+            :to="{
+              name: routeNames.MARKETPLACE_BY_CATEGORY,
+              params: { categoryPath: category.path },
+            }"
+            >{{ category.categoryName }}</router-link
+          >
+        </li>
+      </ul>
+    </div>
+    <!-- <a-layout-header> -->
+
+    <!-- </a-layout-header> -->
     <!-- <a-layout-header class="nav-bar-header"> -->
+    <!-- <
     <a-menu
       mode="horizontal"
       theme="dark"
       :style="{ lineHeight: '30px' }"
       class="px-50"
       @click="goToBrowseByCategory"
-    >
-      <div v-for="category in itemCategories" :key="category.path">
-        <a-menu-item :key="category.path">{{
+    > -->
+    <!-- <a-menu-item :key="category.path">{{
           category.categoryName
-        }}</a-menu-item>
-      </div>
-    </a-menu>
+        }}</a-menu-item> -->
+    <!-- </a-menu> -->
     <!-- </a-layout-header> -->
     <!-- </div> -->
     <a-layout-content style="padding: 0 50px">
@@ -100,7 +117,7 @@ import { localStorageKeys } from "../common/storage-keys";
 import { AuthService } from "../services/auth.service";
 import { ItemCategory } from "../interfaces/item.interface";
 import { ItemService } from "../services/item.service";
-import { MenuProps } from "ant-design-vue";
+// import { MenuProps } from "ant-design-vue";
 
 const route = useRoute();
 const pageTitle: ComputedRef<string | undefined> | any = computed(() => {
@@ -128,14 +145,6 @@ const getItemCategories = async () => {
 onMounted(() => {
   getItemCategories();
 });
-
-const goToBrowseByCategory: MenuProps["onClick"] = (menuInfo) => {
-  console.log(menuInfo.key);
-  router.push({
-    name: routeNames.MARKETPLACE_BY_CATEGORY,
-    params: { categoryPath: menuInfo.key },
-  });
-};
 
 const searchInCategory = ref<ItemCategory>();
 const defineSearchScope = (category: ItemCategory) => {
@@ -181,5 +190,34 @@ const onSearch = (value: string, _event: any) => {
 
 .nav-bar-header {
   background-color: #fff;
+}
+
+.item-category {
+  padding: 0px 50px;
+  background-color: #333;
+}
+
+.item-category > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.item-category li {
+  float: left;
+}
+
+.item-category li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 5px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+.item-category li a:hover {
+  background-color: #111;
 }
 </style>

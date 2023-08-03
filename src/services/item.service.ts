@@ -1,11 +1,11 @@
 // import { University } from "../interfaces/market.interface";
 // import { AxiosResponse } from "axios";
-import { Image } from "../interfaces/image.interface";
 import {
   CreateItemDto,
   Item,
   ItemCategory,
   ItemCondition,
+  ItemImage,
 } from "../interfaces/item.interface";
 import { axiosInstance } from "./base.service";
 // import { ComputedRef } from "vue";
@@ -58,7 +58,7 @@ const getItemDetails = async (itemId: number | undefined) : Promise<Item> => {
   return (await axiosInstance.get(`items/${itemId}`)).data;
 };
 
-const uploadItemImages = async (form: FormData): Promise<Image[]> => {
+const uploadItemImages = async (form: FormData): Promise<ItemImage[]> => {
   console.log('form', form);
   const axiosRes = await axiosInstance.post("items/images", form, {
     headers: {
