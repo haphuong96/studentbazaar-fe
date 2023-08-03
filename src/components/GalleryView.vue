@@ -3,16 +3,19 @@
   <div class="gallery-view-container">
     <div class="gallery-view-container__list-img">
       <img
-        class="gallery-view-container__list-img__item"  
-        v-for="(item, index) in sources" :key="index"
+        class="gallery-view-container__list-img__item"
+        v-for="(item, index) in sources"
+        :key="index"
         :src="item.imgPath"
         @click="selectPhoto = item.imgPath"
       />
     </div>
-    <a-image
-      :src="selectPhoto"
-      class="gallery-view-container__preview-photo"
-    ></a-image>
+    <div class="gallery-view-container__preview_container">
+      <a-image
+        :src="selectPhoto"
+        class="gallery-view-container__preview-photo"
+      ></a-image>
+    </div>
   </div>
 </template>
 
@@ -33,18 +36,25 @@ watch(props, () => {
 </script>
 <style lang="css" scoped>
 .gallery-view-container {
-  border: 1px solid black;
   display: flex;
   width: 600px;
   height: 400px;
 }
 
-.gallery-view-container__preview-photo {
-  width: calc(100% - 112px);
+.gallery-view-container__preview_container {
+  width: 100%;
   height: 100%;
-  object-fit: cover;
-  align-items: center;
   margin-left: 16px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #EEEEEE;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.gallery-view-container__preview-photo {
+  width: 100%;
+  height: 100%;
 }
 
 .gallery-view-container__list-img {
@@ -52,26 +62,20 @@ watch(props, () => {
   height: 100%;
   margin-bottom: 8px;
   overflow: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.gallery-view-container__list-img::-webkit-scrollbar {
+  display: none;
 }
 
 .gallery-view-container__list-img__item {
-  width: 96px;
+  width: 100%;
   height: 64px;
   margin-bottom: 16px;
+  border-radius: 4px;
   object-fit: cover;
   cursor: pointer;
-}
-
-.gallery-view-container__preview-photo .ant-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Set your desired object-fit behavior (e.g., cover, contain, etc.) */
-}
-
-:deep(.ant-image .ant-image-img) {
-  width: 100%;
-  height: 100%;
-  object-fit: cover !important;
+  overflow: hidden;
 }
 </style>
