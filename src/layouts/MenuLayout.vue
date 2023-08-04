@@ -30,9 +30,9 @@
           <router-link :to="{ name: routeNames.INBOX }"
             ><message-two-tone
           /></router-link>
-          <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
+          <!-- <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
             ><tags-two-tone />
-          </a>
+          </a> -->
           <a>
             <!-- #f56a00 -->
             <a-dropdown placement="bottomRight">
@@ -48,6 +48,8 @@
               </template>
             </a-dropdown></a
           >
+          <router-link :to="{name: routeNames.LIST_ITEM}">
+          <a-button>Sell Now</a-button></router-link>
         </div>
       </div>
     </a-layout-header>
@@ -107,7 +109,7 @@ import {
   BellTwoTone,
   LeftOutlined,
   MessageTwoTone,
-  TagsTwoTone,
+  // TagsTwoTone,
   SearchOutlined,
 } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";

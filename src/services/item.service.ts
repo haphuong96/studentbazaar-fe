@@ -2,6 +2,8 @@
 // import { AxiosResponse } from "axios";
 import {
   CreateItemDto,
+  GetItemsCursorBased,
+  GetItemsLimitOffset,
   Item,
   ItemCategory,
   ItemCondition,
@@ -10,9 +12,18 @@ import {
 import { axiosInstance } from "./base.service";
 // import { ComputedRef } from "vue";
 
-const getItems = async (search?: { categoryId?: number; q?: string }) : Promise<Item[]> => {
+const getItems = async (search?: {
+  limit?: number;
+  offset?: number;
+  nextCursor?: number;
+  categoryId?: number;
+  q?: string;
+}): Promise<GetItemsLimitOffset | GetItemsCursorBased> => {
   const axiosRes = await axiosInstance.get("items", {
     params: {
+      limit: search?.limit,
+      offset: search?.offset,
+      nextCursor: search?.nextCursor,
       categoryId: search?.categoryId,
       q: search?.q,
     },
@@ -54,12 +65,12 @@ const uploadItem = async (item: CreateItemDto): Promise<void> => {
   await axiosInstance.post("items", item);
 };
 
-const getItemDetails = async (itemId: number | undefined) : Promise<Item> => {
+const getItemDetails = async (itemId: number | undefined): Promise<Item> => {
   return (await axiosInstance.get(`items/${itemId}`)).data;
 };
 
 const uploadItemImages = async (form: FormData): Promise<ItemImage[]> => {
-  console.log('form', form);
+  console.log("form", form);
   const axiosRes = await axiosInstance.post("items/images", form, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -67,7 +78,7 @@ const uploadItemImages = async (form: FormData): Promise<ItemImage[]> => {
   });
 
   return axiosRes.data;
-}
+};
 export const ItemService = {
   getItems,
   getItemConditions,
@@ -75,5 +86,5 @@ export const ItemService = {
   getOneItemCategory,
   uploadItem,
   getItemDetails,
-  uploadItemImages
+  uploadItemImages,
 };

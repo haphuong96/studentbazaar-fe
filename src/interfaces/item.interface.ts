@@ -36,6 +36,18 @@ export interface Item {
   img: GetItemImage[];
 }
 
+export interface GetItems {
+  items: Item[];
+}
+
+export interface GetItemsLimitOffset extends GetItems {
+  total: number;
+}
+
+export interface GetItemsCursorBased extends GetItems {
+  nextCursor: number;
+}
+
 export interface GetItemImage {
   url: string;
   thumbnailUrl: string;

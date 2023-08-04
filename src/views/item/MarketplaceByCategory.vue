@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { ItemService } from "../../services/item.service";
 import { ComputedRef, Ref, computed, onMounted, ref, watch } from "vue";
-import { Item, ItemCategory } from "../../interfaces/item.interface";
+import {
+  GetItemsLimitOffset,
+  ItemCategory,
+} from "../../interfaces/item.interface";
 import { routeNames } from "../../router/route-names";
 import router from "../../router";
 import { SearchOutlined } from "@ant-design/icons-vue";
 import { getCategoryPath, Route } from "../../utils/get-category-path.util";
 import ItemPost from "./components/ItemPost.vue";
+import { paginationHelper } from "../../utils/pagination.util";
+import { DEFAULT_PAGE_SIZE } from "../../common/pagination-constants";
 
 const emit = defineEmits(["browse-category"]);
 const props = defineProps({
@@ -15,15 +20,20 @@ const props = defineProps({
   searchKeyword: String,
 });
 
-const itemList : Ref<Item[] | undefined> = ref();
+const itemList: Ref<GetItemsLimitOffset | undefined> = ref();
 const itemCategory = ref<ItemCategory | undefined>();
 
-const searchItems = async () => {
+const searchItems = async (query?: { page?: number; pageSize?: number }) => {
+  const { limit, offset } = paginationHelper(query?.page, query?.pageSize);
+
   try {
-    const data = await ItemService.getItems({
+    const data = (await ItemService.getItems({
       categoryId: props.categoryId || itemCategory.value?.id,
       q: props.searchKeyword,
-    });
+      limit,
+      offset,
+    })) as GetItemsLimitOffset;
+
     itemList.value = data;
   } catch (err) {
     console.log(err);
@@ -72,6 +82,10 @@ onMounted(dataLoad);
 const routes: ComputedRef<Route[]> = computed(() => {
   return getCategoryPath(itemCategory.value);
 });
+
+const onPageChange = (page: number, pageSize: number) => {
+  searchItems({ page, pageSize });
+};
 </script>
 <template>
   <a-breadcrumb v-if="itemCategory?.id">
@@ -110,10 +124,15 @@ const routes: ComputedRef<Route[]> = computed(() => {
     Search results for keyword: {{ props.searchKeyword }}
   </div>
   <a-row :gutter="[16, 16]">
-    <a-col :span="6" v-for="item in itemList" v-if="itemList">
+    <a-col :span="6" v-for="item in itemList.items" v-if="itemList">
       <ItemPost :item="item"></ItemPost>
     </a-col>
+    <a-pagination
+      v-model:pageSize="DEFAULT_PAGE_SIZE"
+      :total="itemList?.total"
+      @change="onPageChange"
+      class="my-16"
+    />
   </a-row>
 </template>
-<style>
-</style>
+<style></style>

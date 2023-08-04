@@ -14,24 +14,24 @@ export const state = ref({
 const URL = envConfigs.BASE_API;
 
 export const socket = io(URL, {
-    auth: {
-        token: localStorage.getItem(localStorageKeys.ACCESS_TOKEN)
-    },
-    extraHeaders: {
-      "Authorization": `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
-    }
+  auth: {
+    token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
+  },
 });
 
 socket.on("connect", () => {
-    console.log("socket connected")
+  console.log("socket connected");
   state.value.connected = true;
 });
 
 socket.on("disconnect", (reason) => {
-    console.log("socket disconnected");
+  console.log("socket disconnected");
   state.value.connected = false;
   if (reason === "io server disconnect") {
     AuthService.refreshToken();
+    socket.auth = {
+      token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
+    };
     socket.connect();
   }
 });
@@ -41,14 +41,14 @@ socket.on("disconnect", (reason) => {
 // })
 
 socket.on("exception", (response) => {
-    if (response.message = ErrorCode.UNAUTHORIZED) {
-        console.log("exception: ", response)
-    }
-})
+  if ((response.message = ErrorCode.UNAUTHORIZED)) {
+    console.log("exception: ", response);
+  }
+});
 
 socket.on("message", ({ message, from }) => {
-  console.log('inside message')
-  console.log({message, from});
+  console.log("inside message");
+  console.log({ message, from });
 
   // displayUsers.value.forEach((user: any) => {
   //   if (user.userID === from) {
