@@ -36,9 +36,10 @@
           <a>
             <!-- #f56a00 -->
             <a-dropdown placement="bottomRight">
+              <router-link :to="{name: routeNames.MY_PROFILE}">
               <a-avatar style="color: #f56a00; background-color: #fde3cf">{{
                 userFullname?.charAt(0).toUpperCase()
-              }}</a-avatar>
+              }}</a-avatar></router-link>
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="AuthService.logOut">
@@ -66,24 +67,6 @@
         </li>
       </ul>
     </div>
-    <!-- <a-layout-header> -->
-
-    <!-- </a-layout-header> -->
-    <!-- <a-layout-header class="nav-bar-header"> -->
-    <!-- <
-    <a-menu
-      mode="horizontal"
-      theme="dark"
-      :style="{ lineHeight: '30px' }"
-      class="px-50"
-      @click="goToBrowseByCategory"
-    > -->
-    <!-- <a-menu-item :key="category.path">{{
-          category.categoryName
-        }}</a-menu-item> -->
-    <!-- </a-menu> -->
-    <!-- </a-layout-header> -->
-    <!-- </div> -->
     <a-layout-content style="padding: 0 50px">
       <div
         class="navbar__back my-16"

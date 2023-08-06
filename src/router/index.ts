@@ -11,10 +11,11 @@ import EmailVerificationSend from "../views/auth/EmailVerificationSend.vue";
 import SignupAccountDetails from "../views/auth/SignupAccountDetails.vue";
 import EmailVerificationVerify from "../views/auth/EmailVerificationVerify.vue";
 import { layoutNames } from "./layout-names";
-import { emailSendGuard, globalGuard } from "./guards/auth.guard";
-
+import { WelcomeGuard, emailSendGuard, globalGuard } from "./guards/auth.guard";
 import MyPage from "../views/me/MyPage.vue";
+import MyProfile from "../views/me/MyProfile.vue";
 import Inbox from "../views/chat/Inbox.vue";
+import Welcome from "../views/auth/Welcome.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,7 +47,7 @@ const router = createRouter({
           component: SignupAccountDetails,
         },
         {
-          path: "/email/send",
+          path: "email/send",
           name: routeNames.EMAIL_VERIFICATION_SEND,
           component: EmailVerificationSend,
         },
@@ -61,6 +62,15 @@ const router = createRouter({
       },
       beforeEnter: emailSendGuard,
       component: EmailVerificationVerify,
+    },
+    {
+      path: "/welcome",
+      name: routeNames.WELCOME_PAGE,
+      meta: {
+        layout: layoutNames.FULLSCREEN_LAYOUT,
+      },
+      // beforeEnter: WelcomeGuard,
+      component: Welcome,
     },
     {
       path: "/marketplace",
@@ -122,11 +132,20 @@ const router = createRouter({
       component: MyPage,
       children: [
         {
-          path: "inbox",
-          name: routeNames.INBOX,
-          component: Inbox,
+          path: "profile",
+          name: routeNames.MY_PROFILE,
+          component: MyProfile,
         },
       ],
+    },
+    {
+      path: "/inbox",
+      meta: {
+        pageTitle: "Inbox",
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      name: routeNames.INBOX,
+      component: Inbox,
     },
   ],
 });

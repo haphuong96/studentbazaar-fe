@@ -17,6 +17,7 @@ export const socket = io(URL, {
   auth: {
     token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
   },
+  autoConnect: false,
 });
 
 socket.on("connect", () => {
@@ -24,11 +25,11 @@ socket.on("connect", () => {
   state.value.connected = true;
 });
 
-socket.on("disconnect", (reason) => {
+socket.on("disconnect", async (reason) => {
   console.log("socket disconnected");
   state.value.connected = false;
   if (reason === "io server disconnect") {
-    AuthService.refreshToken();
+    await AuthService.refreshToken();
     socket.auth = {
       token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
     };

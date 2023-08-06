@@ -53,7 +53,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import {
-  localStorageKeys,
+localStorageKeys,
   sessionStorageKeys,
 } from "../../common/storage-keys";
 import { UserService } from "../../services/user.service";
@@ -61,8 +61,9 @@ import { routeNames } from "../../router/route-names";
 import router from "../../router";
 import { AxiosError } from "axios";
 import { LoginDto } from "../../interfaces/login.interface";
-import { User } from "../../interfaces/user.interface";
 import { AuthService } from "../../services/auth.service";
+import { socket } from "../../socket";
+import { User } from "../../interfaces/user.interface";
 
 const loginDto = ref<LoginDto>({
   usernameOrEmail: "",
@@ -78,10 +79,15 @@ const login = async () => {
       await AuthService.login(loginDto.value);
 
       // get user info and store in local storage
-      const me: User = await UserService.getMyProfile();
-      localStorage.setItem(localStorageKeys.USER_FULLNAME, me.fullname);
-      localStorage.setItem(localStorageKeys.USERNAME, me.username);
+      const user : User = await UserService.getMyProfile();
+
+      localStorage.setItem(localStorageKeys.USER_SEARCH_CAMPUS, user.campus.id.toString());
+
+      //login successfully, connect to socket
+      socket.connect();
+
       router.push({ name: routeNames.MARKETPLACE_HOME });
+      
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {

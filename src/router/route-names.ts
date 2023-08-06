@@ -11,4 +11,6 @@ export const routeNames = {
     MARKETPLACE_SEARCH: "Marketplace Search",
     MARKETPLACE_ITEMS_ITEM_DETAILS: "View Item Details",
     INBOX: "Inbox",
+    MY_PROFILE: "My Profile",
+    WELCOME_PAGE: "Welcome Page",
 }

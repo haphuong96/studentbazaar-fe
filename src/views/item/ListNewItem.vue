@@ -74,6 +74,68 @@
             placeholder="Write some description"
           />
         </a-form-item>
+        <a-form-item label="Pickup Point">
+          <!-- <a-select
+            v-model:value="formState.conditionId"
+            :options="conditionOptions"
+            placeholder="Select condition"
+            :fieldNames="{
+              label: 'conditionName',
+              value: 'id',
+            }"
+          >
+          </a-select> -->
+          <a-button type="link" @click="showAddToCollectionModal"
+            ></a-button
+          >
+          <a-modal
+            v-model:visible="AddToCollectionVisible"
+            title="Add To Your Collection"
+            :maskClosable="false"
+            :footer="null"
+          >
+            <div class="d-flex justify-between mb-16">
+              <a-input-search
+                v-model:value="searchMyCollectionKeyword"
+                placeholder="Search your collection"
+                style="width: 250px"
+                @search="() => fetchMyCollections()"
+              />
+              <a-pagination
+                size="small"
+                v-model:current="current"
+                :total="totalMyCollections"
+                show-less-items
+                @change="(page, pageSize) => fetchMyCollections(page, pageSize)"
+              />
+            </div>
+            <a-list
+              size="small"
+              bordered
+              :data-source="myCollections"
+              item-layout="horizontal"
+              v-if="myCollections"
+            >
+              <template #renderItem="{ item }">
+                <a-list-item
+                  ><a @click="addToMyCollection(item.collection_id)">
+                    {{ item.collection_name }}</a
+                  >
+                </a-list-item>
+              </template>
+              <template #header>
+                <div>
+                  <a @click="addToMyNewCollection"
+                    ><b>
+                      <PlusCircleFilled></PlusCircleFilled> Create a new
+                      collection</b
+                    ></a
+                  >
+                </div>
+              </template>
+            </a-list>
+          </a-modal>
+        </a-form-item>
         <a-form-item>
           <a-button :loading="uploading" @click="onUpload" type="primary"
             >Upload</a-button

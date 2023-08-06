@@ -18,6 +18,8 @@ const getItems = async (search?: {
   nextCursor?: number;
   categoryId?: number;
   q?: string;
+  campusId?: number;
+  universityId?: number;
 }): Promise<GetItemsLimitOffset | GetItemsCursorBased> => {
   const axiosRes = await axiosInstance.get("items", {
     params: {

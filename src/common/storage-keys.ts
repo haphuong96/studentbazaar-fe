@@ -6,6 +6,8 @@ export const localStorageKeys = {
   EMAIL_ADDRESS: "EMAIL_ADDRESS",
   REFRESH_TOKEN: "REFRESH_TOKEN",
   USER_FULLNAME: "USER_FULLNAME",
+  USER_STATUS: "USER_STATUS",
+  USER_SEARCH_CAMPUS: "USER_SEARCH_CAMPUS",
 };
 
 export const sessionStorageKeys = {
