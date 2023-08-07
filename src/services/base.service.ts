@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { ErrorCode } from "../common/error-code";
 import { routeNames } from "../router/route-names";
 import router from "../router";
+import { UserService } from "./user.service";
 
 export const axiosInstanceLogin = axios.create({
   baseURL: envConfigs.BASE_API,
@@ -38,8 +39,8 @@ const handleResponseSuccess = (
 };
 /**
  * User cannot access system without logging in first.
- * @param error 
- * @returns 
+ * @param error
+ * @returns
  */
 const handleResponseError = async (error: any) => {
   // https://axios-http.com/docs/res_schema
@@ -54,32 +55,12 @@ const handleResponseError = async (error: any) => {
     if (error.response.data.errorCode === ErrorCode.UNAUTHORIZED) {
       if (localStorage.getItem(localStorageKeys.ACCESS_TOKEN)) {
         //meaning expired token, now refresh
-        const isRefreshSuccess : boolean = await AuthService.refreshToken();
+        const isRefreshSuccess: boolean = await AuthService.refreshToken();
 
         if (isRefreshSuccess) {
+          await UserService.getMyProfile();
           return axiosInstance(originalRequest); //resend request with new token
         }
-        // const refreshToken = localStorage.getItem(
-        //   localStorageKeys.REFRESH_TOKEN
-        // );
-
-        // const res = await axiosInstance.post("auth/refresh-token", {
-        //   refreshToken,
-        // });
-
-        // if (res.status === 201) {
-        //   // refresh token success
-        //   localStorage.setItem(
-        //     localStorageKeys.ACCESS_TOKEN,
-        //     res.data.accessToken
-        //   );
-        //   localStorage.setItem(
-        //     localStorageKeys.REFRESH_TOKEN,
-        //     res.data.refreshToken
-        //   );
-
-          
-        // }
       } else {
         router.push({ name: routeNames.LOGIN });
       }

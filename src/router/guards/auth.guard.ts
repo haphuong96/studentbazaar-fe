@@ -9,7 +9,7 @@ import { UserStatus } from "../../common/user-status";
 
 export const globalGuard = (
   to: RouteLocationNormalized,
-  from: RouteLocationNormalized
+  _from: RouteLocationNormalized
 ) => {
   const accessToken: string | null = localStorage.getItem(
     localStorageKeys.ACCESS_TOKEN

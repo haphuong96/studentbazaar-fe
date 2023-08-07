@@ -20,6 +20,7 @@ export interface CreateItemDto {
   conditionId: number | undefined;
   price: number | undefined;
   img?: ItemImage[];
+  locationId?: number | undefined;
 }
 
 export interface Item {

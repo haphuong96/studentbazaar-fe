@@ -1,4 +1,4 @@
-import { Campus, University } from "./market.interface";
+import { Campus, PickUpLocation, University } from "./market.interface";
 
 export interface User {
   id: number;
@@ -8,6 +8,7 @@ export interface User {
   username: string;
   emailAddress: string;
   status: string;
+  defaultPickUpPoint: PickUpLocation;
 }
 
 export class UpdateUserDto {

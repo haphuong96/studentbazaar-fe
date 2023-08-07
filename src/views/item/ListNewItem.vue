@@ -74,66 +74,78 @@
             placeholder="Write some description"
           />
         </a-form-item>
-        <a-form-item label="Pickup Point">
-          <!-- <a-select
-            v-model:value="formState.conditionId"
-            :options="conditionOptions"
-            placeholder="Select condition"
-            :fieldNames="{
-              label: 'conditionName',
-              value: 'id',
-            }"
-          >
-          </a-select> -->
-          <a-button type="link" @click="showAddToCollectionModal"
-            ></a-button
+        <a-form-item
+          label="Pickup Point"
+          v-if="deliveryLocation.selectedDeliveryLocation"
+        >
+          <a-button type="link" @click="showDeliveryLocationModal">
+            <environment-filled />{{
+              deliveryLocation.selectedDeliveryLocation?.name
+            }}</a-button
           >
           <a-modal
-            v-model:visible="AddToCollectionVisible"
-            title="Add To Your Collection"
+            v-model:visible="deliveryLocation.modalVisible"
+            title="Pick Up Point"
             :maskClosable="false"
             :footer="null"
           >
-            <div class="d-flex justify-between mb-16">
-              <a-input-search
-                v-model:value="searchMyCollectionKeyword"
-                placeholder="Search your collection"
-                style="width: 250px"
-                @search="() => fetchMyCollections()"
-              />
-              <a-pagination
+            <div>
+              <!-- d-flex justify-between mb-16 -->
+              <div>Campus</div>
+              <a-select
+                :value="searchValue.campusLocation?.id"
+                show-search
+                placeholder="Select a campus location"
+                style="width: 200px"
+                :filter-option="true"
+                :fieldNames="{
+                  label: 'campusName',
+                  value: 'id',
+                }"
+                :options="campusLocationOptions"
+                @change="selectCampusLocation"
+              ></a-select>
+              <div>University</div>
+              <a-select
+                :value="searchValue.university?.id"
+                show-search
+                placeholder="Select a university"
+                style="width: 200px"
+                :fieldNames="{
+                  label: 'universityName',
+                  value: 'id',
+                }"
+                :options="universityOptions"
+                @change="selectUniversity"
+              ></a-select>
+              <a-list
+                size="small"
+                bordered
+                :data-source="deliveryLocation.deliveryLocationOptions"
+                item-layout="horizontal"
+                v-if="deliveryLocation.deliveryLocationOptions"
+              >
+                <template #renderItem="{ item }">
+                  <a-list-item
+                    ><a @click="() => selectDeliveryLocation(item)">
+                      <div>
+                        {{ item.name }}
+                      </div>
+                      <div>
+                        {{ item.address }}
+                      </div>
+                    </a>
+                  </a-list-item>
+                </template>
+              </a-list>
+              <!-- <a-pagination
                 size="small"
                 v-model:current="current"
                 :total="totalMyCollections"
                 show-less-items
                 @change="(page, pageSize) => fetchMyCollections(page, pageSize)"
-              />
+              /> -->
             </div>
-            <a-list
-              size="small"
-              bordered
-              :data-source="myCollections"
-              item-layout="horizontal"
-              v-if="myCollections"
-            >
-              <template #renderItem="{ item }">
-                <a-list-item
-                  ><a @click="addToMyCollection(item.collection_id)">
-                    {{ item.collection_name }}</a
-                  >
-                </a-list-item>
-              </template>
-              <template #header>
-                <div>
-                  <a @click="addToMyNewCollection"
-                    ><b>
-                      <PlusCircleFilled></PlusCircleFilled> Create a new
-                      collection</b
-                    ></a
-                  >
-                </div>
-              </template>
-            </a-list>
           </a-modal>
         </a-form-item>
         <a-form-item>
@@ -148,14 +160,36 @@
 </template>
 <script setup lang="ts">
 import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
-import { onMounted, ref, Ref } from "vue";
+import { computed, onMounted, ref, Ref } from "vue";
 import { ItemService } from "../../services/item.service";
 import { CreateItemDto } from "../../interfaces/item.interface";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
-// import { Image } from "../../interfaces/image.interface";
+import { PickUpLocation } from "../../interfaces/market.interface";
+import { MarketService } from "../../services/market.service";
+import { localStorageKeys } from "../../common/storage-keys";
+import { EnvironmentFilled } from "@ant-design/icons-vue";
+import { Campus } from "../../interfaces/market.interface";
+import { University } from "../../interfaces/market.interface";
+
+const userUniversityId = computed(() => {
+  const universityId = localStorage.getItem(
+    localStorageKeys.USER_UNIVERSITY_ID
+  );
+  return universityId ? +universityId : null;
+});
+const userCampusLocationId = computed(() => {
+  const campusId = localStorage.getItem(localStorageKeys.USER_CAMPUS_ID);
+  return campusId ? +campusId : null;
+});
+const userDefaultDeliveryLocationId = computed(() => {
+  const locationId = localStorage.getItem(
+    localStorageKeys.DEFAULT_PICKUP_LOCATION_ID
+  );
+  return locationId ? +locationId : null;
+});
 
 const formState: Ref<CreateItemDto> = ref({
   itemName: undefined,
@@ -164,13 +198,41 @@ const formState: Ref<CreateItemDto> = ref({
   categoryId: undefined,
   conditionId: undefined,
   img: undefined,
+  locationId: undefined,
 });
 
 const conditionOptions = ref<SelectProps["options"]>([]);
 const categoryOptions = ref<TreeSelectProps["treeData"]>([]);
+const campusLocationOptions = ref<SelectProps["options"] | Campus[]>([]);
+const universityOptions = ref<SelectProps["options"]>([]);
+
+const searchValue = ref<{
+  campusLocation: Campus | undefined;
+  university: University | undefined;
+}>({
+  campusLocation: undefined,
+  university: undefined,
+});
+
+const deliveryLocation = ref<{
+  modalVisible: boolean;
+  deliveryLocationOptions: PickUpLocation[];
+  selectedDeliveryLocation: PickUpLocation | null;
+}>({
+  modalVisible: false,
+  deliveryLocationOptions: [],
+  selectedDeliveryLocation: null,
+});
 
 onMounted(async () => {
-  Promise.all([getItemConditions(), getItemCategories()]);
+  await Promise.all([
+    getItemConditions(),
+    getItemCategories(),
+    getDefaultDeliveryLocation(),
+    getAllCampusLocations(),
+  ]);
+  selectCampusLocation(userCampusLocationId.value as number);
+  selectUniversity(userUniversityId.value as number);
 });
 
 const getItemConditions = async (): Promise<void> => {
@@ -179,6 +241,58 @@ const getItemConditions = async (): Promise<void> => {
 
 const getItemCategories = async (): Promise<void> => {
   categoryOptions.value = await ItemService.getItemCategories();
+};
+
+const getDefaultDeliveryLocation = async (): Promise<void> => {
+  deliveryLocation.value.selectedDeliveryLocation =
+    await MarketService.getOneDeliveryLocation(
+      userDefaultDeliveryLocationId.value
+    );
+};
+
+const getAllCampusLocations = async (): Promise<void> => {
+  campusLocationOptions.value = await MarketService.getAllCampuses();
+};
+
+const selectDeliveryLocation = async (
+  location: PickUpLocation | null
+): Promise<void> => {
+  deliveryLocation.value.selectedDeliveryLocation = location;
+
+  formState.value.locationId =
+    deliveryLocation.value.selectedDeliveryLocation?.id;
+
+  deliveryLocation.value.modalVisible = false;
+};
+
+const selectCampusLocation = async (campusLocationId: number) => {
+  searchValue.value.campusLocation = (
+    campusLocationOptions.value as Campus[]
+  ).find((campus) => campus.id === campusLocationId);
+  universityOptions.value = searchValue.value.campusLocation?.universities;
+
+  await searchDeliveryLocation();
+};
+
+const selectUniversity = async (universityId: number) => {
+  searchValue.value.university = (universityOptions.value as University[]).find(
+    (university) => university.id === universityId
+  );
+
+  await searchDeliveryLocation();
+};
+
+const searchDeliveryLocation = async () => {
+  deliveryLocation.value.deliveryLocationOptions =
+    await MarketService.getAllDeliveryLocations({
+      campusLocationId: searchValue.value.campusLocation?.id,
+      universityId: searchValue.value.university?.id,
+    });
+};
+
+const showDeliveryLocationModal = async (): Promise<void> => {
+  await getAllCampusLocations();
+  deliveryLocation.value.modalVisible = true;
 };
 
 const uploadItem = async (): Promise<void> => {
@@ -207,7 +321,6 @@ const uploadItemImages = async () => {
   fileList.value?.forEach((file: UploadProps["fileList"][number]) => {
     formData.append("files", file.originFileObj);
   });
-  formData.set("test", "testvalue");
   try {
     formState.value.img = await ItemService.uploadItemImages(formData);
     message.success("Item images uploaded successfully");

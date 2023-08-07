@@ -10,6 +10,10 @@ const getMyProfile = async (): Promise<User> => {
   localStorage.setItem(localStorageKeys.USER_FULLNAME, data.fullname);
   localStorage.setItem(localStorageKeys.USERNAME, data.username);
   localStorage.setItem(localStorageKeys.USER_STATUS, data.status);
+  localStorage.setItem(localStorageKeys.USER_UNIVERSITY_ID, data.university.id.toString());
+  localStorage.setItem(localStorageKeys.USER_CAMPUS_ID, data.campus.id.toString());
+  localStorage.setItem(localStorageKeys.DEFAULT_PICKUP_LOCATION_ID, data.defaultPickUpPoint.id.toString());
+
   return data;
 };
 
@@ -29,6 +33,9 @@ const updateMyProfile = async(updateUser: UpdateUserDto) : Promise<User> => {
   localStorage.setItem(localStorageKeys.USER_FULLNAME, data.fullname);
   localStorage.setItem(localStorageKeys.USERNAME, data.username);
   localStorage.setItem(localStorageKeys.USER_STATUS, data.status);
+  localStorage.setItem(localStorageKeys.USER_UNIVERSITY_ID, data.university.id.toString());
+  localStorage.setItem(localStorageKeys.USER_CAMPUS_ID, data.campus.id.toString());
+  localStorage.setItem(localStorageKeys.DEFAULT_PICKUP_LOCATION_ID, data.defaultPickUpPoint.id.toString());
 
   return data;
 } 
