@@ -1,19 +1,25 @@
 <template>
   <a-row>
     <a-col :span="20">
-      <div class="d-flex">
+      <div class="d-flex" v-if="userProfile">
         <img class="user-profile__avatar" />
         <div class="user-profile__info">
-          <span class="user-profile__name">Ha Phuong Nguyen</span>
-          <span class="user-profile__address">London, UK</span>
+          <span class="user-profile__name">{{ userProfile.username }}</span>
+          <span class="user-profile__address">
+            {{ userProfile.university.universityName }}</span
+          >
+          <span
+            ><environment-filled></environment-filled>
+            {{ userProfile.campus.campusName }}</span
+          >
         </div>
       </div>
     </a-col>
-    <a-col :span="4">
+    <!-- <a-col :span="4">
       <div class="d-flex">
         <a-button :icon="h(EllipsisOutlined)"></a-button>
       </div>
-    </a-col>
+    </a-col> -->
   </a-row>
   <a-row class="py-16">
     <a-col :span="24">
@@ -21,38 +27,11 @@
     </a-col>
   </a-row>
   <a-row class="py-16">
-    Researchers built their models based on information gleaned from about 5,000
-    verified public profiles on the site. These profiles were used to train the
-    model to estimate the gender and age of a user with high accuracy, using
-    their style of writing in comments and network activity. This enabled the
-    models to accurately estimate the age and gender of users with unverified
-    accounts, and spot misinformation. All details were anonymized to protect
-    users' privacy.
-  </a-row>
-  <a-row class="py-16">
     <a-col :span="24" class="user-profile__address">Listed recently</a-col>
     <a-col :span="24">
       <div class="d-flex user-profile__items">
-        <div class="user-profile__item">
-          <ItemPost :item="mockItem"></ItemPost>
-        </div>
-        <div class="user-profile__item">
-          <ItemPost :item="mockItem"></ItemPost>
-        </div>
-        <div class="user-profile__item">
-          <ItemPost :item="mockItem"></ItemPost>
-        </div>
-        <div class="user-profile__item">
-          <ItemPost :item="mockItem"></ItemPost>
-        </div>
-        <div class="user-profile__item">
-          <ItemPost :item="mockItem"></ItemPost>
-        </div>
-        <div class="user-profile__item">
-          <ItemPost :item="mockItem"></ItemPost>
-        </div>
-        <div class="user-profile__item">
-          <ItemPost :item="mockItem"></ItemPost>
+        <div class="user-profile__item" v-for="item in userItems?.items">
+          <ItemPost :item="item" :showOwner="false"></ItemPost>
         </div>
       </div>
     </a-col>
@@ -62,20 +41,34 @@
 import { h, ref, onMounted } from "vue";
 import { MailOutlined, EllipsisOutlined } from "@ant-design/icons-vue";
 import ItemPost from "../item/components/ItemPost.vue";
-import { Item } from "../../interfaces/item.interface";
-const mockItem = {
-  id: 1,
-  owner: false,
-  status: "brand new",
-  itemName: "Dell Vostro 3560",
-  itemDescription: "Dell vostro 3560",
-  img: [
-    {
-      thumbnailUrl:
-        "https://www.zdnet.com/a/img/resize/dfb04d8df5f8a5148f56fc1334e24f727316bd49/2014/12/04/8e9dd161-7b52-11e4-9a74-d4ae52e95e57/vostro-3560-2.jpg?auto=webp&width=1280",
-    },
-  ],
+import { UserService } from "../../services/user.service";
+import { User } from "../../interfaces/user.interface";
+import { EnvironmentFilled } from "@ant-design/icons-vue";
+import { GetItemsCursorBased } from "../../interfaces/item.interface";
+import { ItemService } from "../../services/item.service";
+
+const props = defineProps({
+  userId: Number,
+});
+
+const userProfile = ref<User | undefined>();
+const userItems = ref<GetItemsCursorBased>();
+
+const getUserProfile = async () => {
+  userProfile.value = await UserService.getUserProfile(props.userId);
 };
+
+const getItemsByUser = async () => {
+  userItems.value = (await ItemService.getItems({
+    ownerId: props.userId,
+  })) as GetItemsCursorBased;
+  console.log('items ', userItems.value)
+};
+
+onMounted(() => {
+  getUserProfile();
+  getItemsByUser();
+});
 </script>
 <style>
 .user-profile__avatar {

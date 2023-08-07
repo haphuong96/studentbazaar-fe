@@ -1,5 +1,5 @@
 <template>
-  <div>{{ item.owner.username }}</div>
+  <div v-if="showOwner">{{ item.owner.username }}</div>
   <div
     class="link"
     @click="
@@ -28,11 +28,16 @@ import { Item } from "../../../interfaces/item.interface";
 import router from "../../../router";
 import { routeNames } from "../../../router/route-names";
 
-interface ItemPostProps {
-  item: Item;
-}
-
-defineProps<ItemPostProps>();
+defineProps({
+  item: {
+    type: Object as () => Item,
+    required: true,
+  },
+  showOwner: {
+    type: Boolean,
+    default: true,
+  },
+});
 </script>
 <style lang="css" scoped>
 .thumbnail {

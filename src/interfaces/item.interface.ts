@@ -1,4 +1,5 @@
 import { Image } from "./image.interface";
+import { User } from "./user.interface";
 
 export interface ItemCondition {
   id: number;
@@ -25,7 +26,7 @@ export interface CreateItemDto {
 
 export interface Item {
   id: number;
-  owner: any;
+  owner: User;
   category: ItemCategory;
   condition: ItemCondition;
   status: string;

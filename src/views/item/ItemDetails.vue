@@ -35,7 +35,16 @@
           {{ itemDetails.itemPrice ? `£${itemDetails.itemPrice}` : "FREE" }}
         </div>
       </div>
-      <div class="d-flex py-16">
+      <div
+        class="d-flex py-16 link"
+        @click="
+          () =>
+            router.push({
+              name: routeNames.USER_PROFILE,
+              params: { userId: itemDetails?.owner.id },
+            })
+        "
+      >
         <a-avatar></a-avatar>
         <div class="pl-16">
           <div>
@@ -43,9 +52,6 @@
           </div>
           <div>
             {{ itemDetails.owner.university.universityName }}
-          </div>
-          <div>
-            {{ itemDetails.owner.campus }}
           </div>
         </div>
       </div>
@@ -55,9 +61,11 @@
         <a-descriptions-item label="Condition">{{
           itemDetails.condition.conditionName
         }}</a-descriptions-item>
-        <a-descriptions-item label="Uploaded">{{ formatFromNow(itemDetails.createdDatetime) }}</a-descriptions-item>
+        <a-descriptions-item label="Uploaded">{{
+          formatFromNow(itemDetails.createdDatetime)
+        }}</a-descriptions-item>
       </a-descriptions>
-      
+
       <a-button>Ask seller</a-button>
     </a-col>
   </a-row>
@@ -73,6 +81,7 @@ import { formatFromNow } from "../../utils/datetime.util";
 
 import router from "../../router";
 import GalleryView from "../../components/GalleryView.vue";
+import { routeNames } from "../../router/route-names";
 
 const props = defineProps({
   itemId: Number,
@@ -82,7 +91,7 @@ const itemDetails = ref<Item>();
 const getItemDetails = async () => {
   try {
     itemDetails.value = await ItemService.getItemDetails(props.itemId);
-    console.log(itemDetails.value)
+    console.log(itemDetails.value);
   } catch (err) {
     console.log(err);
   }
