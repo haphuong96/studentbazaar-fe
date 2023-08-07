@@ -14,6 +14,33 @@
   -webkit-text-size-adjust: 100%;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+  border: none;
+  padding: 1px;
+  background-color: transparent;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border: 1px solid transparent;
+  background: rgba(#000000, 0);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #d7d7d7;
+  border-radius: 5px;
+  width: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #d7d7d7;
+  border-radius: 5px;
+  width: 8px;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

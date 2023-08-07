@@ -69,22 +69,21 @@
         </li>
       </ul>
     </div>
-    <a-layout-content style="padding: 0 50px">
-      <div
-        class="navbar__back my-16"
-        v-if="canBack"
-        @click="() => router.go(-1)"
-      >
-        <left-outlined /> Back
-      </div>
-      <h3 class="my-16">{{ pageTitle }}</h3>
-      <div :style="{ background: '#fff', padding: '24px', minHeight: '280px' }">
-        <router-view @browse-category="defineSearchScope" />
+    <a-layout-content class="menu-layout__a-layout-content">
+      <div>
+        <div
+          class="navbar__back my-16"
+          v-if="canBack"
+          @click="() => router.go(-1)"
+        >
+          <left-outlined /> Back
+        </div>
+        <h3 class="my-16">{{ pageTitle }}</h3>
+        <div class="menu-layout__router-container">
+          <router-view @browse-category="defineSearchScope" />
+        </div>
       </div>
     </a-layout-content>
-    <a-layout-footer style="text-align: center">
-      Student Bazaar ©2023 Created by Phuong Nguyen
-    </a-layout-footer>
   </a-layout>
 </template>
 
@@ -160,6 +159,20 @@ const onSearch = (value: string, _event: any) => {
 .menu-layout-container {
   height: calc(100vh);
 }
+
+.menu-layout__a-layout-content {
+  padding: 0 50px 50px 50px;
+  overflow: scroll;
+}
+.menu-layout__router-container {
+  background-color: white;
+  padding: 24px;
+  min-height: calc(100vh - 64px - 100px - 48px - 5px);
+}
+/* 64px is header height */
+/* 100px is total margin top and bottom */
+/* 48px  is total padding top and bottom */
+/* 5px is scroll horizontal height */
 
 .header-menu > a {
   margin-left: 15px;
