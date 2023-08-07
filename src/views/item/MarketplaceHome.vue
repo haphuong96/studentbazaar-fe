@@ -3,28 +3,22 @@ import { onMounted, ref, Ref, computed } from "vue";
 import { ItemService } from "../../services/item.service";
 import ItemPost from "./components/ItemPost.vue";
 import { DEFAULT_PAGE_SIZE } from "../../common/pagination-constants";
-import { GetItemsCursorBased, Item } from "../../interfaces/item.interface";
+import { GetItemsCursorBased } from "../../interfaces/item.interface";
 import { localStorageKeys } from "../../common/storage-keys";
 import { MarketService } from "../../services/market.service";
 import { Campus, University } from "../../interfaces/market.interface";
+import { EnvironmentFilled } from "@ant-design/icons-vue";
 
 // const onCampus = ref
 const itemList = ref<GetItemsCursorBased | undefined>();
-const campusLocationOptions = ref<Campus[] | undefined>();
-const universityOptions = ref<University[] | undefined>();
 
 onMounted(async () => {
-  filter.value.campusLocation
-  filter.value.university
+  // load campus location and university from local storage
+  await loadLocation();
+  // get items
   getItems();
+  //load data to modal
   getAllCampuses();
-});
-
-const selectCampusId: Ref<number | undefined> = computed(() => {
-  const searchCampusId = localStorage.getItem(
-    localStorageKeys.USER_SEARCH_CAMPUS
-  );
-  return searchCampusId ? +searchCampusId : undefined;
 });
 
 const filter = ref<{
@@ -39,10 +33,14 @@ const locationModal = ref<{
   visible: boolean;
   campusLocationSelect: Campus | undefined;
   universitySelect: University | undefined;
+  campusLocationOptions: Campus[] | undefined;
+  universityOptions: University[] | undefined;
 }>({
   visible: false,
   campusLocationSelect: undefined,
   universitySelect: undefined,
+  campusLocationOptions: undefined,
+  universityOptions: undefined,
 });
 
 const getItems = async () => {
@@ -61,18 +59,36 @@ const getItems = async () => {
 
 const getAllCampuses = async () => {
   try {
-    campusLocationOptions.value = await MarketService.getAllCampuses();
+    locationModal.value.campusLocationOptions =
+      await MarketService.getAllCampuses();
   } catch (err) {
     console.log(err);
   }
 };
 
 const loadLocation = async () => {
+  const userSearchCampusId: Ref<number | undefined> = computed(() => {
+    const searchCampusId = localStorage.getItem(
+      localStorageKeys.USER_SEARCH_CAMPUS_LOCATION
+    );
+    return searchCampusId ? +searchCampusId : undefined;
+  });
+
+  const userSearchUniversityId: Ref<number | undefined> = computed(() => {
+    const searchCampusId = localStorage.getItem(
+      localStorageKeys.USER_SEARCH_UNIVERSITY
+    );
+    return searchCampusId ? +searchCampusId : undefined;
+  });
+
   try {
     filter.value.campusLocation = await MarketService.getOneCampusById(
-      selectCampusId.value
+      userSearchCampusId.value
     );
-    
+
+    filter.value.university = filter.value.campusLocation?.universities?.find(
+      (university) => university.id === userSearchUniversityId.value
+    );
   } catch (err) {
     console.log(err);
   }
@@ -80,45 +96,63 @@ const loadLocation = async () => {
 
 const showLocationModal = () => {
   locationModal.value.campusLocationSelect = filter.value.campusLocation;
+  // since reset modal campusLocationSelect, reset universityOptions at the same time
+  locationModal.value.universityOptions =
+    filter.value.campusLocation?.universities;
+
   locationModal.value.universitySelect = filter.value.university;
   locationModal.value.visible = true;
 };
 
-const selectCampusLocation = (campusLocationId: number) => {
-  locationModal.value.campusLocationSelect = campusLocationOptions.value?.find(
-    (campus) => campus.id === campusLocationId
-  );
-  universityOptions.value = filter.value.campusLocation?.universities;
+const selectCampusLocation = (campusLocationId: number | undefined) => {
+  locationModal.value.campusLocationSelect =
+    locationModal.value.campusLocationOptions?.find(
+      (campus) => campus.id === campusLocationId
+    );
+  locationModal.value.universityOptions =
+    filter.value.campusLocation?.universities;
 };
 
 const selectUniversity = (universityId: number) => {
-  locationModal.value.universitySelect = universityOptions.value?.find(
-    (university) => university.id === universityId
-  );
+  locationModal.value.universitySelect =
+    locationModal.value.universityOptions?.find(
+      (university) => university.id === universityId
+    );
 };
 
-const filterByLocation = async() => {
+const applyFilterByLocation = async () => {
   try {
     filter.value.campusLocation = locationModal.value.campusLocationSelect;
     filter.value.university = locationModal.value.universitySelect;
     await getItems();
     locationModal.value.visible = false;
+
+    // set user's new search campus location and university to local storage
+    localStorage.setItem(
+      localStorageKeys.USER_SEARCH_CAMPUS_LOCATION,
+      filter.value.campusLocation?.id?.toString() || ""
+    );
+    localStorage.setItem(
+      localStorageKeys.USER_SEARCH_UNIVERSITY,
+      filter.value.university?.id?.toString() || ""
+    );
   } catch (err) {
     console.log(err);
   }
 };
-
 </script>
 <template>
   <h2>Listed recently</h2>
   <div class="d-flex justify-right">
-    <!-- <a-select ref="select" v-model:value="selectCampus" style="width: 120px">
-      <a-select-option v-for="campus in campuses" :value="campus.id">{{
-        campus.campusName
-      }}</a-select-option>
-    </a-select> -->
-    <a-button type="link" @click="showLocationModal">
-      <environment-filled />{{ filter.campusLocation?.campusName }}</a-button
+    <a-button
+      type="link"
+      @click="showLocationModal"
+      v-if="filter.campusLocation"
+    >
+      <environment-filled /><span>{{ filter.campusLocation?.campusName }} </span
+      ><span v-if="filter.university">
+        &nbsp;· {{ filter.university?.universityName }}</span
+      ></a-button
     >
     <a-modal
       v-model:visible="locationModal.visible"
@@ -126,7 +160,7 @@ const filterByLocation = async() => {
       :maskClosable="false"
     >
       <template #footer>
-        <a-button @click="filterByLocation">Apply</a-button>
+        <a-button @click="applyFilterByLocation">Apply</a-button>
       </template>
       <div>
         <!-- d-flex justify-between mb-16 -->
@@ -141,20 +175,29 @@ const filterByLocation = async() => {
             label: 'campusName',
             value: 'id',
           }"
-          :options="campusLocationOptions"
+          :options="locationModal.campusLocationOptions"
           @change="selectCampusLocation"
-        ></a-select>
+        >
+          <a-select-option
+            v-for="campus in locationModal.campusLocationOptions"
+            :key="campus.id"
+            :value="campus.id"
+          >
+            {{ campus.campusName }}
+          </a-select-option></a-select
+        >
         <div>University</div>
         <a-select
           :value="locationModal.universitySelect?.id"
           show-search
-          placeholder="Select a university"
+          placeholder="[All Universities]"
           style="width: 200px"
           :fieldNames="{
             label: 'universityName',
             value: 'id',
           }"
-          :options="universityOptions"
+          :options="locationModal.universityOptions"
+          :allow-clear="true"
           @change="selectUniversity"
         ></a-select>
       </div>

@@ -91,33 +91,41 @@
           >
             <div>
               <!-- d-flex justify-between mb-16 -->
-              <div>Campus</div>
+              <div>Campus location</div>
               <a-select
                 :value="searchValue.campusLocation?.id"
                 show-search
-                placeholder="Select a campus location"
+                placeholder="[All]"
                 style="width: 200px"
                 :filter-option="true"
-                :fieldNames="{
-                  label: 'campusName',
-                  value: 'id',
-                }"
-                :options="campusLocationOptions"
+                :allow-clear="true"
                 @change="selectCampusLocation"
-              ></a-select>
+              >
+                <a-select-option
+                  v-for="campus in campusLocationOptions"
+                  :key="campus.id"
+                  :value="campus.id"
+                >
+                  {{ campus.campusName }}
+                </a-select-option>
+              </a-select>
               <div>University</div>
               <a-select
                 :value="searchValue.university?.id"
                 show-search
-                placeholder="Select a university"
+                placeholder="[All]"
                 style="width: 200px"
-                :fieldNames="{
-                  label: 'universityName',
-                  value: 'id',
-                }"
-                :options="universityOptions"
+                :allow-clear="true"
                 @change="selectUniversity"
-              ></a-select>
+              >
+              <a-select-option
+                  v-for="university in universityOptions"
+                  :key="university.id"
+                  :value="university.id"
+                >
+                  {{ university.universityName }}
+                </a-select-option>
+            </a-select>
               <a-list
                 size="small"
                 bordered
@@ -203,7 +211,7 @@ const formState: Ref<CreateItemDto> = ref({
 
 const conditionOptions = ref<SelectProps["options"]>([]);
 const categoryOptions = ref<TreeSelectProps["treeData"]>([]);
-const campusLocationOptions = ref<SelectProps["options"] | Campus[]>([]);
+const campusLocationOptions = ref<Campus[]>([]);
 const universityOptions = ref<SelectProps["options"]>([]);
 
 const searchValue = ref<{
@@ -265,11 +273,13 @@ const selectDeliveryLocation = async (
   deliveryLocation.value.modalVisible = false;
 };
 
-const selectCampusLocation = async (campusLocationId: number) => {
+const selectCampusLocation = async (campusLocationId: number | undefined) => {
   searchValue.value.campusLocation = (
     campusLocationOptions.value as Campus[]
   ).find((campus) => campus.id === campusLocationId);
   universityOptions.value = searchValue.value.campusLocation?.universities;
+  // reset university select choice
+  searchValue.value.university = undefined;
 
   await searchDeliveryLocation();
 };

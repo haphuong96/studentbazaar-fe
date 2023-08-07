@@ -81,8 +81,8 @@ const login = async () => {
       // get user info and store in local storage
       const user : User = await UserService.getMyProfile();
 
-      localStorage.setItem(localStorageKeys.USER_SEARCH_CAMPUS, user.campus.id.toString());
-
+      localStorage.setItem(localStorageKeys.USER_SEARCH_CAMPUS_LOCATION, user.campus.id.toString());
+      localStorage.setItem(localStorageKeys.USER_SEARCH_UNIVERSITY, user.university.id.toString());
       //login successfully, connect to socket
       socket.connect();
 

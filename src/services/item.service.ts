@@ -28,6 +28,8 @@ const getItems = async (search?: {
       nextCursor: search?.nextCursor,
       categoryId: search?.categoryId,
       q: search?.q,
+      campusId: search?.campusId,
+      universityId: search?.universityId,
     },
   });
 
