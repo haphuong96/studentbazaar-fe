@@ -74,14 +74,15 @@
             placeholder="Write some description"
           />
         </a-form-item>
-        <a-form-item
-          label="Pickup Point"
-          v-if="deliveryLocation.selectedDeliveryLocation"
-        >
-          <a-button type="link" @click="showDeliveryLocationModal">
-            <environment-filled />{{
+        <a-form-item label="Pickup Point">
+          <a-button type="link" @click="showDeliveryLocationModal"
+            ><environment-filled /><span
+              v-if="!deliveryLocation.selectedDeliveryLocation && !isOnPageLoading"
+              >Select Pick Up Location</span
+            >
+            <span v-else>{{
               deliveryLocation.selectedDeliveryLocation?.name
-            }}</a-button
+            }}</span></a-button
           >
           <a-modal
             v-model:visible="deliveryLocation.modalVisible"
@@ -93,13 +94,13 @@
               <!-- d-flex justify-between mb-16 -->
               <div>Campus location</div>
               <a-select
-                :value="searchValue.campusLocation?.id"
+                :value="modalSearch.campusLocation?.id"
                 show-search
                 placeholder="[All]"
                 style="width: 200px"
                 :filter-option="true"
                 :allow-clear="true"
-                @change="selectCampusLocation"
+                @change="selectCampusLocationModal"
               >
                 <a-select-option
                   v-for="campus in campusLocationOptions"
@@ -111,21 +112,21 @@
               </a-select>
               <div>University</div>
               <a-select
-                :value="searchValue.university?.id"
+                :value="modalSearch.university?.id"
                 show-search
                 placeholder="[All]"
                 style="width: 200px"
                 :allow-clear="true"
-                @change="selectUniversity"
+                @change="selectUniversityModal"
               >
-              <a-select-option
+                <a-select-option
                   v-for="university in universityOptions"
                   :key="university.id"
                   :value="university.id"
                 >
                   {{ university.universityName }}
                 </a-select-option>
-            </a-select>
+              </a-select>
               <a-list
                 size="small"
                 bordered
@@ -168,7 +169,7 @@
 </template>
 <script setup lang="ts">
 import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
-import { computed, onMounted, ref, Ref } from "vue";
+import { onMounted, ref, Ref } from "vue";
 import { ItemService } from "../../services/item.service";
 import { CreateItemDto } from "../../interfaces/item.interface";
 import { PlusOutlined } from "@ant-design/icons-vue";
@@ -177,26 +178,22 @@ import router from "../../router";
 import { routeNames } from "../../router/route-names";
 import { PickUpLocation } from "../../interfaces/market.interface";
 import { MarketService } from "../../services/market.service";
-import { localStorageKeys } from "../../common/storage-keys";
 import { EnvironmentFilled } from "@ant-design/icons-vue";
 import { Campus } from "../../interfaces/market.interface";
 import { University } from "../../interfaces/market.interface";
+import { UserService } from "../../services/user.service";
+import { User } from "../../interfaces/user.interface";
 
-const userUniversityId = computed(() => {
-  const universityId = localStorage.getItem(
-    localStorageKeys.USER_UNIVERSITY_ID
-  );
-  return universityId ? +universityId : null;
-});
-const userCampusLocationId = computed(() => {
-  const campusId = localStorage.getItem(localStorageKeys.USER_CAMPUS_ID);
-  return campusId ? +campusId : null;
-});
-const userDefaultDeliveryLocationId = computed(() => {
-  const locationId = localStorage.getItem(
-    localStorageKeys.DEFAULT_PICKUP_LOCATION_ID
-  );
-  return locationId ? +locationId : null;
+const me = ref<{
+  university: University | undefined;
+  campusLocation: Campus | undefined;
+  defaultDeliveryLocation: PickUpLocation | undefined;
+  suggestedDeliveryLocations: PickUpLocation[] | undefined;
+}>({
+  university: undefined,
+  campusLocation: undefined,
+  defaultDeliveryLocation: undefined,
+  suggestedDeliveryLocations: undefined,
 });
 
 const formState: Ref<CreateItemDto> = ref({
@@ -214,7 +211,7 @@ const categoryOptions = ref<TreeSelectProps["treeData"]>([]);
 const campusLocationOptions = ref<Campus[]>([]);
 const universityOptions = ref<SelectProps["options"]>([]);
 
-const searchValue = ref<{
+const modalSearch = ref<{
   campusLocation: Campus | undefined;
   university: University | undefined;
 }>({
@@ -232,16 +229,30 @@ const deliveryLocation = ref<{
   selectedDeliveryLocation: null,
 });
 
+const isOnPageLoading : Ref<boolean> = ref<boolean>(true);
+
 onMounted(async () => {
   await Promise.all([
+    getMyProfile(),
     getItemConditions(),
     getItemCategories(),
-    getDefaultDeliveryLocation(),
     getAllCampusLocations(),
   ]);
-  selectCampusLocation(userCampusLocationId.value as number);
-  selectUniversity(userUniversityId.value as number);
+  getDefaultDeliveryLocation(),
+  await selectCampusLocationModal(me.value.campusLocation?.id);
+  await selectUniversityModal(me.value.university?.id);
+  isOnPageLoading.value = false;
 });
+
+const getMyProfile = async (): Promise<void> => {
+  const user: User = await UserService.getMyProfile();
+  if (user) {
+    me.value.university = user.university;
+    me.value.campusLocation = user.campus;
+    me.value.defaultDeliveryLocation = user.defaultPickUpPoint;
+    me.value.suggestedDeliveryLocations = user.suggestedPickUpPoints;
+  }
+};
 
 const getItemConditions = async (): Promise<void> => {
   conditionOptions.value = await ItemService.getItemConditions();
@@ -251,11 +262,9 @@ const getItemCategories = async (): Promise<void> => {
   categoryOptions.value = await ItemService.getItemCategories();
 };
 
-const getDefaultDeliveryLocation = async (): Promise<void> => {
+const getDefaultDeliveryLocation = (): void => {
   deliveryLocation.value.selectedDeliveryLocation =
-    await MarketService.getOneDeliveryLocation(
-      userDefaultDeliveryLocationId.value
-    );
+    me.value.defaultDeliveryLocation || me.value.suggestedDeliveryLocations?.[0];
 };
 
 const getAllCampusLocations = async (): Promise<void> => {
@@ -273,19 +282,19 @@ const selectDeliveryLocation = async (
   deliveryLocation.value.modalVisible = false;
 };
 
-const selectCampusLocation = async (campusLocationId: number | undefined) => {
-  searchValue.value.campusLocation = (
+const selectCampusLocationModal = async (campusLocationId: number | undefined) => {
+  modalSearch.value.campusLocation = (
     campusLocationOptions.value as Campus[]
   ).find((campus) => campus.id === campusLocationId);
-  universityOptions.value = searchValue.value.campusLocation?.universities;
+  universityOptions.value = modalSearch.value.campusLocation?.universities;
   // reset university select choice
-  searchValue.value.university = undefined;
+  modalSearch.value.university = undefined;
 
   await searchDeliveryLocation();
 };
 
-const selectUniversity = async (universityId: number) => {
-  searchValue.value.university = (universityOptions.value as University[]).find(
+const selectUniversityModal = async (universityId: number | undefined) => {
+  modalSearch.value.university = (universityOptions.value as University[]).find(
     (university) => university.id === universityId
   );
 
@@ -295,8 +304,8 @@ const selectUniversity = async (universityId: number) => {
 const searchDeliveryLocation = async () => {
   deliveryLocation.value.deliveryLocationOptions =
     await MarketService.getAllDeliveryLocations({
-      campusLocationId: searchValue.value.campusLocation?.id,
-      universityId: searchValue.value.university?.id,
+      campusLocationId: modalSearch.value.campusLocation?.id,
+      universityId: modalSearch.value.university?.id,
     });
 };
 

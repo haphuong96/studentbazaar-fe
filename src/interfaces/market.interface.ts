@@ -15,8 +15,8 @@ export interface PickUpLocation {
   id: number;
   name: string;
   address: string;
-  university: University;
-  campusLocation: Campus;
+  university?: University;
+  campusLocation?: Campus;
 }
 
 export interface PickUpLocationQuery {

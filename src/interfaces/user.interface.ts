@@ -9,6 +9,7 @@ export interface User {
   emailAddress: string;
   status: string;
   defaultPickUpPoint: PickUpLocation;
+  suggestedPickUpPoints?: PickUpLocation[];
 }
 
 export class UpdateUserDto {
