@@ -2,8 +2,18 @@ import {
   Campus,
   PickUpLocation,
   PickUpLocationQuery,
+  University,
 } from "../interfaces/market.interface";
 import { axiosInstance } from "./base.service";
+
+const getUniversityByEmailAddress = async (emailAddress: string) : Promise<University> => {
+  const university: University = (await axiosInstance.get(`university/${emailAddress}`))
+    .data;
+  if (!university) {
+    throw new Error("No university found");
+  }
+  return university;
+};
 
 const getAllCampuses = async (): Promise<Campus[]> => {
   return (await axiosInstance.get("campuses")).data;
@@ -32,8 +42,10 @@ const getAllDeliveryLocations = async (
 
 const getOneDeliveryLocation = async (
   locationId: number | null
-): Promise<PickUpLocation> => {
-  return (await axiosInstance.get(`delivery/locations/${locationId}`)).data;
+): Promise<PickUpLocation | undefined> => {
+  if (locationId) {
+    return (await axiosInstance.get(`delivery/locations/${locationId}`)).data;
+  }
 };
 
 export const MarketService = {
@@ -41,4 +53,5 @@ export const MarketService = {
   getAllDeliveryLocations,
   getOneDeliveryLocation,
   getOneCampusById,
+  getUniversityByEmailAddress
 };

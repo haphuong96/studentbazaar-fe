@@ -225,7 +225,7 @@ const searchValue = ref<{
 const deliveryLocation = ref<{
   modalVisible: boolean;
   deliveryLocationOptions: PickUpLocation[];
-  selectedDeliveryLocation: PickUpLocation | null;
+  selectedDeliveryLocation: PickUpLocation | null | undefined;
 }>({
   modalVisible: false,
   deliveryLocationOptions: [],

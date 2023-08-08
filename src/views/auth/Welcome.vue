@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, Ref } from "vue";
 import { onMounted } from "vue";
-
 import { UserService } from "../../services/user.service";
-import { User } from "../../interfaces/user.interface";
-import { Campus } from "../../interfaces/market.interface";
+import { Campus, University } from "../../interfaces/market.interface";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
+import { localStorageKeys } from "../../common/storage-keys";
+import { MarketService } from "../../services/market.service";
 
 const welcome = ref<{ university: string; campuses: Campus[] | undefined }>({
   university: "",
@@ -15,13 +15,16 @@ const welcome = ref<{ university: string; campuses: Campus[] | undefined }>({
 
 const selectCampus: Ref<number | undefined> = ref<number>();
 
-const getMyProfile = async () => {
+const getUniversity = async () => {
   try {
-    const user: User = await UserService.getMyProfile();
+    const university: University =
+      await MarketService.getUniversityByEmailAddress(
+        localStorage.getItem(localStorageKeys.EMAIL_ADDRESS) || ""
+      );
 
-    welcome.value.university = user.university.universityName;
-    welcome.value.campuses = user.university.campuses;
-    selectCampus.value = user.university.campuses[0].id;
+    welcome.value.university = university.universityName;
+    welcome.value.campuses = university.campuses;
+    selectCampus.value = university.campuses[0].id;
   } catch (e) {
     console.log(e);
   }
@@ -29,11 +32,23 @@ const getMyProfile = async () => {
 
 const activateUser = async () => {
   try {
-    Promise.all([
-      UserService.updateMyProfile({ campusId: selectCampus.value }),
+    const [user, _isActivatedSuccess] = await Promise.all([
+      UserService.updateMyProfile({
+        campusId: selectCampus.value,
+      }),
       UserService.activateUser(),
     ]);
 
+    // store user default search in local storage
+    localStorage.setItem(
+      localStorageKeys.USER_SEARCH_CAMPUS_LOCATION,
+      user.campus.id.toString()
+    );
+    localStorage.setItem(
+      localStorageKeys.USER_SEARCH_UNIVERSITY,
+      user.university.id.toString()
+    );
+    // redirect to marketplace home
     router.push({ name: routeNames.MARKETPLACE_HOME });
   } catch (e) {
     console.log(e);
@@ -41,7 +56,7 @@ const activateUser = async () => {
 };
 
 onMounted(async () => {
-  await getMyProfile();
+  await getUniversity();
   console.log(welcome.value.campuses);
 });
 </script>
@@ -67,9 +82,7 @@ onMounted(async () => {
       }}</a-select-option>
     </a-select>
     <div class="d-flex justify-right">
-      <a-button @click="activateUser"
-        ><arrow-left-outlined />Let's get started!</a-button
-      >
+      <a-button @click="activateUser">Let's get started!</a-button>
     </div>
   </div>
 </template>

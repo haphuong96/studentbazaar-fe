@@ -53,7 +53,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import {
-localStorageKeys,
+  localStorageKeys,
   sessionStorageKeys,
 } from "../../common/storage-keys";
 import { UserService } from "../../services/user.service";
@@ -79,15 +79,21 @@ const login = async () => {
       await AuthService.login(loginDto.value);
 
       // get user info and store in local storage
-      const user : User = await UserService.getMyProfile();
-
-      localStorage.setItem(localStorageKeys.USER_SEARCH_CAMPUS_LOCATION, user.campus.id.toString());
-      localStorage.setItem(localStorageKeys.USER_SEARCH_UNIVERSITY, user.university.id.toString());
+      const user: User = await UserService.getMyProfile();
+      if (user.campus && user.university) {
+        localStorage.setItem(
+          localStorageKeys.USER_SEARCH_CAMPUS_LOCATION,
+          user.campus.id.toString()
+        );
+        localStorage.setItem(
+          localStorageKeys.USER_SEARCH_UNIVERSITY,
+          user.university.id.toString()
+        );
+      }
       //login successfully, connect to socket
       socket.connect();
 
       router.push({ name: routeNames.MARKETPLACE_HOME });
-      
     } catch (err) {
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) {
