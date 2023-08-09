@@ -116,6 +116,17 @@ const router = createRouter({
       props: true,
     },
     {
+      path: "/marketplace/items/:itemId/edit",
+      name: routeNames.EDIT_ITEM,
+      meta: {
+        canBack: true,
+        layout: layoutNames.MENU_LAYOUT,
+      },
+      component: ListNewItem,
+      props: true,
+    },
+
+    {
       path: "/items/new",
       name: routeNames.LIST_ITEM,
       meta: {

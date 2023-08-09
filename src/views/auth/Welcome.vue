@@ -6,7 +6,6 @@ import { Campus, University } from "../../interfaces/market.interface";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
 import { localStorageKeys } from "../../common/storage-keys";
-import { MarketService } from "../../services/market.service";
 
 const welcome = ref<{ university: string; campuses: Campus[] | undefined }>({
   university: "",
@@ -17,10 +16,7 @@ const selectCampus: Ref<number | undefined> = ref<number>();
 
 const getUniversity = async () => {
   try {
-    const university: University =
-      await MarketService.getUniversityByEmailAddress(
-        localStorage.getItem(localStorageKeys.EMAIL_ADDRESS) || ""
-      );
+    const university: University = await UserService.getMyUniversity();
 
     welcome.value.university = university.universityName;
     welcome.value.campuses = university.campuses;

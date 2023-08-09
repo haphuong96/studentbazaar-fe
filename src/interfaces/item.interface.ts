@@ -2,6 +2,14 @@ import { Image } from "./image.interface";
 import { PickUpLocation } from "./market.interface";
 import { User } from "./user.interface";
 
+export enum ItemStatus {
+  DRAFT = 'DRAFT',
+  PUBLISHED = 'PUBLISHED',
+  RESERVED = 'RESERVED',
+  SOLD = 'SOLD',
+  HIDDEN = 'HIDDEN',
+}
+
 export interface ItemCondition {
   id: number;
   conditionName: string;
@@ -23,6 +31,11 @@ export interface CreateItemDto {
   price: number | undefined;
   img?: ItemImage[];
   locationId?: number | undefined;
+  status?: ItemStatus;
+}
+
+export interface UpdateItemDto {
+  status?: ItemStatus;
 }
 
 export interface Item {
@@ -30,7 +43,7 @@ export interface Item {
   owner: User;
   category: ItemCategory;
   condition: ItemCondition;
-  status: string;
+  status: ItemStatus;
   itemName: string;
   itemDescription: string;
   itemPrice: number;

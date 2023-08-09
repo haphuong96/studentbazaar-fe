@@ -3,6 +3,7 @@ import {
   GetItemsCursorBased,
   GetItemsLimitOffset,
 } from "../interfaces/item.interface";
+import { University } from "../interfaces/market.interface";
 import { UpdateUserDto, User } from "../interfaces/user.interface";
 import { axiosInstance } from "./base.service";
 
@@ -15,14 +16,6 @@ const getMyProfile = async (): Promise<User> => {
   localStorage.setItem(localStorageKeys.USERNAME, data.username);
   localStorage.setItem(localStorageKeys.EMAIL_ADDRESS, data.emailAddress);
   localStorage.setItem(localStorageKeys.USER_STATUS, data.status);
-  localStorage.setItem(
-    localStorageKeys.USER_UNIVERSITY_ID,
-    data.university?.id.toString()
-  );
-  localStorage.setItem(
-    localStorageKeys.USER_CAMPUS_ID,
-    data.campus?.id.toString()
-  );
   localStorage.setItem(
     localStorageKeys.DEFAULT_PICKUP_LOCATION_ID,
     data.defaultPickUpPoint?.id.toString()
@@ -49,14 +42,6 @@ const updateMyProfile = async (updateUser: UpdateUserDto): Promise<User> => {
   localStorage.setItem(localStorageKeys.EMAIL_ADDRESS, data.emailAddress);
   localStorage.setItem(localStorageKeys.USER_STATUS, data.status);
   localStorage.setItem(
-    localStorageKeys.USER_UNIVERSITY_ID,
-    data.university?.id.toString()
-  );
-  localStorage.setItem(
-    localStorageKeys.USER_CAMPUS_ID,
-    data.campus?.id.toString()
-  );
-  localStorage.setItem(
     localStorageKeys.DEFAULT_PICKUP_LOCATION_ID,
     data.defaultPickUpPoint?.id.toString()
   );
@@ -82,10 +67,14 @@ const getMyItems = async (query?: {
   return (await axiosInstance.get("me/items", { params: { ...query } })).data;
 };
 
+const getMyUniversity = async (): Promise<University> => {
+  return (await axiosInstance.get("me/university")).data;
+};
 export const UserService = {
   getMyProfile,
   activateUser,
   updateMyProfile,
   getUserProfile,
-  getMyItems
+  getMyItems,
+  getMyUniversity,
 };

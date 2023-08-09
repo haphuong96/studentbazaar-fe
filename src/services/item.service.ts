@@ -8,6 +8,7 @@ import {
   ItemCategory,
   ItemCondition,
   ItemImage,
+  UpdateItemDto,
 } from "../interfaces/item.interface";
 import { axiosInstance } from "./base.service";
 // import { ComputedRef } from "vue";
@@ -71,6 +72,10 @@ const uploadItem = async (item: CreateItemDto): Promise<void> => {
   await axiosInstance.post("items", item);
 };
 
+const updateItem = async (itemId: number | undefined, item: UpdateItemDto): Promise<Item> => {
+  return (await axiosInstance.put(`items/${itemId}`, item)).data;
+}
+
 const getItemDetails = async (itemId: number | undefined): Promise<Item> => {
   return (await axiosInstance.get(`items/${itemId}`)).data;
 };
@@ -91,6 +96,7 @@ export const ItemService = {
   getItemCategories,
   getOneItemCategory,
   uploadItem,
+  updateItem,
   getItemDetails,
   uploadItemImages,
 };

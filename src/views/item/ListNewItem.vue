@@ -77,7 +77,9 @@
         <a-form-item label="Pickup Point">
           <a-button type="link" @click="showDeliveryLocationModal"
             ><environment-filled /><span
-              v-if="!deliveryLocation.selectedDeliveryLocation && !isOnPageLoading"
+              v-if="
+                !deliveryLocation.selectedDeliveryLocation && !isOnPageLoading
+              "
               >Select Pick Up Location</span
             >
             <span v-else>{{
@@ -158,8 +160,15 @@
           </a-modal>
         </a-form-item>
         <a-form-item>
-          <a-button :loading="uploading" @click="onUpload" type="primary"
-            >Upload</a-button
+          <span>
+            <a-button :loading="uploading" @click="() => onUpload(true)"
+              >Save Draft</a-button
+            ></span
+          >
+          <span class="ml-32">
+            <a-button :loading="uploading" @click="() => onUpload()" type="primary"
+              >Upload</a-button
+            ></span
           >
         </a-form-item>
       </a-form>
@@ -171,16 +180,18 @@
 import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
 import { computed, onMounted, ref, Ref } from "vue";
 import { ItemService } from "../../services/item.service";
-import { CreateItemDto } from "../../interfaces/item.interface";
+import { CreateItemDto, ItemStatus } from "../../interfaces/item.interface";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import type { UploadProps } from "ant-design-vue";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
-import { PickUpLocation } from "../../interfaces/market.interface";
+import {
+  PickUpLocation,
+  Campus,
+  University,
+} from "../../interfaces/market.interface";
 import { MarketService } from "../../services/market.service";
 import { EnvironmentFilled } from "@ant-design/icons-vue";
-import { Campus } from "../../interfaces/market.interface";
-import { University } from "../../interfaces/market.interface";
 import { UserService } from "../../services/user.service";
 import { User } from "../../interfaces/user.interface";
 
@@ -206,6 +217,7 @@ const formState: Ref<CreateItemDto> = ref({
   locationId: computed(() => {
     return deliveryLocation.value.selectedDeliveryLocation?.id;
   }),
+  status: undefined,
 });
 
 const conditionOptions = ref<SelectProps["options"]>([]);
@@ -231,7 +243,7 @@ const deliveryLocation = ref<{
   selectedDeliveryLocation: null,
 });
 
-const isOnPageLoading : Ref<boolean> = ref<boolean>(true);
+const isOnPageLoading: Ref<boolean> = ref<boolean>(true);
 
 onMounted(async () => {
   await Promise.all([
@@ -241,7 +253,7 @@ onMounted(async () => {
     getAllCampusLocations(),
   ]);
   getDefaultDeliveryLocation(),
-  await selectCampusLocationModal(me.value.campusLocation?.id);
+    await selectCampusLocationModal(me.value.campusLocation?.id);
   await selectUniversityModal(me.value.university?.id);
   isOnPageLoading.value = false;
 });
@@ -266,7 +278,8 @@ const getItemCategories = async (): Promise<void> => {
 
 const getDefaultDeliveryLocation = (): void => {
   deliveryLocation.value.selectedDeliveryLocation =
-    me.value.defaultDeliveryLocation || me.value.suggestedDeliveryLocations?.[0];
+    me.value.defaultDeliveryLocation ||
+    me.value.suggestedDeliveryLocations?.[0];
 };
 
 const getAllCampusLocations = async (): Promise<void> => {
@@ -280,7 +293,9 @@ const selectDeliveryLocation = async (
   deliveryLocation.value.modalVisible = false;
 };
 
-const selectCampusLocationModal = async (campusLocationId: number | undefined) => {
+const selectCampusLocationModal = async (
+  campusLocationId: number | undefined
+) => {
   modalSearch.value.campusLocation = (
     campusLocationOptions.value as Campus[]
   ).find((campus) => campus.id === campusLocationId);
@@ -321,7 +336,9 @@ const uploadItem = async (): Promise<void> => {
   }
 };
 
-const onUpload = async (): Promise<void> => {
+const onUpload = async (isDraft: boolean = false): Promise<void> => {
+  formState.value.status = isDraft ? ItemStatus.DRAFT : ItemStatus.PUBLISHED;
+
   uploading.value = true;
   // upload item images
   await uploadItemImages();

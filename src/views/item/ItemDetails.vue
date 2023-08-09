@@ -1,7 +1,7 @@
 <template>
-  <a-row v-if="itemDetails">
+  <a-row v-if="!isPageLoading && itemDetails">
     <a-col :span="12">
-      <a-breadcrumb v-if="itemDetails">
+      <a-breadcrumb>
         <span v-for="route in routes">
           <span v-if="routes.indexOf(route) === routes.length - 1">
             <a-breadcrumb-item>{{
@@ -30,10 +30,20 @@
     </a-col>
     <a-col :span="12">
       <div class="d-flex align-center">
-        <h2>{{ itemDetails.itemName }}</h2>
-        <div class="pl-32">
-          {{ itemDetails.itemPrice ? `£${itemDetails.itemPrice}` : "FREE" }}
+        <div class="d-flex align-center flex-grow-1">
+          <h2>{{ itemDetails.itemName }}</h2>
+          <div class="px-32">
+            {{ itemDetails.itemPrice ? `£${itemDetails.itemPrice}` : "FREE" }}
+          </div>
         </div>
+        <a-select
+          ref="select"
+          v-model:value="itemStatus"
+          style="width: 120px"
+          :options="itemStatuses"
+          @change="onStatusChange"
+          v-if="isOwner"
+        ></a-select>
       </div>
       <div
         class="d-flex py-16 link"
@@ -75,9 +85,13 @@
           </div>
         </a-descriptions-item>
       </a-descriptions>
-      <div class="my-32">
-        <span class="ml-32"> <a-button>Ask seller</a-button></span>
-        <span> <a-button>Add to Favorites</a-button></span>
+      <div class="my-32" v-if="!isOwner">
+        <span> <a-button>Ask seller</a-button></span>
+        <span class="ml-32"> <a-button>Add to Favorites</a-button></span>
+      </div>
+      <div class="my-32" v-else>
+        <span> <a-button type="primary" ghost>Edit</a-button></span>
+        <span class="ml-16"> <a-button type="primary" danger>Delete</a-button></span>
       </div>
     </a-col>
   </a-row>
@@ -95,26 +109,72 @@ import router from "../../router";
 import GalleryView from "../../components/GalleryView.vue";
 import { routeNames } from "../../router/route-names";
 import { EnvironmentFilled } from "@ant-design/icons-vue";
+import { User } from "../../interfaces/user.interface";
+import { UserService } from "../../services/user.service";
+import { SelectProps } from "ant-design-vue";
+import { ItemStatus } from "../../interfaces/item.interface";
+
 const props = defineProps({
   itemId: Number,
 });
+const itemStatuses = ref<SelectProps["options"]>([
+  {
+    value: ItemStatus.DRAFT,
+    label: "Draft",
+  },
+  {
+    value: ItemStatus.PUBLISHED,
+    label: "Published",
+  },
+  {
+    value: ItemStatus.SOLD,
+    label: "Sold",
+  },
+]);
 
 const itemDetails = ref<Item>();
 const getItemDetails = async () => {
   try {
     itemDetails.value = await ItemService.getItemDetails(props.itemId);
-    console.log(itemDetails.value);
+    itemStatus.value = itemDetails.value.status;
+    console.log(itemStatus.value);
   } catch (err) {
     console.log(err);
   }
 };
 
+const itemStatus = ref<ItemStatus>();
+const onStatusChange = async (status: ItemStatus) => {
+  try {
+    itemDetails.value = await ItemService.updateItem(props.itemId, {
+      status: status,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const myProfile = ref<User>();
+const getMyProfile = async () => {
+  try {
+    myProfile.value = await UserService.getMyProfile();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const isOwner = computed(() => {
+  return myProfile.value?.id === itemDetails.value?.owner.id;
+});
+
 const routes: ComputedRef<Route[]> = computed(() => {
   return getCategoryPath(itemDetails.value?.category);
 });
 
-onMounted(() => {
-  getItemDetails();
+const isPageLoading = ref<boolean>(true);
+onMounted(async () => {
+  await Promise.all([getItemDetails(), getMyProfile()]);
+  isPageLoading.value = false;
 });
 </script>
 <style></style>
