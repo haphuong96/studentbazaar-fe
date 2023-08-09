@@ -1,4 +1,5 @@
 import { Image } from "./image.interface";
+import { PickUpLocation } from "./market.interface";
 import { User } from "./user.interface";
 
 export interface ItemCondition {
@@ -35,6 +36,7 @@ export interface Item {
   itemPrice: number;
   createdDatetime: string;
   lastUpdatedDatetime: string;
+  location: PickUpLocation;
   img: GetItemImage[];
 }
 

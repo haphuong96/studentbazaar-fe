@@ -64,9 +64,21 @@
         <a-descriptions-item label="Uploaded">{{
           formatFromNow(itemDetails.createdDatetime)
         }}</a-descriptions-item>
-      </a-descriptions>
+        <a-descriptions-item label="Pick Up Location">
+          <div class="d-flex justify-space-between">
+            <div class="mr-16"><environment-filled /></div>
 
-      <a-button>Ask seller</a-button>
+            <div class="d-flex flex-col">
+              <div>{{ itemDetails.location.name }}</div>
+              <div>{{ itemDetails.location.address }}</div>
+            </div>
+          </div>
+        </a-descriptions-item>
+      </a-descriptions>
+      <div class="my-32">
+        <span class="ml-32"> <a-button>Ask seller</a-button></span>
+        <span> <a-button>Add to Favorites</a-button></span>
+      </div>
     </a-col>
   </a-row>
 </template>
@@ -82,7 +94,7 @@ import { formatFromNow } from "../../utils/datetime.util";
 import router from "../../router";
 import GalleryView from "../../components/GalleryView.vue";
 import { routeNames } from "../../router/route-names";
-
+import { EnvironmentFilled } from "@ant-design/icons-vue";
 const props = defineProps({
   itemId: Number,
 });

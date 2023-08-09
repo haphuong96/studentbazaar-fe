@@ -12,6 +12,7 @@ import MarketplaceByCategory from "../views/item/MarketplaceByCategory.vue";
 import MarketplaceHome from "../views/item/MarketplaceHome.vue";
 import MyPage from "../views/me/MyPage.vue";
 import MyProfile from "../views/me/MyProfile.vue";
+import MyItems from "../views/me/MyItems.vue";
 import UserProfile from "../views/me/UserProfile.vue";
 import { emailSendGuard, globalGuard } from "./guards/auth.guard";
 import { layoutNames } from "./layout-names";
@@ -135,6 +136,11 @@ const router = createRouter({
           path: "profile",
           name: routeNames.MY_PROFILE,
           component: MyProfile,
+        },
+        {
+          path: "items",
+          name: routeNames.MY_ITEMS,
+          component: MyItems,
         },
       ],
     },

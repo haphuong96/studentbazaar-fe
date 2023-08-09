@@ -26,6 +26,12 @@
       <a-button :icon="h(MailOutlined)">Send a message</a-button>
     </a-col>
   </a-row>
+  <a-row>
+    <a-col :span="24"
+      >
+      <p>{{ userProfile?.aboutMe }}</p>
+    </a-col>
+  </a-row>
   <a-row class="py-16">
     <a-col :span="24" class="user-profile__address">Listed recently</a-col>
     <a-col :span="24">
@@ -62,7 +68,7 @@ const getItemsByUser = async () => {
   userItems.value = (await ItemService.getItems({
     ownerId: props.userId,
   })) as GetItemsCursorBased;
-  console.log('items ', userItems.value)
+  console.log("items ", userItems.value);
 };
 
 onMounted(() => {

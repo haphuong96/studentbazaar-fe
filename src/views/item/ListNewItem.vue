@@ -169,7 +169,7 @@
 </template>
 <script setup lang="ts">
 import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
-import { onMounted, ref, Ref } from "vue";
+import { computed, onMounted, ref, Ref } from "vue";
 import { ItemService } from "../../services/item.service";
 import { CreateItemDto } from "../../interfaces/item.interface";
 import { PlusOutlined } from "@ant-design/icons-vue";
@@ -203,7 +203,9 @@ const formState: Ref<CreateItemDto> = ref({
   categoryId: undefined,
   conditionId: undefined,
   img: undefined,
-  locationId: undefined,
+  locationId: computed(() => {
+    return deliveryLocation.value.selectedDeliveryLocation?.id;
+  }),
 });
 
 const conditionOptions = ref<SelectProps["options"]>([]);
@@ -275,10 +277,6 @@ const selectDeliveryLocation = async (
   location: PickUpLocation | null
 ): Promise<void> => {
   deliveryLocation.value.selectedDeliveryLocation = location;
-
-  formState.value.locationId =
-    deliveryLocation.value.selectedDeliveryLocation?.id;
-
   deliveryLocation.value.modalVisible = false;
 };
 
@@ -332,7 +330,7 @@ const onUpload = async (): Promise<void> => {
   await uploadItem();
   uploading.value = false;
 
-  router.push({ name: routeNames.MARKETPLACE_HOME });
+  router.push({ name: routeNames.MY_ITEMS });
 };
 
 const uploadItemImages = async () => {

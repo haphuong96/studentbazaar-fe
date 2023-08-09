@@ -5,6 +5,7 @@ export interface User {
   university: University;
   campus: Campus;
   fullname: string;
+  aboutMe?: string;
   username: string;
   emailAddress: string;
   status: string;
@@ -15,4 +16,5 @@ export interface User {
 export class UpdateUserDto {
   campusId?: number;
   fullname?: string;
+  aboutMe?: string;
 }

@@ -26,9 +26,9 @@
           </a-input-search>
         </div>
         <div class="d-flex header-menu">
-          <a><bell-two-tone /></a>
+          <a><bell-outlined /></a>
           <router-link :to="{ name: routeNames.INBOX }"
-            ><message-two-tone
+            ><message-outlined
           /></router-link>
           <!-- <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
             ><tags-two-tone />
@@ -90,9 +90,11 @@
 <script lang="ts" setup>
 import { computed, ComputedRef, ref, Ref, onMounted, watch } from "vue";
 import {
-  BellTwoTone,
+  BellOutlined,
+  MessageOutlined,
+  // BellTwoTone,
   LeftOutlined,
-  MessageTwoTone,
+  // MessageTwoTone,
   // TagsTwoTone,
   SearchOutlined,
 } from "@ant-design/icons-vue";

@@ -1,4 +1,8 @@
 import { localStorageKeys } from "../common/storage-keys";
+import {
+  GetItemsCursorBased,
+  GetItemsLimitOffset,
+} from "../interfaces/item.interface";
 import { UpdateUserDto, User } from "../interfaces/user.interface";
 import { axiosInstance } from "./base.service";
 
@@ -60,10 +64,22 @@ const updateMyProfile = async (updateUser: UpdateUserDto): Promise<User> => {
   return data;
 };
 
-const getUserProfile = async (userId: number | undefined): Promise<User | undefined> => {
+const getUserProfile = async (
+  userId: number | undefined
+): Promise<User | undefined> => {
   if (userId) {
     return (await axiosInstance.get(`users/${userId}`)).data;
   }
+};
+
+const getMyItems = async (query?: {
+  limit?: number;
+  offset?: number;
+  nextCursor?: number;
+  categoryId?: number;
+  q?: string;
+}): Promise<GetItemsCursorBased | GetItemsLimitOffset> => {
+  return (await axiosInstance.get("me/items", { params: { ...query } })).data;
 };
 
 export const UserService = {
@@ -71,4 +87,5 @@ export const UserService = {
   activateUser,
   updateMyProfile,
   getUserProfile,
+  getMyItems
 };
