@@ -61,7 +61,7 @@
             {{ itemDetails.owner.username }}
           </div>
           <div>
-            {{ itemDetails.owner.university.universityName }}
+            {{ itemDetails.owner.university?.universityName }}
           </div>
         </div>
       </div>
@@ -77,7 +77,6 @@
         <a-descriptions-item label="Pick Up Location">
           <div class="d-flex justify-space-between">
             <div class="mr-16"><environment-filled /></div>
-
             <div class="d-flex flex-col">
               <div>{{ itemDetails.location.name }}</div>
               <div>{{ itemDetails.location.address }}</div>
@@ -91,7 +90,9 @@
       </div>
       <div class="my-32" v-else>
         <span> <a-button type="primary" ghost>Edit</a-button></span>
-        <span class="ml-16"> <a-button type="primary" danger>Delete</a-button></span>
+        <span class="ml-16">
+          <a-button type="primary" danger>Delete</a-button></span
+        >
       </div>
     </a-col>
   </a-row>
