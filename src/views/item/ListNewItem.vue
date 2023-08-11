@@ -365,5 +365,18 @@ const uploadItemImages = async () => {
 };
 const uploading = ref<boolean>(false);
 </script>
-<style></style>
-<!-- class="logo" -->
+<style>
+.list-new-item__list-image-preview {
+  width: 100%;
+  max-width: calc(5 * (160px + 16px));
+}
+
+.list-new-item__image-picker {
+  margin-right: 16px;
+  width: 160px;
+  height: 160px;
+  max-width: 160px;
+  max-height: 160px;
+  margin-bottom: 16px;
+}
+</style>
