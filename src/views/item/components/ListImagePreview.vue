@@ -1,18 +1,18 @@
 <template>
   <div class="list-image-preview-container">
-    <ul>
-      <li v-for="(source, index) in sources" :key="index">
-        {{ source?.name }}
-      </li>
-    </ul>
-    <img
-      class="list-image-preview-container__img"
-      v-if="sources"
-      v-for="(source, index) in sources"
-      :src="source?.toString() || ''"
-      :key="index"
-      alt="Selected Image"
-    />
+    <a-image-preview-group>
+      <a-image
+        v-if="sources"
+        v-for="(source, index) in sources"
+        :src="source"
+        :key="index"
+        alt="Selected Image"
+        :width="80"
+        :height="80"
+      >
+        <div slot="previewMask">Nghia</div>
+      </a-image>
+    </a-image-preview-group>
   </div>
 </template>
 
@@ -27,15 +27,30 @@ defineProps<ListImagePreviewProps>();
 .list-image-preview-container {
   display: flex;
   height: 80px;
-  width: 500px;
-  background-color: green;
+  width: 400px;
+  margin-top: 16px;
+  overflow: scroll;
 }
 
-.list-image-preview-container__img {
-  width: 80px;
-  height: 80px;
-  background-color: red;
-  margin: 8px;
-  object-fit: scale-down;
+/* Hide scrollbar for Chrome, Safari and Opera */
+.list-image-preview-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.list-image-preview-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+:deep(.ant-image) {
+  border: 1px solid lightgray;
+  margin-right: 16px;
+}
+
+:deep(.ant-image > .ant-image-img) {
+  object-fit: contain !important;
+  width: 78px;
+  height: 78px;
 }
 </style>
