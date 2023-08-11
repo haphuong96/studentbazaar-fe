@@ -2,29 +2,13 @@
   <a-row>
     <a-col :span="12" class="pr-32">
       <h2>Add images</h2>
-      <!-- <img src="https://studentbazaar.blob.core.windows.net/item-images/354076998_171323875771236_7388431690475966556_n.jpg"/> -->
-      <div class="clearfix">
-        <a-upload-dragger
-          v-model:file-list="fileList"
-          class="my-16"
-          list-type="picture-card"
-          @preview="handlePreview"
-          :before-upload="beforeUpload"
-          @remove="handleRemove"
-        >
-          <div v-if="fileList ? fileList.length < 4 : false">
-            <plus-outlined />
-            <div style="margin-top: 8px">Upload</div>
-          </div>
-        </a-upload-dragger>
-        <a-modal
-          v-model:visible="previewVisible"
-          :title="previewTitle"
-          :footer="null"
-          @cancel="handleCancel"
-        >
-          <img alt="example" style="width: 100%" :src="previewImage" />
-        </a-modal>
+      <div class="list-new-item__list-image-preview">
+        <ListImagePreview :sources="preview" @remove-image="onImageRemoved">
+          <ImagePicker
+            @image-selected="onImageSelected"
+            class="list-new-item__image-picker"
+          ></ImagePicker>
+        </ListImagePreview>
       </div>
     </a-col>
     <a-col :span="12">
@@ -166,7 +150,10 @@
             ></span
           >
           <span class="ml-32">
-            <a-button :loading="uploading" @click="() => onUpload()" type="primary"
+            <a-button
+              :loading="uploading"
+              @click="() => onUpload()"
+              type="primary"
               >Upload</a-button
             ></span
           >
@@ -177,23 +164,24 @@
   <!-- List Item -->
 </template>
 <script setup lang="ts">
+import { EnvironmentFilled } from "@ant-design/icons-vue";
 import { SelectProps, TreeSelectProps, message } from "ant-design-vue";
-import { computed, onMounted, ref, Ref } from "vue";
-import { ItemService } from "../../services/item.service";
+import { Ref, computed, onMounted, ref } from "vue";
 import { CreateItemDto, ItemStatus } from "../../interfaces/item.interface";
-import { PlusOutlined } from "@ant-design/icons-vue";
-import type { UploadProps } from "ant-design-vue";
-import router from "../../router";
-import { routeNames } from "../../router/route-names";
 import {
-  PickUpLocation,
   Campus,
+  PickUpLocation,
   University,
 } from "../../interfaces/market.interface";
-import { MarketService } from "../../services/market.service";
-import { EnvironmentFilled } from "@ant-design/icons-vue";
-import { UserService } from "../../services/user.service";
 import { User } from "../../interfaces/user.interface";
+import router from "../../router";
+import { routeNames } from "../../router/route-names";
+import { ItemService } from "../../services/item.service";
+import { MarketService } from "../../services/market.service";
+import { UserService } from "../../services/user.service";
+
+import ImagePicker from "./components/ImagePicker.vue";
+import ListImagePreview from "./components/ListImagePreview.vue";
 
 const me = ref<{
   university: University | undefined;
@@ -245,6 +233,11 @@ const deliveryLocation = ref<{
 
 const isOnPageLoading: Ref<boolean> = ref<boolean>(true);
 
+const sources = ref<any[]>([]);
+const preview = computed(() => {
+  return sources.value.map((s) => s.data);
+});
+
 onMounted(async () => {
   await Promise.all([
     getMyProfile(),
@@ -257,6 +250,14 @@ onMounted(async () => {
   await selectUniversityModal(me.value.university?.id);
   isOnPageLoading.value = false;
 });
+
+const onImageSelected = (images: any[]) => {
+  sources.value.push(images);
+};
+
+const onImageRemoved = (index: number) => {
+  sources.value.splice(index, 1);
+};
 
 const getMyProfile = async (): Promise<void> => {
   const user: User = await UserService.getMyProfile();
@@ -352,8 +353,8 @@ const onUpload = async (isDraft: boolean = false): Promise<void> => {
 
 const uploadItemImages = async () => {
   const formData = new FormData();
-  fileList.value?.forEach((file: UploadProps["fileList"][number]) => {
-    formData.append("files", file.originFileObj);
+  sources.value?.forEach((s) => {
+    formData.append("files", s.origin);
   });
   try {
     formState.value.img = await ItemService.uploadItemImages(formData);
@@ -362,48 +363,20 @@ const uploadItemImages = async () => {
     console.log(error);
   }
 };
-
-//
-
-function getBase64(file: File) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-}
-const previewVisible = ref(false);
-const previewImage = ref("");
-const previewTitle = ref("");
-const handleCancel = () => {
-  previewVisible.value = false;
-  previewTitle.value = "";
-};
-const handlePreview = async (file: UploadProps["fileList"][number]) => {
-  if (!file.url && !file.preview) {
-    file.preview = (await getBase64(file.originFileObj)) as string;
-  }
-  previewImage.value = file.url || file.preview;
-  previewVisible.value = true;
-  previewTitle.value =
-    file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
-  console.log(fileList.value);
-  console.log(previewVisible.value);
-};
-const fileList = ref<UploadProps["fileList"]>([]);
 const uploading = ref<boolean>(false);
-const handleRemove: UploadProps["onRemove"] = (file) => {
-  const index: number | undefined = fileList.value?.indexOf(file);
-  const newFileList = fileList.value?.slice();
-  newFileList?.splice(index, 1);
-  fileList.value = newFileList;
-};
-const beforeUpload: UploadProps["beforeUpload"] = (file) => {
-  console.log(file);
-  fileList.value = [...(fileList.value || []), file];
-  return false;
-};
 </script>
-<style></style>
-<!-- class="logo" -->
+<style>
+.list-new-item__list-image-preview {
+  width: 100%;
+  max-width: calc(5 * (160px + 16px));
+}
+
+.list-new-item__image-picker {
+  margin-right: 16px;
+  width: 160px;
+  height: 160px;
+  max-width: 160px;
+  max-height: 160px;
+  margin-bottom: 16px;
+}
+</style>

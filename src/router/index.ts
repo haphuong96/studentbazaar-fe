@@ -17,6 +17,7 @@ import UserProfile from "../views/me/UserProfile.vue";
 import { emailSendGuard, globalGuard } from "./guards/auth.guard";
 import { layoutNames } from "./layout-names";
 import { routeNames } from "./route-names";
+import EditItemVue from "../views/item/EditItem.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -122,7 +123,7 @@ const router = createRouter({
         canBack: true,
         layout: layoutNames.MENU_LAYOUT,
       },
-      component: ListNewItem,
+      component: EditItemVue,
       props: true,
     },
 
