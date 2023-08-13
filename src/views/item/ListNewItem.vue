@@ -372,6 +372,7 @@ const uploading = ref<boolean>(false);
 }
 
 .list-new-item__image-picker {
+  margin-right: 16px;
   width: 120px;
   height: 120px;
   max-width: 120px;

@@ -1,6 +1,7 @@
 <template>
   <a-image-preview-group>
     <div class="list-image-preview-container">
+      <slot></slot>
       <div
         class="list-image-preview-container__img-container"
         v-for="(source, index) in sources"
@@ -20,7 +21,6 @@
           @click="() => removeImage(index)"
         ></CloseCircleFilled>
       </div>
-      <slot></slot>
     </div>
   </a-image-preview-group>
 </template>
@@ -80,7 +80,7 @@ const removeImage = (index: number) => {
 }
 
 :deep(.ant-image > .ant-image-img) {
-  object-fit: contain !important;
+  object-fit: cover !important;
   width: calc(120px - 2px);
   height: calc(120px - 2px);
 }
