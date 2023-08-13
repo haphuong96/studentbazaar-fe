@@ -11,8 +11,8 @@
           :src="source"
           :key="index"
           alt="Selected Image"
-          :width="80"
-          :height="80"
+          :width="120"
+          :height="120"
         >
         </a-image>
         <CloseCircleFilled
@@ -20,6 +20,7 @@
           @click="() => removeImage(index)"
         ></CloseCircleFilled>
       </div>
+      <slot></slot>
     </div>
   </a-image-preview-group>
 </template>
@@ -41,10 +42,10 @@ const removeImage = (index: number) => {
 <style lang="css" scoped>
 .list-image-preview-container {
   display: flex;
-  height: 80px;
+  flex-wrap: wrap;
+  height: 120px;
   width: 100%;
   margin-top: 16px;
-  overflow: scroll;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -59,6 +60,7 @@ const removeImage = (index: number) => {
 }
 
 .list-image-preview-container__img-container {
+  margin-bottom: 16px;
   position: relative;
 }
 
@@ -79,7 +81,7 @@ const removeImage = (index: number) => {
 
 :deep(.ant-image > .ant-image-img) {
   object-fit: contain !important;
-  width: 78px;
-  height: 78px;
+  width: calc(120px - 2px);
+  height: calc(120px - 2px);
 }
 </style>

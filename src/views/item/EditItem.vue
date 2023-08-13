@@ -3,11 +3,12 @@
     <a-col :span="12" class="pr-32">
       <h2>Add images</h2>
       <div class="image-picker">
-        <ImagePicker @image-selected="onImageSelected"></ImagePicker>
-        <ListImagePreview
-          :sources="preview"
-          @remove-image="onImageRemoved"
-        ></ListImagePreview>
+        <ListImagePreview :sources="preview" @remove-image="onImageRemoved">
+          <ImagePicker
+            @image-selected="onImageSelected"
+            class="edit-item__image-picker"
+          ></ImagePicker>
+        </ListImagePreview>
       </div>
     </a-col>
     <a-col :span="12">
@@ -49,5 +50,10 @@ const uploadItemImages = async () => {
 <style scoped>
 .image-picker {
   width: 400px;
+}
+
+.edit-item__image-picker {
+  width: 96px;
+  margin-bottom: 16px;
 }
 </style>

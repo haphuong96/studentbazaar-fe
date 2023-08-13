@@ -2,13 +2,13 @@
   <a-row>
     <a-col :span="12" class="pr-32">
       <h2>Add images</h2>
-      <!-- <img src="https://studentbazaar.blob.core.windows.net/item-images/354076998_171323875771236_7388431690475966556_n.jpg"/> -->
-      <div>
-        <ImagePicker @image-selected="onImageSelected"></ImagePicker>
-        <ListImagePreview
-          :sources="preview"
-          @remove-image="onImageRemoved"
-        ></ListImagePreview>
+      <div class="list-new-item__list-image-preview">
+        <ListImagePreview :sources="preview" @remove-image="onImageRemoved">
+          <ImagePicker
+            @image-selected="onImageSelected"
+            class="list-new-item__image-picker"
+          ></ImagePicker>
+        </ListImagePreview>
       </div>
     </a-col>
     <a-col :span="12">
@@ -352,7 +352,7 @@ const onUpload = async (isDraft: boolean = false): Promise<void> => {
 };
 
 const uploadItemImages = async () => {
- const formData = new FormData();
+  const formData = new FormData();
   sources.value?.forEach((s) => {
     formData.append("files", s.origin);
   });
@@ -365,5 +365,17 @@ const uploadItemImages = async () => {
 };
 const uploading = ref<boolean>(false);
 </script>
-<style></style>
-<!-- class="logo" -->
+<style>
+.list-new-item__list-image-preview {
+  width: calc(5 * (120px + 16px));
+  max-width: calc(5 * (120px + 16px));
+}
+
+.list-new-item__image-picker {
+  width: 120px;
+  height: 120px;
+  max-width: 120px;
+  max-height: 120px;
+  margin-bottom: 16px;
+}
+</style>

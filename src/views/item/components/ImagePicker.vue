@@ -60,7 +60,7 @@ const selectFile = () => {
   justify-content: space-around;
   gap: 10px;
   cursor: pointer;
-  height: 96px;
+  height: 100%;
   width: 100%;
   background-color: #fafafa;
   background-image: repeating-linear-gradient(
