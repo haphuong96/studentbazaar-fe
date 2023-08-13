@@ -367,16 +367,16 @@ const uploading = ref<boolean>(false);
 </script>
 <style>
 .list-new-item__list-image-preview {
-  width: calc(5 * (120px + 16px));
-  max-width: calc(5 * (120px + 16px));
+  width: calc(5 * (160px + 16px));
+  max-width: calc(5 * (160px + 16px));
 }
 
 .list-new-item__image-picker {
   margin-right: 16px;
-  width: 120px;
-  height: 120px;
-  max-width: 120px;
-  max-height: 120px;
+  width: 160px;
+  height: 160px;
+  max-width: 160px;
+  max-height: 160px;
   margin-bottom: 16px;
 }
 </style>

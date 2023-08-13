@@ -12,8 +12,8 @@
           :src="source"
           :key="index"
           alt="Selected Image"
-          :width="120"
-          :height="120"
+          :width="160"
+          :height="160"
         >
         </a-image>
         <CloseCircleFilled
@@ -43,7 +43,7 @@ const removeImage = (index: number) => {
 .list-image-preview-container {
   display: flex;
   flex-wrap: wrap;
-  height: 120px;
+  height: 160px;
   width: 100%;
   margin-top: 16px;
 }
@@ -81,7 +81,7 @@ const removeImage = (index: number) => {
 
 :deep(.ant-image > .ant-image-img) {
   object-fit: cover !important;
-  width: calc(120px - 2px);
-  height: calc(120px - 2px);
+  width: calc(160px - 2px);
+  height: calc(160px - 2px);
 }
 </style>
