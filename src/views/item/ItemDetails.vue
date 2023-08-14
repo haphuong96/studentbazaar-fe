@@ -116,7 +116,7 @@
 <script setup lang="ts">
 import { ComputedRef, computed, onMounted, ref } from "vue";
 import { ItemService } from "../../services/item.service";
-import { Item } from "../../interfaces/item.interface";
+import { Item, ItemCategory } from "../../interfaces/item.interface";
 import { Route, getCategoryPath } from "../../utils/get-category-path.util";
 // import { routeNames } from "../../router/route-names";
 import { formatFromNow } from "../../utils/datetime.util";
@@ -149,9 +149,15 @@ const itemStatuses = ref<SelectProps["options"]>([
 ]);
 
 const itemDetails = ref<Item>();
+const itemCategoryBreadCrumb = ref<ItemCategory>();
+
 const getItemDetails = async () => {
   try {
     itemDetails.value = await ItemService.getItemDetails(props.itemId);
+    itemCategoryBreadCrumb.value = await ItemService.getOneItemCategory({
+      id: itemDetails.value.category}
+    );
+
     itemStatus.value = itemDetails.value.status;
     console.log(itemStatus.value);
   } catch (err) {
@@ -184,7 +190,7 @@ const isOwner = computed(() => {
 });
 
 const routes: ComputedRef<Route[]> = computed(() => {
-  return getCategoryPath(itemDetails.value?.category);
+  return getCategoryPath(itemCategoryBreadCrumb.value);
 });
 
 const isPageLoading = ref<boolean>(true);
@@ -198,6 +204,6 @@ const messageModal = ref({
   messageToSeller: "",
 });
 
-const sendMessageToSeller = async() => {}
+const sendMessageToSeller = async () => {};
 </script>
 <style></style>

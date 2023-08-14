@@ -41,7 +41,7 @@ export interface UpdateItemDto {
 export interface Item {
   id: number;
   owner: User;
-  category: ItemCategory;
+  category: number | undefined;
   condition: ItemCondition;
   status: ItemStatus;
   itemName: string;
