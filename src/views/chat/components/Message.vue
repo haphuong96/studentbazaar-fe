@@ -1,12 +1,22 @@
 <template>
-  <div :class="['message', { dark }]">
-    <h5>{{ author }}</h5>
+  <div :class="['message']">
+    <h5>{{ author.username }}</h5>
     {{ text }}
   </div>
 </template>
 <script setup lang="ts">
-defineProps(['author', 'text', 'dark']);
+import { User } from "../../../interfaces/user.interface";
 
+defineProps({
+  author: {
+    type: Object as () => User,
+    required: true,
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+});
 </script>
 <style>
 .message {
@@ -21,6 +31,6 @@ defineProps(['author', 'text', 'dark']);
 }
 
 h5 {
-  margin: 0 0 .5rem 0;
+  margin: 0 0 0.5rem 0;
 }
 </style>

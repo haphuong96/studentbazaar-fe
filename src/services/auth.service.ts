@@ -4,6 +4,7 @@ import { University } from "../interfaces/market.interface";
 import { SignUpDto } from "../interfaces/signup.interface";
 import router from "../router";
 import { routeNames } from "../router/route-names";
+import { socket } from "../socket";
 import { axiosInstance, axiosInstanceLogin } from "./base.service";
 
 const checkEmailAddress = async (
@@ -65,8 +66,12 @@ const resendVerificationEmail = async (email: string): Promise<void> => {
 };
 
 const logOut = async () => {
-  axiosInstance.post("auth/logout");
+  await axiosInstance.post("auth/logout");
   localStorage.clear();
+
+  // disconnect socket
+  socket.disconnect();
+  
   router.push({ name: routeNames.LOGIN });
 };
 

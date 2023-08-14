@@ -3,8 +3,9 @@
   <div class="gallery-view-container">
     <div class="gallery-view-container__list-img">
       <img
-        class="gallery-view-container__list-img__item"  
-        v-for="(img, index) in sources" :key="index"
+        class="gallery-view-container__list-img__item"
+        v-for="(img, index) in sources"
+        :key="index"
         :src="img.thumbnailUrl"
         @click="selectPhoto = img.url"
       />
@@ -12,6 +13,8 @@
     <a-image
       :src="selectPhoto"
       class="gallery-view-container__preview-photo"
+      :width="488"
+      :height="400"
     ></a-image>
   </div>
 </template>
@@ -19,7 +22,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { GetItemImage } from "../interfaces/item.interface";
-
 
 interface GalleryViewProps {
   sources: GetItemImage[];
@@ -29,18 +31,17 @@ const props = defineProps<GalleryViewProps>();
 const selectPhoto = ref<string>(props.sources[0]?.url || "");
 watch(props, () => {
   selectPhoto.value = props.sources[0]?.url || "";
-  console.log("vap day ne");
 });
 </script>
 <style lang="css" scoped>
 .gallery-view-container {
-  border: 1px solid black;
   display: flex;
   width: 600px;
   height: 400px;
 }
 
 .gallery-view-container__preview-photo {
+  margin-left: 16px;
   width: calc(100% - 112px);
   height: 100%;
   object-fit: cover;
@@ -49,10 +50,22 @@ watch(props, () => {
 }
 
 .gallery-view-container__list-img {
+  margin-right: 16px;
   width: 96px;
   height: 100%;
   margin-bottom: 8px;
   overflow: scroll;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.gallery-view-container__list-img::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.gallery-view-container__list-img {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .gallery-view-container__list-img__item {

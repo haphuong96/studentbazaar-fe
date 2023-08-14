@@ -1,57 +1,59 @@
 <script setup lang="ts">
 // import ChatBox from './components/ChatBox.vue';
-import { computed, ref } from "vue";
-import { socket, state } from "../../socket";
+import {  onMounted, ref } from "vue";
+import { socket } from "../../socket";
+// import MessagePanel from "./MessagePanel.vue";
+import { User as IUser } from "../../interfaces/user.interface";
+import { Conversation, Message } from "../../interfaces/chat.interface";
+import { ChatService } from "../../services/inbox.service";
 import User from "./components/User.vue";
-import MessagePanel from "./components/MessagePanel.vue";
+import { UserService } from "../../services/user.service";
+import router from "../../router";
+import { routeNames } from "../../router/route-names";
 
-const connected = computed(() => state.value.connected);
-const displayUsers = ref();
-const selectedUser = ref();
+// const connected = computed(() => state.value.connected);
+const me = ref<IUser>();
+const conversations = ref<Conversation[]>();
 
-const onSelectUser = (user: any) => {
-  selectedUser.value = user;
-};
-
-socket.on("users", (users) => {
-  console.log("inside users event");
-  // find me
-  users.forEach((user: any) => {
-    user.self = user.userID === socket.id;
-    user.messages = [];
-  });
-
-  displayUsers.value = users;
-  console.log('users', users)
-  console.log('displayUsers', displayUsers.value);
+const selectedConversation = ref<{
+  id: number | undefined;
+  messages: Message[] | undefined;
+}>({
+  id: undefined,
+  messages: undefined,
 });
 
-socket.on("message", ({message, from}) => {
-  console.log({message, from})
-  displayUsers.value.forEach((user: any) => {
-    if (user.userID === from) {
-      user.messages.push({
-        message,
-        fromSelf: false,
-      });
-    }
-  });
-  console.log('users ', displayUsers.value)
-});
-
-const onSend = (input: any) => {
-  if (selectedUser.value) {
-    socket.emit("message", {
-      to: selectedUser.value.userID,
-      message: input,
-    });
-  }
-  selectedUser.value.messages.push({
-    message: input,
-    fromSelf: true,
+const onSelectConversation = async (conversation: Conversation) => {
+  selectedConversation.value.messages = await ChatService.getConversationById(
+    conversation.id
+  );
+  selectedConversation.value.id = conversation.id;
+  router.push({
+    name: routeNames.INBOX_CONVERSATION,
+    params: { conversationId: conversation.id },
   });
 };
 
+socket.on("message", (message : Message) => 
+{
+  console.log("inside message event");
+  console.log(message);
+  selectedConversation.value.messages?.push(message);
+}
+);
+
+const getConversations = async () => {
+  conversations.value = await ChatService.getMyConversations();
+};
+
+const getMyProfile = async () => {
+  me.value = await UserService.getMyProfile();
+};
+
+onMounted(() => {
+  getConversations();
+  getMyProfile();
+});
 </script>
 
 <template>
@@ -59,15 +61,19 @@ const onSend = (input: any) => {
   <div class="d-flex">
     <div class="left-panel">
       <User
-        v-for="user in displayUsers"
-        :key="user.userID"
-        :user="user"
-        :selected="selectedUser === user"
-        @select="onSelectUser(user)"
+        v-for="conversation in conversations"
+        :key="conversation.id"
+        :user="conversation.participants[0]"
+        :selected="selectedConversation.id === conversation.id"
+        @select="onSelectConversation(conversation)"
       />
     </div>
     <div class="right-panel">
-      <MessagePanel :user="selectedUser" @input="onSend" />
+      <router-view
+        :messages="selectedConversation.messages"
+        :me="me"
+      ></router-view>
+      <!-- <MessagePanel :messages="selectedConversation.messages" :me="me" @input="onSend" /> -->
     </div>
   </div>
 </template>

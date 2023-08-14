@@ -12,6 +12,7 @@ const getMyProfile = async (): Promise<User> => {
 
   const data: User = axiosRes.data;
 
+  localStorage.setItem(localStorageKeys.USER_ID, data.id.toString());
   localStorage.setItem(localStorageKeys.USER_FULLNAME, data.fullname);
   localStorage.setItem(localStorageKeys.USERNAME, data.username);
   localStorage.setItem(localStorageKeys.EMAIL_ADDRESS, data.emailAddress);
@@ -37,6 +38,7 @@ const updateMyProfile = async (updateUser: UpdateUserDto): Promise<User> => {
 
   const data: User = axiosRes.data;
 
+  localStorage.setItem(localStorageKeys.USER_ID, data.id.toString());
   localStorage.setItem(localStorageKeys.USER_FULLNAME, data.fullname);
   localStorage.setItem(localStorageKeys.USERNAME, data.username);
   localStorage.setItem(localStorageKeys.EMAIL_ADDRESS, data.emailAddress);

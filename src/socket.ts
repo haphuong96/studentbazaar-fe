@@ -17,7 +17,12 @@ export const socket = io(URL, {
   auth: {
     token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
   },
-  autoConnect: false,
+  // testing purpose for now
+  extraHeaders: {
+    "Authorization": `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
+  }
+
+  // autoConnect: true,
 });
 
 socket.on("connect", () => {
@@ -47,17 +52,6 @@ socket.on("exception", (response) => {
   }
 });
 
-socket.on("message", ({ message, from }) => {
-  console.log("inside message");
-  console.log({ message, from });
-
-  // displayUsers.value.forEach((user: any) => {
-  //   if (user.userID === from) {
-  //     user.messages.push(message);
-  //   }
-  // });
-});
-
-// socket.onAny((event, ...args) => {
-//     console.log(event, args)
-// })
+socket.onAny((event, ...args) => {
+    console.log(event, args)
+})

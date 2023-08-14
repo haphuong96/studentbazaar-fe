@@ -91,7 +91,7 @@ const login = async () => {
         );
       }
       //login successfully, connect to socket
-      socket.connect();
+      // socket.connect();
 
       router.push({ name: routeNames.MARKETPLACE_HOME });
     } catch (err) {

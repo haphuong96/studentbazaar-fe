@@ -86,15 +86,31 @@
         </a-descriptions-item>
       </a-descriptions>
       <div class="my-32" v-if="!isOwner">
-        <span> <a-button>Ask seller</a-button></span>
+        <span> <a-button @click="() => {}">Ask seller</a-button></span>
         <span class="ml-32"> <a-button>Add to Favorites</a-button></span>
       </div>
       <div class="my-32" v-else>
         <span> <a-button type="primary" ghost>Edit</a-button></span>
-        <span class="ml-16"> <a-button type="primary" danger>Delete</a-button></span>
+        <span class="ml-16">
+          <a-button type="primary" danger>Delete</a-button></span
+        >
       </div>
     </a-col>
   </a-row>
+  <a-modal
+    v-model:visible="messageModal.sendMessageModalVisible"
+    :title="`Send a message to ${itemDetails?.owner?.username}`"
+    :maskClosable="false"
+  >
+    <template #footer>
+      <a-button>Cancel</a-button>
+      <a-button @click="sendMessageToSeller">Send</a-button>
+    </template>
+    <a-textarea
+      v-model:value="messageModal.messageToSeller"
+      placeholder="Type your message to seller here..."
+    />
+  </a-modal>
 </template>
 
 <script setup lang="ts">
@@ -176,5 +192,12 @@ onMounted(async () => {
   await Promise.all([getItemDetails(), getMyProfile()]);
   isPageLoading.value = false;
 });
+
+const messageModal = ref({
+  sendMessageModalVisible: false,
+  messageToSeller: "",
+});
+
+const sendMessageToSeller = async() => {}
 </script>
 <style></style>

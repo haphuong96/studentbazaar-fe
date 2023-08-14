@@ -14,6 +14,7 @@ import MyPage from "../views/me/MyPage.vue";
 import MyProfile from "../views/me/MyProfile.vue";
 import MyItems from "../views/me/MyItems.vue";
 import UserProfile from "../views/me/UserProfile.vue";
+import MessagePanel from "../views/chat/MessagePanel.vue";
 import { emailSendGuard, globalGuard } from "./guards/auth.guard";
 import { layoutNames } from "./layout-names";
 import { routeNames } from "./route-names";
@@ -164,6 +165,14 @@ const router = createRouter({
       },
       name: routeNames.INBOX,
       component: Inbox,
+      children: [
+        {
+          path: ":conversationId",
+          name: routeNames.INBOX_CONVERSATION,
+          component: MessagePanel,
+          props: true,
+        }
+      ]
     },
     {
       path: "/user/:userId",
