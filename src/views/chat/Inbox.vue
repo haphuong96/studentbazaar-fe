@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import ChatBox from './components/ChatBox.vue';
-import {  onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { socket } from "../../socket";
 // import MessagePanel from "./MessagePanel.vue";
 import { User as IUser } from "../../interfaces/user.interface";
@@ -34,13 +34,11 @@ const onSelectConversation = async (conversation: Conversation) => {
   });
 };
 
-socket.on("message", (message : Message) => 
-{
+socket.on("message", (message: Message) => {
   console.log("inside message event");
   console.log(message);
   selectedConversation.value.messages?.push(message);
-}
-);
+});
 
 const getConversations = async () => {
   conversations.value = await ChatService.getMyConversations();
@@ -50,9 +48,11 @@ const getMyProfile = async () => {
   me.value = await UserService.getMyProfile();
 };
 
-onMounted(() => {
-  getConversations();
-  getMyProfile();
+onMounted(async () => {
+  await Promise.all([getConversations(), getMyProfile()]);
+  if (conversations.value?.length) {
+    onSelectConversation(conversations.value[0]);
+  }
 });
 </script>
 
@@ -63,7 +63,7 @@ onMounted(() => {
       <User
         v-for="conversation in conversations"
         :key="conversation.id"
-        :user="conversation.participants[0]"
+        :conversation="conversation"
         :selected="selectedConversation.id === conversation.id"
         @select="onSelectConversation(conversation)"
       />

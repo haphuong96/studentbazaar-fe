@@ -47,7 +47,7 @@ socket.on("disconnect", async (reason) => {
 // })
 
 socket.on("exception", (response) => {
-  if ((response.message = ErrorCode.UNAUTHORIZED)) {
+  if ((response === ErrorCode.UNAUTHORIZED)) {
     console.log("exception: ", response);
   }
 });

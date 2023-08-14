@@ -2,7 +2,10 @@
   <div class="user" @click="onClick" :class="{ selected: selected }">
     <div class="description">
       <div class="name">
-        {{ user?.username }} {{ user?.self ? " (yourself)" : "" }}
+        {{ conversation.participants[0].username }}
+      </div>
+      <div class="status">
+        {{ conversation.lastMessage?.[0].message }}
       </div>
       <!-- <div class="status">
         <status-icon :connected="user.connected" />{{ status }}
@@ -13,10 +16,17 @@
 </template>
 
 <script setup lang="ts">
+import { Conversation } from "../../../interfaces/chat.interface";
 
 defineProps({
-  user: Object,
-  selected: Boolean,
+  conversation: {
+    type: Object as () => Conversation,
+    required: true,
+  },
+  selected: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["select"]);
