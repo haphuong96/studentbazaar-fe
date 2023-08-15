@@ -32,7 +32,7 @@ const router = createRouter({
       name: routeNames.LOGIN,
       meta: {
         isAuthRoute: true,
-        layout: layoutNames.FULLSCREEN_LAYOUT,
+        layout: layoutNames.AUTH_LAYOUT,
       },
       component: LoginPage,
     },

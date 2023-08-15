@@ -1,12 +1,15 @@
 <template>
-  <div class="p-80 d-flex flex-col align-center login__container">
-    <h2>Login</h2>
+  <div class="p-80 d-flex flex-col align-center">
+    <div class="auth-page-title">Login</div>
     <div v-if="credentialsError" class="error-label">
       {{ credentialsError }}
     </div>
-    <a-form layout="vertical" :model="loginDto">
-      <a-form-item label="Username or email" name="Username or email">
+    <a-form class="login-form-container" layout="vertical" :model="loginDto">
+      <a-form-item>
+        <div class="input-label-base">Username or email</div>
         <a-input
+          class="input-base"
+          size="large"
           v-model:value="loginDto.usernameOrEmail"
           @change="
             () => {
@@ -16,8 +19,11 @@
         />
       </a-form-item>
 
-      <a-form-item label="Password" name="Password">
+      <a-form-item>
+        <div class="input-label-base">Password</div>
         <a-input-password
+          class="input-base"
+          size="large"
           v-model:value="loginDto.password"
           @change="
             () => {
@@ -32,14 +38,13 @@
       </a-form-item>
 
       <a-form-item>
-        <a-button type="primary" html-type="submit" @click="login"
-          >Submit</a-button
-        >
+        <button @click="login" class="button-base">Submit</button>
       </a-form-item>
     </a-form>
     <div>
       Don't have an account yet?
       <a
+        class="hyper-link"
         @click="
           () => {
             router.push({ name: routeNames.SIGNUP_ACCOUNT_DETAILS });
@@ -51,19 +56,18 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { AxiosError } from "axios";
 import { ref } from "vue";
 import {
   localStorageKeys,
   sessionStorageKeys,
 } from "../../common/storage-keys";
-import { UserService } from "../../services/user.service";
-import { routeNames } from "../../router/route-names";
-import router from "../../router";
-import { AxiosError } from "axios";
 import { LoginDto } from "../../interfaces/login.interface";
-import { AuthService } from "../../services/auth.service";
-import { socket } from "../../socket";
 import { User } from "../../interfaces/user.interface";
+import router from "../../router";
+import { routeNames } from "../../router/route-names";
+import { AuthService } from "../../services/auth.service";
+import { UserService } from "../../services/user.service";
 
 const loginDto = ref<LoginDto>({
   usernameOrEmail: "",
@@ -115,8 +119,7 @@ const login = async () => {
 };
 </script>
 <style>
-/* .login__container { */
-/* min-width: 450px;
-  max-width: 50%; */
-/* } */
+.login-form-container {
+  width: 400px;
+}
 </style>

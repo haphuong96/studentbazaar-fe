@@ -7,3 +7,40 @@
 .link {
     cursor: pointer;
 }
+
+.label-base {
+    color: #02015a;
+}
+
+.auth-page-title {
+    color: #02015a;
+    font-size: 48px;
+    font-weight: 600;
+}
+
+.hyper-link {
+    color: #563BFF;
+}
+
+.hyper-link:hover {
+    color: #563BFF;
+}
+
+.input-label-base {
+    font-size: 16px;
+    font-weight: 500;
+    color: #02015a;
+    margin-bottom: 8px;
+}
+
+.input-base {
+    color: #02015a;
+    border: 1px solid #02015a;
+    border-radius: 8px;
+}
+
+.input-base:hover {
+    color: #02015a;
+    border: 1px solid #02015a;
+    border-radius: 8px;
+}
