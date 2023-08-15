@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import ChatBox from './components/ChatBox.vue';
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { socket } from "../../socket";
 // import MessagePanel from "./MessagePanel.vue";
 import { User as IUser } from "../../interfaces/user.interface";
@@ -10,6 +10,10 @@ import User from "./components/User.vue";
 import { UserService } from "../../services/user.service";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
+import { RouteLocationNormalizedLoaded } from "vue-router";
+import { useRoute } from "vue-router";
+
+const route: RouteLocationNormalizedLoaded = useRoute();
 
 // const connected = computed(() => state.value.connected);
 const me = ref<IUser>();
@@ -23,14 +27,32 @@ const selectedConversation = ref<{
   messages: undefined,
 });
 
-const onSelectConversation = async (conversation: Conversation) => {
-  selectedConversation.value.messages = await ChatService.getConversationById(
-    conversation.id
-  );
-  selectedConversation.value.id = conversation.id;
+watch(
+  () => route.params.conversationId,
+  async () => {
+    if (route.params.conversationId) {
+      await setSelectedConversation();
+    }
+  }
+);
+
+const setSelectedConversation = async () => {
+  console.log("zo day");
+  selectedConversation.value.id = +route.params.conversationId;
+  selectedConversation.value.messages =
+    await ChatService.getConversationMessagesById(
+      selectedConversation.value.id
+    );
+};
+
+const onSelectConversation = async (conversationId: number) => {
+  // selectedConversation.value.messages = await ChatService.getConversationMessagesById(
+  //   conversation.id
+  // );
+  // selectedConversation.value.id = conversation.id;
   router.push({
     name: routeNames.INBOX_CONVERSATION,
-    params: { conversationId: conversation.id },
+    params: { conversationId },
   });
 };
 
@@ -49,9 +71,22 @@ const getMyProfile = async () => {
 };
 
 onMounted(async () => {
+  console.log("mounted ", selectedConversation.value.id);
   await Promise.all([getConversations(), getMyProfile()]);
-  if (conversations.value?.length) {
-    onSelectConversation(conversations.value[0]);
+
+  // if no conversation is selected, select the first conversation
+  if (conversations.value?.length && !route.params.conversationId) {
+    console.log('no conversation')
+    onSelectConversation(conversations.value[0].id);
+  } else if (route.params.conversationId) {
+    // check if it is a new conversation. If yes, add it to the list
+    const conversation: Conversation = await ChatService.getConversationById(
+      +route.params.conversationId
+    );
+    if (conversation?.isNew) {
+      conversations.value?.unshift(conversation);
+    }
+    await setSelectedConversation();
   }
 });
 </script>
@@ -65,7 +100,7 @@ onMounted(async () => {
         :key="conversation.id"
         :conversation="conversation"
         :selected="selectedConversation.id === conversation.id"
-        @select="onSelectConversation(conversation)"
+        @select="onSelectConversation(conversation.id)"
       />
     </div>
     <div class="right-panel">

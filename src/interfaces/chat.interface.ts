@@ -13,4 +13,5 @@ export interface Conversation {
   id: number;
   participants: User[];
   lastMessage?: Message[];
+  isNew?: boolean;
 }

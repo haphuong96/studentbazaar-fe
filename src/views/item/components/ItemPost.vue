@@ -1,5 +1,18 @@
 <template>
-  <div v-if="showOwner">{{ item.owner.username }}</div>
+  <div
+    v-if="showOwner"
+    @click="
+      () =>
+        router.push({
+          name: routeNames.USER_PROFILE,
+          params: {
+            userId: item.owner.id,
+          },
+        })
+    "
+  >
+  <span class="link">  {{ item.owner.username }} </span>
+  </div>
   <div
     class="link"
     @click="

@@ -23,12 +23,13 @@
   </a-row>
   <a-row class="py-16">
     <a-col :span="24">
-      <a-button :icon="h(MailOutlined)">Send a message</a-button>
+      <a-button :icon="h(MailOutlined)" @click="startConversation"
+        >Send a message</a-button
+      >
     </a-col>
   </a-row>
   <a-row>
-    <a-col :span="24"
-      >
+    <a-col :span="24">
       <p>{{ userProfile?.aboutMe }}</p>
     </a-col>
   </a-row>
@@ -52,6 +53,10 @@ import { User } from "../../interfaces/user.interface";
 import { EnvironmentFilled } from "@ant-design/icons-vue";
 import { GetItemsCursorBased } from "../../interfaces/item.interface";
 import { ItemService } from "../../services/item.service";
+import { Conversation } from "../../interfaces/chat.interface";
+import { ChatService } from "../../services/inbox.service";
+import router from "../../router";
+import { routeNames } from "../../router/route-names";
 
 const props = defineProps({
   userId: Number,
@@ -75,6 +80,20 @@ onMounted(() => {
   getUserProfile();
   getItemsByUser();
 });
+
+const startConversation = async () => {
+  if (props.userId) {
+    const conversation: Conversation =
+      await ChatService.getConversationByTargetUser(props.userId);
+    
+    router.push({
+      name: routeNames.INBOX_CONVERSATION,
+      params: {
+        conversationId: conversation.id,
+      },
+    })
+  }
+};
 </script>
 <style>
 .user-profile__avatar {
