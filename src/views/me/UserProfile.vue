@@ -45,18 +45,17 @@
   </a-row>
 </template>
 <script setup lang="ts">
-import { h, ref, onMounted } from "vue";
-import { MailOutlined, EllipsisOutlined } from "@ant-design/icons-vue";
-import ItemPost from "../item/components/ItemPost.vue";
-import { UserService } from "../../services/user.service";
-import { User } from "../../interfaces/user.interface";
-import { EnvironmentFilled } from "@ant-design/icons-vue";
-import { GetItemsCursorBased } from "../../interfaces/item.interface";
-import { ItemService } from "../../services/item.service";
+import { EnvironmentFilled, MailOutlined } from "@ant-design/icons-vue";
+import { h, onMounted, ref } from "vue";
 import { Conversation } from "../../interfaces/chat.interface";
-import { ChatService } from "../../services/inbox.service";
+import { GetItemsCursorBased } from "../../interfaces/item.interface";
+import { User } from "../../interfaces/user.interface";
 import router from "../../router";
 import { routeNames } from "../../router/route-names";
+import { ChatService } from "../../services/inbox.service";
+import { ItemService } from "../../services/item.service";
+import { UserService } from "../../services/user.service";
+import ItemPost from "../item/components/ItemPost.vue";
 
 const props = defineProps({
   userId: Number,
@@ -85,13 +84,13 @@ const startConversation = async () => {
   if (props.userId) {
     const conversation: Conversation =
       await ChatService.getConversationByTargetUser(props.userId);
-    
+
     router.push({
       name: routeNames.INBOX_CONVERSATION,
       params: {
         conversationId: conversation.id,
       },
-    })
+    });
   }
 };
 </script>

@@ -7,11 +7,7 @@
       <div class="status">
         {{ conversation.lastMessage?.[0].message }}
       </div>
-      <!-- <div class="status">
-        <status-icon :connected="user.connected" />{{ status }}
-      </div> -->
     </div>
-    <!-- <div v-if="user.hasNewMessages" class="new-messages">!</div> -->
   </div>
 </template>
 
@@ -32,27 +28,8 @@ defineProps({
 const emit = defineEmits(["select"]);
 
 const onClick = () => {
-    emit("select");
-}
-
-// export default {
-//   name: "User",
-//   components: { StatusIcon },
-//   props: {
-//     user: Object,
-//     selected: Boolean,
-//   },
-//   methods: {
-//     onClick() {
-//       this.$emit("select");
-//     },
-//   },
-//   computed: {
-//     status() {
-//       return this.user.connected ? "online" : "offline";
-//     },
-//   },
-// };
+  emit("select");
+};
 </script>
 
 <style scoped>
@@ -62,23 +39,27 @@ const onClick = () => {
 
 .user {
   padding: 10px;
+  height: 64px;
 }
 
 .description {
   display: inline-block;
+  color: black;
 }
 
-.status {
+.name {
   color: #92959e;
 }
 
-.new-messages {
+.status {
+  color: black;
+}
+
+.selected > .name {
   color: white;
-  background-color: red;
-  width: 20px;
-  border-radius: 5px;
-  text-align: center;
-  float: right;
-  margin-top: 10px;
+}
+
+.selected > .status {
+  color: #92959e;
 }
 </style>

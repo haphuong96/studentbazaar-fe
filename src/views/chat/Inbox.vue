@@ -17,7 +17,7 @@ const route: RouteLocationNormalizedLoaded = useRoute();
 
 // const connected = computed(() => state.value.connected);
 const me = ref<IUser>();
-const conversations = ref<Conversation[]>();
+const conversations = ref<Conversation[]>([]);
 
 const selectedConversation = ref<{
   id: number | undefined;
@@ -37,7 +37,6 @@ watch(
 );
 
 const setSelectedConversation = async () => {
-  console.log("zo day");
   selectedConversation.value.id = +route.params.conversationId;
   selectedConversation.value.messages =
     await ChatService.getConversationMessagesById(
@@ -60,6 +59,11 @@ socket.on("message", (message: Message) => {
   console.log("inside message event");
   console.log(message);
   selectedConversation.value.messages?.push(message);
+  conversations?.value?.forEach((c) => {
+    if (c.id === selectedConversation?.value?.id) {
+      c.lastMessage = [message];
+    }
+  });
 });
 
 const getConversations = async () => {
@@ -76,7 +80,6 @@ onMounted(async () => {
 
   // if no conversation is selected, select the first conversation
   if (conversations.value?.length && !route.params.conversationId) {
-    console.log('no conversation')
     onSelectConversation(conversations.value[0].id);
   } else if (route.params.conversationId) {
     // check if it is a new conversation. If yes, add it to the list
@@ -92,16 +95,18 @@ onMounted(async () => {
 </script>
 
 <template>
-  <h2>Inbox</h2>
-  <div class="d-flex">
+  <div class="d-flex inbox">
     <div class="left-panel">
-      <User
-        v-for="conversation in conversations"
-        :key="conversation.id"
-        :conversation="conversation"
-        :selected="selectedConversation.id === conversation.id"
-        @select="onSelectConversation(conversation.id)"
-      />
+      <h2 class="ml-16 my-16">Chat</h2>
+      <div class="inbox__list-user">
+        <User
+          v-for="conversation in conversations"
+          :key="conversation.id"
+          :conversation="conversation"
+          :selected="selectedConversation.id === conversation.id"
+          @select="onSelectConversation(conversation.id)"
+        />
+      </div>
     </div>
     <div class="right-panel">
       <router-view
@@ -113,6 +118,12 @@ onMounted(async () => {
   </div>
 </template>
 <style>
+.inbox {
+  border: 1px solid lightgray;
+}
+.inbox__list-user {
+  overflow: scroll;
+}
 .messages {
   background-color: bisque;
   flex-grow: 1;
@@ -121,19 +132,15 @@ onMounted(async () => {
 }
 
 .left-panel {
-  /* position: fixed; */
-  /* left: 0;
-  top: 0;
-  bottom: 0;
-  width: 260px; */
-  width: 30%;
-  overflow-x: hidden;
-  background-color: #3f0e40;
+  width: 280px;
+  overflow: hidden;
   color: white;
+  border-right: 1px solid lightgray;
 }
 
 .right-panel {
   /* margin-left: 260px; */
-  width: 70%;
+  width: calc(100% - 280px);
+  height: calc(100vh - 64px - 32px - 57px - 67px - 90px);
 }
 </style>

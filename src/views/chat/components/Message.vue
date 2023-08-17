@@ -1,11 +1,14 @@
 <template>
-  <div :class="['message']">
-    <h5>{{ author.username }}</h5>
-    {{ text }}
+  <div :class="[!isMine ? 'message' : 'mine-message']">
+    <div class="message-auth-name">{{ author.username }}</div>
+    <div>{{ text }}</div>
+    <div>{{ formatDate(time) }}</div>
   </div>
 </template>
 <script setup lang="ts">
 import { User } from "../../../interfaces/user.interface";
+
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 defineProps({
   author: {
@@ -16,7 +19,22 @@ defineProps({
     type: String,
     required: true,
   },
+  time: {
+    type: String,
+    required: true,
+  },
+  isMine: {
+    type: Boolean,
+    required: true,
+  },
 });
+
+const formatDate = (date: string) => {
+  return formatDistanceToNow(new Date(date), {
+    addSuffix: true,
+    includeSeconds: true,
+  });
+};
 </script>
 <style>
 .message {
@@ -24,6 +42,21 @@ defineProps({
   border-radius: 10px;
   padding: 1rem;
   width: fit-content;
+  margin-top: 8px;
+}
+
+.mine-message {
+  background: #1164a3;
+  color: white;
+  border-radius: 10px;
+  padding: 1rem;
+  width: fit-content;
+  margin-top: 8px;
+}
+
+.message-auth-name {
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .message.dark {
