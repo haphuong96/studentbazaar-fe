@@ -164,7 +164,7 @@ const applyFilterByLocation = async () => {
       </template>
       <div>
         <!-- d-flex justify-between mb-16 -->
-        <div>Campus Location</div>
+        <div class="mb-8">Campus Location</div>
         <a-select
           :value="locationModal.campusLocationSelect?.id"
           show-search
@@ -186,7 +186,7 @@ const applyFilterByLocation = async () => {
             {{ campus.campusName }}
           </a-select-option></a-select
         >
-        <div>University</div>
+        <div class="mb-8 mt-16">University</div>
         <a-select
           :value="locationModal.universitySelect?.id"
           show-search
@@ -203,7 +203,7 @@ const applyFilterByLocation = async () => {
       </div>
     </a-modal>
   </div>
-  <a-row :gutter="[16, 16]">
+  <a-row :gutter="[16, 16]" :wrap="true">
     <a-col :span="6" v-for="item in itemList.items" v-if="itemList">
       <ItemPost :item="item" />
     </a-col>

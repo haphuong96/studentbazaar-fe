@@ -123,16 +123,22 @@ const onPageChange = (page: number, pageSize: number) => {
     <search-outlined></search-outlined>
     Search results for keyword: {{ props.searchKeyword }}
   </div>
-  <a-row :gutter="[16, 16]">
-    <a-col :span="6" v-for="item in itemList.items" v-if="itemList">
-      <ItemPost :item="item"></ItemPost>
-    </a-col>
-    <a-pagination
-      v-model:pageSize="DEFAULT_PAGE_SIZE"
-      :total="itemList?.total"
-      @change="onPageChange"
-      class="my-16"
-    />
-  </a-row>
+  <div v-if="itemList && itemList.items.length">
+    <a-row :gutter="[16, 16]">
+      <a-col :span="6" v-for="item in itemList.items">
+        <ItemPost :item="item"></ItemPost>
+      </a-col>
+    </a-row>
+    <div class="my-32">
+      <a-pagination
+        v-model:pageSize="DEFAULT_PAGE_SIZE"
+        :total="itemList?.total"
+        @change="onPageChange"
+      />
+    </div>
+  </div>
+  <div v-else>
+    <a-empty></a-empty>
+  </div>
 </template>
 <style></style>

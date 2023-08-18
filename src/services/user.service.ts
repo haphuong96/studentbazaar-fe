@@ -2,6 +2,7 @@ import { localStorageKeys } from "../common/storage-keys";
 import {
   GetItemsCursorBased,
   GetItemsLimitOffset,
+  Item,
 } from "../interfaces/item.interface";
 import { University } from "../interfaces/market.interface";
 import { UpdateUserDto, User } from "../interfaces/user.interface";
@@ -69,6 +70,10 @@ const getMyItems = async (query?: {
   return (await axiosInstance.get("me/items", { params: { ...query } })).data;
 };
 
+const getMyFavoriteItems = async() : Promise<Item[]> => {
+  return (await axiosInstance.get("me/item-favorites")).data;
+}
+
 const getMyUniversity = async (): Promise<University> => {
   return (await axiosInstance.get("me/university")).data;
 };
@@ -79,4 +84,5 @@ export const UserService = {
   getUserProfile,
   getMyItems,
   getMyUniversity,
+  getMyFavoriteItems
 };

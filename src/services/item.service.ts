@@ -90,6 +90,11 @@ const uploadItemImages = async (form: FormData): Promise<ItemImage[]> => {
 
   return axiosRes.data;
 };
+
+const toggleFavorite = async(itemId: number) : Promise<Item> => {
+  return (await axiosInstance.post(`items/${itemId}/user_favorites/toggle`)).data;
+}
+
 export const ItemService = {
   getItems,
   getItemConditions,
@@ -99,4 +104,5 @@ export const ItemService = {
   updateItem,
   getItemDetails,
   uploadItemImages,
+  toggleFavorite
 };

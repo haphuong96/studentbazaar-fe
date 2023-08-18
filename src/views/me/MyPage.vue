@@ -1,5 +1,7 @@
 <template>
-  <a-layout style="padding: 24px 0px 48px 0px; background: #fff; min-height: 100vh">
+  <a-layout
+    style="padding: 24px 0px 48px 0px; background: #fff; min-height: 100vh"
+  >
     <a-layout-sider
       width="200"
       style="background: #fff"
@@ -19,7 +21,12 @@
           </div>
         </a-menu-item>
         <a-menu-item key="favorites">
-          <heart-outlined /><span> Favorites </span>
+          <div
+            class="link"
+            @click="() => router.push({ name: routeNames.MY_FAVORITES })"
+          >
+            <heart-outlined /><span> Favorites </span>
+          </div>
         </a-menu-item>
         <a-menu-item :key="routeNames.MY_PROFILE">
           <div
@@ -84,7 +91,7 @@ const toggleCollapsed = () => {
 
 onMounted(() => {
   selectedKeys.value = [route.name as string];
-})
+});
 </script>
 <style>
 /* #components-layout-demo-top-side .logo {

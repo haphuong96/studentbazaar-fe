@@ -78,7 +78,7 @@
           >
             <div>
               <!-- d-flex justify-between mb-16 -->
-              <div>Campus location</div>
+              <div class="mb-8">Campus location</div>
               <a-select
                 :value="modalSearch.campusLocation?.id"
                 show-search
@@ -96,7 +96,7 @@
                   {{ campus.campusName }}
                 </a-select-option>
               </a-select>
-              <div>University</div>
+              <div class="mb-8 mt-16">University</div>
               <a-select
                 :value="modalSearch.university?.id"
                 show-search
@@ -119,6 +119,7 @@
                 :data-source="deliveryLocation.deliveryLocationOptions"
                 item-layout="horizontal"
                 v-if="deliveryLocation.deliveryLocationOptions"
+                class="mt-32"
               >
                 <template #renderItem="{ item }">
                   <a-list-item

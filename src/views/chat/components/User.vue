@@ -4,7 +4,7 @@
       <div class="name">
         {{ conversation.participants[0].username }}
       </div>
-      <div class="status">
+      <div class="last-message">
         {{ conversation.lastMessage?.[0].message }}
       </div>
     </div>
@@ -48,18 +48,19 @@ const onClick = () => {
 }
 
 .name {
-  color: #92959e;
+  color: black;
+  font-weight: 600;
 }
 
-.status {
-  color: black;
+.last-message {
+  color: #92959e;
 }
 
 .selected > .name {
   color: white;
 }
 
-.selected > .status {
+.selected > .last-message {
   color: #92959e;
 }
 </style>

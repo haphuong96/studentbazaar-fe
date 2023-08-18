@@ -1,6 +1,6 @@
 <template>
   <!-- Your component's template -->
-  <div class="gallery-view-container">
+  <div v-if="sources.length" class="gallery-view-container">
     <div class="gallery-view-container__list-img">
       <img
         class="gallery-view-container__list-img__item"
@@ -16,6 +16,9 @@
       :width="488"
       :height="400"
     ></a-image>
+  </div>
+  <div v-else>
+    <a-empty description="No Image"/>
   </div>
 </template>
 

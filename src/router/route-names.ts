@@ -15,6 +15,7 @@ export const routeNames = {
     INBOX_CONVERSATION: "Inbox Conversation",
     MY_PROFILE: "My Profile",
     MY_ITEMS: "My Items",
+    MY_FAVORITES: "My Favorites",
     WELCOME_PAGE: "Welcome Page",
     USER_PROFILE: "User Profilee",
 }

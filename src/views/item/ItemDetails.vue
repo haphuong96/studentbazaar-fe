@@ -15,18 +15,9 @@
           >
         </span>
       </a-breadcrumb>
-
-      <!-- <div class="d-flex">
-        <div class="d-flex flex-col" v-for="img in itemDetails.img">
-          <a-image :src="img.imgPath" :width="100"></a-image>
-        </div>
-
-        <div>
-          <a-image :src="itemDetails.img[0].imgPath" :width="400">
-          </a-image>
-        </div>
-      </div> -->
-      <GalleryView :sources="itemDetails.img" />
+      <div class="my-16">
+        <GalleryView :sources="itemDetails.img" />
+      </div>
     </a-col>
     <a-col :span="12">
       <div class="d-flex align-center">
@@ -45,25 +36,8 @@
           v-if="isOwner"
         ></a-select>
       </div>
-      <div
-        class="d-flex py-16 link"
-        @click="
-          () =>
-            router.push({
-              name: routeNames.USER_PROFILE,
-              params: { userId: itemDetails?.owner.id },
-            })
-        "
-      >
-        <a-avatar></a-avatar>
-        <div class="pl-16">
-          <div>
-            {{ itemDetails.owner.username }}
-          </div>
-          <div>
-            {{ itemDetails.owner.university.universityName }}
-          </div>
-        </div>
+      <div class="py-16">
+        <UserInfo :user="itemDetails.owner" />
       </div>
       <div>{{ itemDetails.itemDescription }}</div>
       <a-divider />
@@ -87,7 +61,15 @@
       </a-descriptions>
       <div class="my-32" v-if="!isOwner">
         <span> <a-button @click="() => {}">Ask seller</a-button></span>
-        <span class="ml-32"> <a-button>Add to Favorites</a-button></span>
+        <span class="ml-32">
+          <a-button @click="toggleFavorite"
+            ><span v-if="!itemDetails.isFavorite">Add to Favorites</span>
+            <span v-else
+              ><heart-filled :style="{ color: 'red' }" /> Remove from
+              Favorites</span
+            >
+          </a-button></span
+        >
       </div>
       <div class="my-32" v-else>
         <span> <a-button type="primary" ghost>Edit</a-button></span>
@@ -123,12 +105,13 @@ import { formatFromNow } from "../../utils/datetime.util";
 
 import router from "../../router";
 import GalleryView from "../../components/GalleryView.vue";
-import { routeNames } from "../../router/route-names";
 import { EnvironmentFilled } from "@ant-design/icons-vue";
 import { User } from "../../interfaces/user.interface";
 import { UserService } from "../../services/user.service";
 import { SelectProps } from "ant-design-vue";
 import { ItemStatus } from "../../interfaces/item.interface";
+import { HeartFilled } from "@ant-design/icons-vue";
+import UserInfo from "./components/UserInfo.vue";
 
 const props = defineProps({
   itemId: Number,
@@ -155,8 +138,8 @@ const getItemDetails = async () => {
   try {
     itemDetails.value = await ItemService.getItemDetails(props.itemId);
     itemCategoryBreadCrumb.value = await ItemService.getOneItemCategory({
-      id: itemDetails.value.category}
-    );
+      id: itemDetails.value.category,
+    });
 
     itemStatus.value = itemDetails.value.status;
     console.log(itemStatus.value);
@@ -205,5 +188,13 @@ const messageModal = ref({
 });
 
 const sendMessageToSeller = async () => {};
+
+const toggleFavorite = async () => {
+  if (props.itemId) {
+    itemDetails.value = await ItemService.toggleFavorite(props.itemId);
+  }
+
+  console.log("fav ", itemDetails.value?.isFavorite);
+};
 </script>
 <style></style>

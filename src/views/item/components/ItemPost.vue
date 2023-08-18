@@ -1,38 +1,49 @@
 <template>
-  <div
-    v-if="showOwner"
-    @click="
-      () =>
-        router.push({
-          name: routeNames.USER_PROFILE,
-          params: {
-            userId: item.owner.id,
-          },
-        })
-    "
-  >
-  <span class="link">  {{ item.owner.username }} </span>
-  </div>
-  <div
-    class="link"
-    @click="
-      () =>
-        router.push({
-          name: routeNames.MARKETPLACE_ITEMS_ITEM_DETAILS,
-          params: { itemId: item.id },
-        })
-    "
-  >
-    <div class="py-16">
-      <img
-        v-if="item.img.length > 0"
-        :src="item.img[0].thumbnailUrl"
-        class="thumbnail"
+  <div class="mb-16">
+    <div v-if="showOwner">
+      <UserInfo
+        :user="item.owner"
+        :show-university="false"
+        :show-campus="false"
+        :show-avatar="false"
+        :space="8"
       />
-
-      <a-skeleton-image v-else></a-skeleton-image>
     </div>
-    <div>{{ item.itemName }}</div>
+    <div
+      class="link item-post-container"
+      @click="
+        () =>
+          router.push({
+            name: routeNames.MARKETPLACE_ITEMS_ITEM_DETAILS,
+            params: { itemId: item.id },
+          })
+      "
+    >
+      <div
+        :class="`${
+          item.img.length
+            ? 'thumbnail-container'
+            : 'thumbnail-container-skeleton'
+        } `"
+      >
+        <img
+          v-if="item.img.length"
+          :src="item.img[0].thumbnailUrl"
+          class="thumbnail-container_img"
+        />
+
+        <a-skeleton-image v-else></a-skeleton-image>
+      </div>
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          <span v-if="item.itemPrice">£{{ item.itemPrice }}</span>
+          <span v-else>Free</span>
+        </div>
+        <div><heart-outlined /> {{ item.favoriteCount }}</div>
+      </div>
+      <div></div>
+      <div>{{ item.itemName }}</div>
+    </div>
   </div>
 </template>
 
@@ -40,6 +51,8 @@
 import { Item } from "../../../interfaces/item.interface";
 import router from "../../../router";
 import { routeNames } from "../../../router/route-names";
+import UserInfo from "./UserInfo.vue";
+import { HeartOutlined } from "@ant-design/icons-vue";
 
 defineProps({
   item: {
@@ -53,9 +66,28 @@ defineProps({
 });
 </script>
 <style lang="css" scoped>
-.thumbnail {
-  width: 200px;
+.thumbnail-container_img {
+  width: 100%;
   height: 250px;
   object-fit: cover;
 }
+
+.thumbnail-container {
+  /* width: 200px; */
+  margin: 8px 0px;
+}
+
+.item-post-container {
+  max-width: 200px;
+}
+
+.thumbnail-container-skeleton {
+  height: 250px;
+  margin: 8px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d7d7d740;
+}
+
 </style>

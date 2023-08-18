@@ -51,6 +51,8 @@ export interface Item {
   lastUpdatedDatetime: string;
   location: PickUpLocation;
   img: GetItemImage[];
+  isFavorite?: boolean;
+  favoriteCount?: number;
 }
 
 export interface GetItems {

@@ -33,6 +33,9 @@
           <!-- <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
             ><tags-two-tone />
           </a> -->
+          <router-link :to="{ name: routeNames.MY_FAVORITES }"
+            ><heart-outlined
+          /></router-link>
           <a>
             <!-- #f56a00 -->
             <a-dropdown placement="bottomRight">
@@ -51,7 +54,9 @@
             </a-dropdown></a
           >
           <router-link :to="{ name: routeNames.LIST_ITEM }">
-            <a-button>Sell Now</a-button></router-link
+            <a-button
+              ><plus-outlined></plus-outlined> Sell Item</a-button
+            ></router-link
           >
         </div>
       </div>
@@ -92,11 +97,13 @@ import { computed, ComputedRef, ref, Ref, onMounted, watch } from "vue";
 import {
   BellOutlined,
   MessageOutlined,
+  HeartOutlined,
   // BellTwoTone,
   LeftOutlined,
   // MessageTwoTone,
   // TagsTwoTone,
   SearchOutlined,
+  PlusOutlined,
 } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";
 import router from "../router";

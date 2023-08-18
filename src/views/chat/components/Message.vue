@@ -1,14 +1,13 @@
 <template>
   <div :class="[!isMine ? 'message' : 'mine-message']">
-    <div class="message-auth-name">{{ author.username }}</div>
+    <!-- <div class="message-auth-name">{{ author.username }}</div> -->
     <div>{{ text }}</div>
-    <div>{{ formatDate(time) }}</div>
+    <!-- <div>{{ formatFromNow(time) }}</div> -->
   </div>
 </template>
 <script setup lang="ts">
 import { User } from "../../../interfaces/user.interface";
-
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
+// import { formatFromNow } from "../../../utils/datetime.util";
 
 defineProps({
   author: {
@@ -29,12 +28,6 @@ defineProps({
   },
 });
 
-const formatDate = (date: string) => {
-  return formatDistanceToNow(new Date(date), {
-    addSuffix: true,
-    includeSeconds: true,
-  });
-};
 </script>
 <style>
 .message {

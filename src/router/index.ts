@@ -13,6 +13,7 @@ import MarketplaceHome from "../views/item/MarketplaceHome.vue";
 import MyPage from "../views/me/MyPage.vue";
 import MyProfile from "../views/me/MyProfile.vue";
 import MyItems from "../views/me/MyItems.vue";
+import MyFavoriteItems from "../views/me/MyFavoriteItems.vue";
 import UserProfile from "../views/me/UserProfile.vue";
 import MessagePanel from "../views/chat/MessagePanel.vue";
 import { emailSendGuard, globalGuard } from "./guards/auth.guard";
@@ -154,6 +155,11 @@ const router = createRouter({
           path: "items",
           name: routeNames.MY_ITEMS,
           component: MyItems,
+        },
+        {
+          path: "favorites",
+          name: routeNames.MY_FAVORITES,
+          component: MyFavoriteItems,
         },
       ],
     },
