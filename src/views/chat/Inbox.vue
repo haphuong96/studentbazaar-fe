@@ -56,11 +56,16 @@ const onSelectConversation = async (conversationId: number) => {
 };
 
 socket.on("message", (message: Message) => {
-  console.log("inside message event");
-  console.log(message);
-  selectedConversation.value.messages?.push(message);
+  console.log(
+    "===========> ",
+    selectedConversation.value.id,
+    message.conversation.id
+  );
+  if (selectedConversation.value.id === message?.conversation?.id) {
+    selectedConversation.value.messages?.push(message);
+  }
   conversations?.value?.forEach((c) => {
-    if (c.id === selectedConversation?.value?.id) {
+    if (c.id === message?.conversation?.id) {
       c.lastMessage = [message];
     }
   });
