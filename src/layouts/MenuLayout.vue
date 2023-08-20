@@ -176,7 +176,7 @@ const onSearch = (value: string, _event: any) => {
 .menu-layout__router-container {
   background-color: white;
   padding: 24px;
-  min-height: calc(100vh - 64px - 100px - 48px - 5px);
+  min-height: calc(100vh - 64px - 100px - 48px - 10px);
 }
 /* 64px is header height */
 /* 100px is total margin top and bottom */

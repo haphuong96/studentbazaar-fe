@@ -113,16 +113,17 @@ onMounted(async () => {
         :messages="selectedConversation.messages"
         :me="me"
       ></router-view>
-      <!-- <MessagePanel :messages="selectedConversation.messages" :me="me" @input="onSend" /> -->
     </div>
   </div>
 </template>
 <style>
 .inbox {
   border: 1px solid lightgray;
+  height: 100%;
 }
 .inbox__list-user {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .messages {
   background-color: bisque;
@@ -141,6 +142,6 @@ onMounted(async () => {
 .right-panel {
   /* margin-left: 260px; */
   width: calc(100% - 280px);
-  height: calc(100vh - 64px - 32px - 57px - 67px - 90px);
+  height: calc(100vh - 64px - 32px - 57px - 67px - 56px);
 }
 </style>

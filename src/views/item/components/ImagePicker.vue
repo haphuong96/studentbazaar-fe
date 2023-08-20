@@ -24,7 +24,6 @@ onMounted(() => {
 
 const handleImageChange = (event: any) => {
   const files = event.target.files;
-  console.log("vao day", files.length);
   if (files?.length) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];

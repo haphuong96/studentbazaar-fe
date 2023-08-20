@@ -5,7 +5,7 @@ export interface Message {
   message: string;
   conversation: number;
   sender: User;
-  messageTypes: string;
+  messageType: string;
   createdDatetime: string;
 }
 

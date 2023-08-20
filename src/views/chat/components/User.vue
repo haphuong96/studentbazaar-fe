@@ -34,7 +34,7 @@ const onClick = () => {
 
 <style scoped>
 .selected {
-  background-color: #1164a3;
+  background-color: #e5efff;
 }
 
 .user {
@@ -54,6 +54,11 @@ const onClick = () => {
 
 .last-message {
   color: #92959e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: calc(100% - 10px);
+  max-width: calc(100% - 10px);
 }
 
 .selected > .name {
@@ -62,5 +67,10 @@ const onClick = () => {
 
 .selected > .last-message {
   color: #92959e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: calc(100% - 10px);
+  max-width: calc(100% - 10px);
 }
 </style>

@@ -1,3 +1,8 @@
 @import "./text.css";
 @import "./dimensions.css";
 @import "./layouts.css";
+
+/* override ant design */
+.ant-popover-inner-content {
+  padding: 0 !important;
+}

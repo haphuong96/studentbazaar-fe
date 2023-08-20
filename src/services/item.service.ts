@@ -81,7 +81,6 @@ const getItemDetails = async (itemId: number | undefined): Promise<Item> => {
 };
 
 const uploadItemImages = async (form: FormData): Promise<ItemImage[]> => {
-  console.log("form", form);
   const axiosRes = await axiosInstance.post("items/images", form, {
     headers: {
       "Content-Type": "multipart/form-data",

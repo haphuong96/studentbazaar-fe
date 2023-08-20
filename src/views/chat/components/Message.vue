@@ -1,13 +1,17 @@
 <template>
-  <div :class="[!isMine ? 'message' : 'mine-message']">
-    <!-- <div class="message-auth-name">{{ author.username }}</div> -->
-    <div>{{ text }}</div>
-    <!-- <div>{{ formatFromNow(time) }}</div> -->
+  <div
+    :class="[!isMine ? 'message' : 'mine-message']"
+    @click="isShowTime = true"
+  >
+    <a-image :height="160" :width="160" v-if="type === 'image'" :src="text"></a-image>
+    <div v-else>{{ text }}</div>
+    <div v-show="isShowTime">{{ formatFromNow(time) }}</div>
   </div>
 </template>
 <script setup lang="ts">
+import { ref } from "vue";
 import { User } from "../../../interfaces/user.interface";
-// import { formatFromNow } from "../../../utils/datetime.util";
+import { formatFromNow } from "../../../utils/datetime.util";
 
 defineProps({
   author: {
@@ -15,6 +19,10 @@ defineProps({
     required: true,
   },
   text: {
+    type: String,
+    required: true,
+  },
+  type: {
     type: String,
     required: true,
   },
@@ -28,8 +36,9 @@ defineProps({
   },
 });
 
+const isShowTime = ref<boolean>(false);
 </script>
-<style>
+<style lang="css" scoped>
 .message {
   background: #e7e7e7;
   border-radius: 10px;
@@ -39,8 +48,8 @@ defineProps({
 }
 
 .mine-message {
-  background: #1164a3;
-  color: white;
+  background: #e5efff;
+  color: black;
   border-radius: 10px;
   padding: 1rem;
   width: fit-content;
@@ -58,5 +67,16 @@ defineProps({
 
 h5 {
   margin: 0 0 0.5rem 0;
+}
+
+:deep(.ant-image) {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+}
+
+:deep(.ant-image > .ant-image-img) {
+  object-fit: cover !important;
+  width: calc(160px - 2px);
+  height: calc(160px - 2px);
 }
 </style>
