@@ -57,8 +57,6 @@ const onClick = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: calc(100% - 10px);
-  max-width: calc(100% - 10px);
 }
 
 .selected > .name {
@@ -70,7 +68,5 @@ const onClick = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: calc(100% - 10px);
-  max-width: calc(100% - 10px);
 }
 </style>

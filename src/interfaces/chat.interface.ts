@@ -3,7 +3,7 @@ import { User } from "./user.interface";
 export interface Message {
   id: number;
   message: string;
-  conversation: number;
+  conversation: Conversation;
   sender: User;
   messageType: string;
   createdDatetime: string;
