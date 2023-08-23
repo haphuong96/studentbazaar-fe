@@ -15,10 +15,10 @@
         {{ user.username }}
       </div>
       <div v-if="showUniversity">
-        {{ user.university.universityName }}
+        {{ user.university?.universityName }}
       </div>
       <div v-if="showCampus">
-        {{ user.campus.campusName }}
+        {{ user.campus?.campusName }}
       </div>
     </div>
   </div>

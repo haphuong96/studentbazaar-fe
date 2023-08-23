@@ -74,7 +74,9 @@
       <div class="my-32" v-else>
         <span> <a-button type="primary" ghost>Edit</a-button></span>
         <span class="ml-16">
-          <a-button type="primary" danger>Delete</a-button></span
+          <a-button type="primary" danger @click="deleteItem"
+            >Delete</a-button
+          ></span
         >
       </div>
     </a-col>
@@ -96,22 +98,26 @@
 </template>
 
 <script setup lang="ts">
-import { ComputedRef, computed, onMounted, ref } from "vue";
-import { ItemService } from "../../services/item.service";
+import { ComputedRef, computed, createVNode, onMounted, ref } from "vue";
 import { Item, ItemCategory } from "../../interfaces/item.interface";
+import { ItemService } from "../../services/item.service";
 import { Route, getCategoryPath } from "../../utils/get-category-path.util";
 // import { routeNames } from "../../router/route-names";
 import { formatFromNow } from "../../utils/datetime.util";
 
-import router from "../../router";
+import {
+  EnvironmentFilled,
+  HeartFilled,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons-vue";
+import { SelectProps, message } from "ant-design-vue";
 import GalleryView from "../../components/GalleryView.vue";
-import { EnvironmentFilled } from "@ant-design/icons-vue";
-import { User } from "../../interfaces/user.interface";
-import { UserService } from "../../services/user.service";
-import { SelectProps } from "ant-design-vue";
 import { ItemStatus } from "../../interfaces/item.interface";
-import { HeartFilled } from "@ant-design/icons-vue";
+import { User } from "../../interfaces/user.interface";
+import router from "../../router";
+import { UserService } from "../../services/user.service";
 import UserInfo from "./components/UserInfo.vue";
+import { Modal } from "ant-design-vue";
 
 const props = defineProps({
   itemId: Number,
@@ -142,7 +148,6 @@ const getItemDetails = async () => {
     });
 
     itemStatus.value = itemDetails.value.status;
-    console.log(itemStatus.value);
   } catch (err) {
     console.log(err);
   }
@@ -193,8 +198,35 @@ const toggleFavorite = async () => {
   if (props.itemId) {
     itemDetails.value = await ItemService.toggleFavorite(props.itemId);
   }
+};
 
-  console.log("fav ", itemDetails.value?.isFavorite);
+const deleteItem = async () => {
+  Modal.confirm({
+    title: "Delete Item",
+    icon: createVNode(ExclamationCircleOutlined),
+    content: "Are you sure delete this item?",
+    okText: "Yes",
+    okType: "danger",
+    cancelText: "No",
+    onOk() {
+      onDeleteItem();
+    },
+    onCancel() {
+      // console.log("Cancel");
+    },
+  });
+};
+
+const onDeleteItem = async () => {
+  if (props.itemId) {
+    try {
+      await ItemService.deleteItem(props.itemId);
+      message.success("Delete item successfully!");
+      router.go(-1);
+    } catch (error) {
+      message.success("Delete item failed!");
+    }
+  }
 };
 </script>
 <style></style>

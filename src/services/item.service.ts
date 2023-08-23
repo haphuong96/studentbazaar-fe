@@ -72,9 +72,12 @@ const uploadItem = async (item: CreateItemDto): Promise<void> => {
   await axiosInstance.post("items", item);
 };
 
-const updateItem = async (itemId: number | undefined, item: UpdateItemDto): Promise<Item> => {
+const updateItem = async (
+  itemId: number | undefined,
+  item: UpdateItemDto
+): Promise<Item> => {
   return (await axiosInstance.put(`items/${itemId}`, item)).data;
-}
+};
 
 const getItemDetails = async (itemId: number | undefined): Promise<Item> => {
   return (await axiosInstance.get(`items/${itemId}`)).data;
@@ -90,9 +93,14 @@ const uploadItemImages = async (form: FormData): Promise<ItemImage[]> => {
   return axiosRes.data;
 };
 
-const toggleFavorite = async(itemId: number) : Promise<Item> => {
-  return (await axiosInstance.post(`items/${itemId}/user_favorites/toggle`)).data;
-}
+const toggleFavorite = async (itemId: number): Promise<Item> => {
+  return (await axiosInstance.post(`items/${itemId}/user_favorites/toggle`))
+    .data;
+};
+
+const deleteItem = async (itemId: number): Promise<Item> => {
+  return (await axiosInstance.delete(`items/${itemId}`)).data;
+};
 
 export const ItemService = {
   getItems,
@@ -103,5 +111,6 @@ export const ItemService = {
   updateItem,
   getItemDetails,
   uploadItemImages,
-  toggleFavorite
+  toggleFavorite,
+  deleteItem,
 };
