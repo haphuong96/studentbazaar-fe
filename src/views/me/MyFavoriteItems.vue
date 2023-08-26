@@ -1,7 +1,7 @@
 <template>
   <h3>Favorites</h3>
   <!-- <div v-if="itemList?.length"> -->
-    <a-row :gutter="[16, 16]" v-if="itemList?.length">
+    <a-row :gutter="[48, 16]" v-if="itemList?.length">
       <a-col :span="6" v-for="item in itemList" v-if="itemList">
         <ItemPost :item="item" />
       </a-col>

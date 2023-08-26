@@ -148,13 +148,21 @@ const applyFilterByLocation = async () => {
       type="link"
       @click="showLocationModal"
       v-if="filter.campusLocation"
+      class="mb-16"
+      :style="{padding: '0px'}"
     >
       <environment-filled /><span>{{ filter.campusLocation?.campusName }} </span
       ><span v-if="filter.university">
         &nbsp;· {{ filter.university?.universityName }}</span
       ></a-button
     >
-    <a-modal
+  </div>
+  <a-row :gutter="[48, 16]" :wrap="true">
+    <a-col :span="6" v-for="item in itemList.items" v-if="itemList">
+      <ItemPost :item="item" />
+    </a-col>
+  </a-row>
+  <a-modal
       v-model:visible="locationModal.visible"
       title="Pick Up Location"
       :maskClosable="false"
@@ -202,12 +210,6 @@ const applyFilterByLocation = async () => {
         ></a-select>
       </div>
     </a-modal>
-  </div>
-  <a-row :gutter="[16, 16]" :wrap="true">
-    <a-col :span="6" v-for="item in itemList.items" v-if="itemList">
-      <ItemPost :item="item" />
-    </a-col>
-  </a-row>
 </template>
 <style></style>
 <!-- class="logo" -->

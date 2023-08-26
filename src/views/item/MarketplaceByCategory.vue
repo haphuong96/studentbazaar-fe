@@ -124,7 +124,7 @@ const onPageChange = (page: number, pageSize: number) => {
     Search results for keyword: {{ props.searchKeyword }}
   </div>
   <div v-if="itemList && itemList.items.length">
-    <a-row :gutter="[16, 16]">
+    <a-row :gutter="[48, 16]">
       <a-col :span="6" v-for="item in itemList.items">
         <ItemPost :item="item"></ItemPost>
       </a-col>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="d-flex link"
+    class="d-flex align-center link"
     @click="
       () =>
         router.push({
@@ -9,7 +9,9 @@
         })
     "
   >
-    <a-avatar v-if="showAvatar"></a-avatar>
+    <a-avatar v-if="showAvatar" :size="avatarSize">
+      <template #icon><UserOutlined /></template
+    ></a-avatar>
     <div :class="showAvatar ? `pl-${space}` : ''">
       <div>
         {{ user.username }}
@@ -28,6 +30,7 @@
 import { User } from "../../../interfaces/user.interface";
 import router from "../../../router";
 import { routeNames } from "../../../router/route-names";
+import { UserOutlined } from "@ant-design/icons-vue";
 
 defineProps({
   user: {
@@ -49,6 +52,10 @@ defineProps({
   space: {
     type: Number,
     default: 16,
+  },
+  avatarSize: {
+    type: String,
+    default: undefined,
   },
 });
 </script>

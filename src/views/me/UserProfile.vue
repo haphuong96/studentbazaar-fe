@@ -1,14 +1,17 @@
 <template>
   <a-row>
     <a-col :span="20">
-      <div class="d-flex" v-if="userProfile">
-        <img class="user-profile__avatar" />
+      <div class="d-flex align-center" v-if="userProfile">
+        <!-- <img class="user-profile__avatar" /> -->
+        <a-avatar :size="{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }">
+          <template #icon><UserOutlined /></template
+        ></a-avatar>
         <div class="user-profile__info">
           <span class="user-profile__name">{{ userProfile.username }}</span>
           <span class="user-profile__address">
             {{ userProfile.university.universityName }}</span
           >
-          <span
+          <span class="my-8"
             ><environment-filled></environment-filled>
             {{ userProfile.campus.campusName }}</span
           >
@@ -56,6 +59,7 @@ import { ChatService } from "../../services/inbox.service";
 import { ItemService } from "../../services/item.service";
 import { UserService } from "../../services/user.service";
 import ItemPost from "../item/components/ItemPost.vue";
+import { UserOutlined } from "@ant-design/icons-vue";
 
 const props = defineProps({
   userId: Number,
@@ -104,6 +108,7 @@ const startConversation = async () => {
 }
 
 .user-profile__info {
+  margin-left: 32px;
   display: grid;
 }
 

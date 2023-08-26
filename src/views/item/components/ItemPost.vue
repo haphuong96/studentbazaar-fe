@@ -5,8 +5,9 @@
         :user="item.owner"
         :show-university="false"
         :show-campus="false"
-        :show-avatar="false"
+        :show-avatar="true"
         :space="8"
+        avatar-size='small'
       />
     </div>
     <div
@@ -39,7 +40,11 @@
           <span v-if="item.itemPrice">£{{ item.itemPrice }}</span>
           <span v-else>Free</span>
         </div>
-        <div><heart-outlined /> {{ item.favoriteCount }}</div>
+        <div>
+          <!-- <heart-outlined /> -->
+          <heart-two-tone two-tone-color="#eb2f96" />
+          {{ item.favoriteCount }}
+        </div>
       </div>
       <div></div>
       <div>{{ item.itemName }}</div>
@@ -52,7 +57,7 @@ import { Item } from "../../../interfaces/item.interface";
 import router from "../../../router";
 import { routeNames } from "../../../router/route-names";
 import UserInfo from "./UserInfo.vue";
-import { HeartOutlined } from "@ant-design/icons-vue";
+import { HeartOutlined, HeartTwoTone } from "@ant-design/icons-vue";
 
 defineProps({
   item: {
@@ -78,7 +83,8 @@ defineProps({
 }
 
 .item-post-container {
-  max-width: 200px;
+  /* max-width: 200px; */
+  width: 100%;
 }
 
 .thumbnail-container-skeleton {
@@ -89,5 +95,4 @@ defineProps({
   justify-content: center;
   background-color: #d7d7d740;
 }
-
 </style>

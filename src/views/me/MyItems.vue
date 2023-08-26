@@ -1,6 +1,6 @@
 <template>
   <h3>Listed recently</h3>
-  <a-row :gutter="[16, 16]">
+  <a-row :gutter="[48, 16]">
     <a-col :span="6">
       <div class="py-16">
         <a-button
@@ -43,7 +43,7 @@ onMounted(() => {
 </script>
 <style>
 .ant-btn.ant-btn-dashed.ant-btn-block {
-  width: 200px;
+  width: 100%;
   height: 250px;
 }
 </style>

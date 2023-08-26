@@ -39,8 +39,9 @@
           <a>
             <!-- #f56a00 -->
             <a-dropdown placement="bottomRight">
+              <!-- #f56a00 -->
               <router-link :to="{ name: routeNames.MY_PROFILE }">
-                <a-avatar style="color: #f56a00; background-color: #fde3cf">{{
+                <a-avatar style="color: #D6763C; background-color: #fde3cf">{{
                   userFullname?.charAt(0).toUpperCase()
                 }}</a-avatar></router-link
               >
@@ -170,12 +171,13 @@ const onSearch = (value: string, _event: any) => {
 }
 
 .menu-layout__a-layout-content {
-  padding: 0 50px 50px 50px;
+  background-color: white;
+  padding: 24px 74px 74px 74px;
   overflow: scroll;
 }
 .menu-layout__router-container {
   background-color: white;
-  padding: 24px;
+  /* padding: 24px; */
   min-height: calc(100vh - 64px - 100px - 48px - 10px);
 }
 /* 64px is header height */
@@ -186,7 +188,8 @@ const onSearch = (value: string, _event: any) => {
 .header-menu > a {
   margin-left: 15px;
   font-size: 20px;
-  color: #f56a00;
+  color: #D6763C;
+  /* #f56a00; */
 }
 
 .logo {
@@ -203,11 +206,17 @@ const onSearch = (value: string, _event: any) => {
 
 .nav-bar-header {
   background-color: #fff;
+  padding: 0px 74px;
+  /* margin: 24px 0px */
 }
 
 .item-category {
-  padding: 0px 50px;
-  background-color: #333;
+  padding: 0px 74px;
+  background-color: #f0f2f5;
+  border-top: solid 0.5px gainsboro;
+  border-bottom: solid 0.5px gainsboro;
+  /* #5b9397; */
+  /* #f7f8fa; */
 }
 
 .item-category > ul {
@@ -223,14 +232,16 @@ const onSearch = (value: string, _event: any) => {
 
 .item-category li a {
   display: block;
-  color: white;
+  color: #2d5377;
+  /* white; */
   text-align: center;
   padding: 5px 16px;
   text-decoration: none;
+  font-weight: 400;
 }
 
 /* Change the link color to #111 (black) on hover */
 .item-category li a:hover {
-  background-color: #111;
+  background-color: #67918d40;
 }
 </style>
