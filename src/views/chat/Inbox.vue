@@ -56,11 +56,6 @@ const onSelectConversation = async (conversationId: number) => {
 };
 
 socket.on("message", (message: Message) => {
-  console.log(
-    "===========> ",
-    selectedConversation.value.id,
-    message.conversation.id
-  );
   if (selectedConversation.value.id === message?.conversation?.id) {
     selectedConversation.value.messages?.push(message);
   }
@@ -147,6 +142,6 @@ onMounted(async () => {
 .right-panel {
   /* margin-left: 260px; */
   width: calc(100% - 280px);
-  height: calc(100vh - 64px - 32px - 57px - 67px - 56px);
+  height: calc(100vh - 64px - 57px - 67px - 56px);
 }
 </style>

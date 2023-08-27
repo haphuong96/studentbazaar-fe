@@ -137,6 +137,7 @@ const scrollToBottom = () => {
   setTimeout(() => {
     messageContainer.scrollTop = messageContainer.scrollHeight;
   }, 100);
+  messageContainer.scrollIntoView({ behavior: "smooth", block: "end" });
 };
 
 const viewUserProfile = () => {

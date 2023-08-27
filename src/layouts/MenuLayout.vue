@@ -1,12 +1,57 @@
 <template>
   <a-layout class="layout menu-layout-container">
-    <!-- <div :style="{ position: 'fixed', zIndex: 1, width: '100%'}"> -->
     <a-layout-header class="nav-bar-header">
       <div class="d-flex">
         <a @click="() => router.push({ name: routeNames.MARKETPLACE_HOME })">
           <img src="@/assets/logo.png" alt="logo" class="logo" />
         </a>
         <div class="d-flex flex-grow-1 align-center">
+          <a-popover
+            placement="bottomLeft"
+            v-model:visible="visible"
+            trigger="click"
+          >
+            <template #content>
+              <div class="item-category-filter-modal__content-container">
+                <div
+                  :class="[
+                    category.id === searchInCategory?.id
+                      ? 'item-category-filter-modal__category-block__selected'
+                      : 'item-category-filter-modal__category-block',
+                    'mt-16',
+                  ]"
+                  v-for="category in itemCategories"
+                  :key="category.path"
+                  @click="onSelectCategory(category.path)"
+                >
+                  <span>{{ category.categoryName }}</span>
+                  <CaretRightOutlined
+                    v-if="category.children?.length"
+                    class="ml-8"
+                    :style="{ fontSize: '12px' }"
+                  ></CaretRightOutlined>
+                  <div
+                    v-if="category?.children?.length"
+                    v-for="subCategory in category?.children"
+                    :key="subCategory.path"
+                    :class="[
+                      'ml-16',
+                      'mt-8',
+                      subCategory.id === searchInCategory?.id
+                        ? 'item-category-filter-modal__category-block__selected'
+                        : 'item-category-filter-modal__category-block',
+                    ]"
+                    @click="onSelectCategory(subCategory.path)"
+                  >
+                    {{ subCategory.categoryName }}
+                  </div>
+                </div>
+              </div>
+            </template>
+            <a-button class="mr-16" size="large" :icon="h(CaretDownOutlined)"
+              >Filter by category</a-button
+            >
+          </a-popover>
           <a-input-search
             v-model:value="searchKeyword"
             :placeholder="
@@ -30,18 +75,13 @@
           <router-link :to="{ name: routeNames.INBOX }"
             ><message-outlined
           /></router-link>
-          <!-- <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
-            ><tags-two-tone />
-          </a> -->
           <router-link :to="{ name: routeNames.MY_FAVORITES }"
             ><heart-outlined
           /></router-link>
           <a>
-            <!-- #f56a00 -->
             <a-dropdown placement="bottomRight">
-              <!-- #f56a00 -->
               <router-link :to="{ name: routeNames.MY_PROFILE }">
-                <a-avatar style="color: #D6763C; background-color: #fde3cf">{{
+                <a-avatar style="color: #d6763c; background-color: #fde3cf">{{
                   userFullname?.charAt(0).toUpperCase()
                 }}</a-avatar></router-link
               >
@@ -62,19 +102,7 @@
         </div>
       </div>
     </a-layout-header>
-    <div class="item-category">
-      <ul>
-        <li v-for="category in itemCategories" :key="category.path">
-          <router-link
-            :to="{
-              name: routeNames.MARKETPLACE_BY_CATEGORY,
-              params: { categoryPath: category.path },
-            }"
-            >{{ category.categoryName }}</router-link
-          >
-        </li>
-      </ul>
-    </div>
+
     <a-layout-content class="menu-layout__a-layout-content">
       <div>
         <div
@@ -94,28 +122,27 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ComputedRef, ref, Ref, onMounted, watch } from "vue";
 import {
   BellOutlined,
-  MessageOutlined,
   HeartOutlined,
-  // BellTwoTone,
   LeftOutlined,
-  // MessageTwoTone,
-  // TagsTwoTone,
-  SearchOutlined,
+  MessageOutlined,
   PlusOutlined,
+  SearchOutlined,
+  CaretDownOutlined,
+  CaretRightOutlined,
 } from "@ant-design/icons-vue";
-import { routeNames } from "../router/route-names";
-import router from "../router";
+import { ComputedRef, Ref, computed, onMounted, ref, watch, h } from "vue";
 import { useRoute } from "vue-router";
 import { localStorageKeys } from "../common/storage-keys";
-import { AuthService } from "../services/auth.service";
 import { ItemCategory } from "../interfaces/item.interface";
+import router from "../router";
+import { routeNames } from "../router/route-names";
+import { AuthService } from "../services/auth.service";
 import { ItemService } from "../services/item.service";
-// import { MenuProps } from "ant-design-vue";
 
 const route = useRoute();
+const visible = ref<boolean>(false);
 const pageTitle: ComputedRef<string | undefined> | any = computed(() => {
   return route.meta.pageTitle || "";
 });
@@ -164,6 +191,15 @@ const onSearch = (value: string, _event: any) => {
     query: { q: value, category: searchInCategory.value?.id },
   });
 };
+
+const onSelectCategory = (path: string): void => {
+  visible.value = false;
+
+  router.push({
+    name: routeNames.MARKETPLACE_BY_CATEGORY,
+    params: { categoryPath: path },
+  });
+};
 </script>
 <style scoped>
 .menu-layout-container {
@@ -178,7 +214,7 @@ const onSearch = (value: string, _event: any) => {
 .menu-layout__router-container {
   background-color: white;
   /* padding: 24px; */
-  min-height: calc(100vh - 64px - 100px - 48px - 10px);
+  min-height: calc(100vh - 64px - 100px - 48px - 10px - 12px);
 }
 /* 64px is header height */
 /* 100px is total margin top and bottom */
@@ -188,7 +224,7 @@ const onSearch = (value: string, _event: any) => {
 .header-menu > a {
   margin-left: 15px;
   font-size: 20px;
-  color: #D6763C;
+  color: #d6763c;
   /* #f56a00; */
 }
 
@@ -242,6 +278,67 @@ const onSearch = (value: string, _event: any) => {
 
 /* Change the link color to #111 (black) on hover */
 .item-category li a:hover {
+  background-color: #67918d40;
+}
+
+/* item category modal*/
+.item-category-filter-modal__content-container {
+  max-width: 720px;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 32px;
+}
+
+.item-category-filter-modal__category-block {
+  width: 50%;
+  height: auto;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d5377;
+  cursor: pointer;
+}
+
+.item-category-filter-modal__category-block__selected {
+  width: 50%;
+  height: auto;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1890ff;
+  cursor: pointer;
+}
+.item-category-filter-modal__category-block :hover {
+  color: #1890ff;
+}
+
+.item-category-filter-modal__category-block > span {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.item-category-filter-modal__category-block__seleted > span {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.item-category-filter-modal__content-container > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.item-category-filter-modal__content-container li {
+  float: left;
+  height: 32px;
+}
+.item-category-filter-modal__content-container li a {
+  display: block;
+  color: #2d5377;
+  text-align: center;
+  padding: 5px 16px;
+  text-decoration: none;
+  font-weight: 400;
+}
+.item-category-filter-modal__content-container li a:hover {
   background-color: #67918d40;
 }
 </style>
