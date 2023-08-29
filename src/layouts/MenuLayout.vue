@@ -1,7 +1,7 @@
 <template>
   <a-layout class="layout menu-layout-container">
     <a-layout-header class="nav-bar-header">
-      <div class="d-flex">
+      <div class="nav-container">
         <a @click="() => router.push({ name: routeNames.MARKETPLACE_HOME })">
           <img src="@/assets/logo.png" alt="logo" class="logo" />
         </a>
@@ -22,9 +22,10 @@
                   ]"
                   v-for="category in itemCategories"
                   :key="category.path"
-                  @click="onSelectCategory(category.path)"
                 >
-                  <span>{{ category.categoryName }}</span>
+                  <span @click="onSelectCategory(category.path)">{{
+                    category.categoryName
+                  }}</span>
                   <CaretRightOutlined
                     v-if="category.children?.length"
                     class="ml-8"
@@ -38,8 +39,8 @@
                       'ml-16',
                       'mt-8',
                       subCategory.id === searchInCategory?.id
-                        ? 'item-category-filter-modal__category-block__selected'
-                        : 'item-category-filter-modal__category-block',
+                        ? 'item-sub-category-filter-modal__category-block__selected'
+                        : 'item-sub-category-filter-modal__category-block',
                     ]"
                     @click="onSelectCategory(subCategory.path)"
                   >
@@ -48,8 +49,12 @@
                 </div>
               </div>
             </template>
-            <a-button class="mr-16" size="large" :icon="h(CaretDownOutlined)"
-              >Filter by category</a-button
+            <a-button
+              class="mr-16"
+              size="large"
+              :icon="h(CaretDownOutlined)"
+              type="link"
+              >Browse by category</a-button
             >
           </a-popover>
           <a-input-search
@@ -63,10 +68,18 @@
             @search="onSearch"
           >
             <template #prefix>
-              <search-outlined />
+              <search-outlined class="mx-16" />
             </template>
             <template #enterButton>
-              <a-button>Search</a-button>
+              <a-button
+                style="
+                  padding-left: 32px;
+                  padding-right: 32px;
+                  height: 48px;
+                  color: black;
+                "
+                >Search</a-button
+              >
             </template>
           </a-input-search>
         </div>
@@ -96,6 +109,8 @@
           >
           <router-link :to="{ name: routeNames.LIST_ITEM }">
             <a-button
+              size="large"
+              style="height: 48px"
               ><plus-outlined></plus-outlined> Sell Item</a-button
             ></router-link
           >
@@ -124,15 +139,15 @@
 <script lang="ts" setup>
 import {
   BellOutlined,
+  CaretDownOutlined,
+  CaretRightOutlined,
   HeartOutlined,
   LeftOutlined,
   MessageOutlined,
   PlusOutlined,
   SearchOutlined,
-  CaretDownOutlined,
-  CaretRightOutlined,
 } from "@ant-design/icons-vue";
-import { ComputedRef, Ref, computed, onMounted, ref, watch, h } from "vue";
+import { ComputedRef, Ref, computed, h, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { localStorageKeys } from "../common/storage-keys";
 import { ItemCategory } from "../interfaces/item.interface";
@@ -194,7 +209,6 @@ const onSearch = (value: string, _event: any) => {
 
 const onSelectCategory = (path: string): void => {
   visible.value = false;
-
   router.push({
     name: routeNames.MARKETPLACE_BY_CATEGORY,
     params: { categoryPath: path },
@@ -214,7 +228,7 @@ const onSelectCategory = (path: string): void => {
 .menu-layout__router-container {
   background-color: white;
   /* padding: 24px; */
-  min-height: calc(100vh - 64px - 100px - 48px - 10px - 12px);
+  min-height: calc(100vh - 80px - 100px - 48px - 10px - 12px);
 }
 /* 64px is header height */
 /* 100px is total margin top and bottom */
@@ -241,9 +255,18 @@ const onSelectCategory = (path: string): void => {
 }
 
 .nav-bar-header {
+  height: 80px;
   background-color: #fff;
   padding: 0px 74px;
   /* margin: 24px 0px */
+  border-bottom: 1px solid lightgray;
+}
+
+.nav-container {
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .item-category {
@@ -306,7 +329,30 @@ const onSelectCategory = (path: string): void => {
   color: #1890ff;
   cursor: pointer;
 }
+
+.item-sub-category-filter-modal__category-block {
+  width: 50%;
+  height: auto;
+  font-size: 14px;
+  font-weight: 400;
+  color: #2d5377;
+  cursor: pointer;
+}
+
+.item-sub-category-filter-modal__category-block__selected {
+  width: 50%;
+  height: auto;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1890ff;
+  cursor: pointer;
+}
+
 .item-category-filter-modal__category-block :hover {
+  color: #1890ff;
+}
+
+.item-sub-category-filter-modal__category-block:hover {
   color: #1890ff;
 }
 
@@ -340,5 +386,9 @@ const onSelectCategory = (path: string): void => {
 }
 .item-category-filter-modal__content-container li a:hover {
   background-color: #67918d40;
+}
+
+:deep(.ant-input-group .ant-input-affix-wrapper:not(:last-child)) {
+  height: 48px;
 }
 </style>
