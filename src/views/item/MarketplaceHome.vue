@@ -149,7 +149,7 @@ const applyFilterByLocation = async () => {
       @click="showLocationModal"
       v-if="filter.campusLocation"
       class="mb-16"
-      :style="{padding: '0px'}"
+      :style="{ padding: '0px' }"
     >
       <environment-filled /><span>{{ filter.campusLocation?.campusName }} </span
       ><span v-if="filter.university">
@@ -157,59 +157,68 @@ const applyFilterByLocation = async () => {
       ></a-button
     >
   </div>
-  <a-row :gutter="[48, 16]" :wrap="true">
-    <a-col :span="6" v-for="item in itemList.items" v-if="itemList">
+  <a-row :gutter="[48, 48]" :wrap="true">
+    <a-col
+      :xs="24"
+      :sm="12"
+      :md="8"
+      :lg="8"
+      :xl="6"
+      :xxl="4"
+      v-for="item in itemList.items"
+      v-if="itemList"
+    >
       <ItemPost :item="item" />
     </a-col>
   </a-row>
   <a-modal
-      v-model:visible="locationModal.visible"
-      title="Pick Up Location"
-      :maskClosable="false"
-    >
-      <template #footer>
-        <a-button @click="applyFilterByLocation">Apply</a-button>
-      </template>
-      <div>
-        <!-- d-flex justify-between mb-16 -->
-        <div class="mb-8">Campus Location</div>
-        <a-select
-          :value="locationModal.campusLocationSelect?.id"
-          show-search
-          placeholder="Select a campus location"
-          style="width: 200px"
-          :filter-option="true"
-          :fieldNames="{
-            label: 'campusName',
-            value: 'id',
-          }"
-          :options="locationModal.campusLocationOptions"
-          @change="selectCampusLocation"
+    v-model:visible="locationModal.visible"
+    title="Pick Up Location"
+    :maskClosable="false"
+  >
+    <template #footer>
+      <a-button @click="applyFilterByLocation">Apply</a-button>
+    </template>
+    <div>
+      <!-- d-flex justify-between mb-16 -->
+      <div class="mb-8">Campus Location</div>
+      <a-select
+        :value="locationModal.campusLocationSelect?.id"
+        show-search
+        placeholder="Select a campus location"
+        style="width: 200px"
+        :filter-option="true"
+        :fieldNames="{
+          label: 'campusName',
+          value: 'id',
+        }"
+        :options="locationModal.campusLocationOptions"
+        @change="selectCampusLocation"
+      >
+        <a-select-option
+          v-for="campus in locationModal.campusLocationOptions"
+          :key="campus.id"
+          :value="campus.id"
         >
-          <a-select-option
-            v-for="campus in locationModal.campusLocationOptions"
-            :key="campus.id"
-            :value="campus.id"
-          >
-            {{ campus.campusName }}
-          </a-select-option></a-select
-        >
-        <div class="mb-8 mt-16">University</div>
-        <a-select
-          :value="locationModal.universitySelect?.id"
-          show-search
-          placeholder="[All Universities]"
-          style="width: 200px"
-          :fieldNames="{
-            label: 'universityName',
-            value: 'id',
-          }"
-          :options="locationModal.universityOptions"
-          :allow-clear="true"
-          @change="selectUniversity"
-        ></a-select>
-      </div>
-    </a-modal>
+          {{ campus.campusName }}
+        </a-select-option></a-select
+      >
+      <div class="mb-8 mt-16">University</div>
+      <a-select
+        :value="locationModal.universitySelect?.id"
+        show-search
+        placeholder="[All Universities]"
+        style="width: 200px"
+        :fieldNames="{
+          label: 'universityName',
+          value: 'id',
+        }"
+        :options="locationModal.universityOptions"
+        :allow-clear="true"
+        @change="selectUniversity"
+      ></a-select>
+    </div>
+  </a-modal>
 </template>
 <style></style>
 <!-- class="logo" -->

@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-16">
+  <div>
     <div v-if="showOwner">
       <UserInfo
         :user="item.owner"

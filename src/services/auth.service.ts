@@ -8,12 +8,10 @@ import { socket } from "../socket";
 import { axiosInstance, axiosInstanceLogin } from "./base.service";
 
 const checkEmailAddress = async (
-  emailAddress: string | undefined
+  email: string | undefined
 ): Promise<University> => {
-  const axiosRes = await axiosInstance.get("auth/signup", {
-    params: {
-      email: emailAddress,
-    },
+  const axiosRes = await axiosInstance.post("auth/email/validate", {
+    email,
   });
 
   const data: University = axiosRes.data;
@@ -28,7 +26,7 @@ const login = async (
     ...loginDto,
   });
 
-  const data : {accessToken: string, refreshToken: string} = axiosRes.data;
+  const data: { accessToken: string; refreshToken: string } = axiosRes.data;
 
   // if successful, store tokens in local storage
   localStorage.setItem(localStorageKeys.ACCESS_TOKEN, data.accessToken);
@@ -71,14 +69,12 @@ const logOut = async () => {
 
   // disconnect socket
   socket.disconnect();
-  
+
   router.push({ name: routeNames.LOGIN });
 };
 
-const refreshToken = async () : Promise<boolean> => {
-  const refreshToken = localStorage.getItem(
-    localStorageKeys.REFRESH_TOKEN
-  );
+const refreshToken = async (): Promise<boolean> => {
+  const refreshToken = localStorage.getItem(localStorageKeys.REFRESH_TOKEN);
 
   const res = await axiosInstance.post("auth/refresh-token", {
     refreshToken,
@@ -86,19 +82,13 @@ const refreshToken = async () : Promise<boolean> => {
 
   if (res.status === 201) {
     // refresh token success
-    localStorage.setItem(
-      localStorageKeys.ACCESS_TOKEN,
-      res.data.accessToken
-    );
-    localStorage.setItem(
-      localStorageKeys.REFRESH_TOKEN,
-      res.data.refreshToken
-    );
+    localStorage.setItem(localStorageKeys.ACCESS_TOKEN, res.data.accessToken);
+    localStorage.setItem(localStorageKeys.REFRESH_TOKEN, res.data.refreshToken);
     return true;
   }
 
   return false;
-}
+};
 
 export const AuthService = {
   checkEmailAddress,
@@ -107,5 +97,5 @@ export const AuthService = {
   register,
   verifyEmailToken,
   resendVerificationEmail,
-  refreshToken
+  refreshToken,
 };
