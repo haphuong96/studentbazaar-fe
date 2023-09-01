@@ -202,7 +202,7 @@ const formState: Ref<CreateItemDto> = ref({
   price: undefined,
   categoryId: undefined,
   conditionId: undefined,
-  img: undefined,
+  images: [],
   locationId: computed(() => {
     return deliveryLocation.value.selectedDeliveryLocation?.id;
   }),
@@ -331,6 +331,12 @@ const showDeliveryLocationModal = async (): Promise<void> => {
 
 const uploadItem = async (): Promise<void> => {
   try {
+    // prepare images
+    sources.value?.forEach((s) => {
+    formState.value.images.push(s.origin);
+    // append("files", s.origin);
+  });
+
     await ItemService.uploadItem(formState.value);
     message.success("Item uploaded successfully");
   } catch (error) {
@@ -342,8 +348,8 @@ const onUpload = async (isDraft: boolean = false): Promise<void> => {
   formState.value.status = isDraft ? ItemStatus.DRAFT : ItemStatus.PUBLISHED;
 
   uploading.value = true;
-  // upload item images
-  await uploadItemImages();
+  // // upload item images
+  // await uploadItemImages();
 
   //upload item
   await uploadItem();
@@ -352,18 +358,18 @@ const onUpload = async (isDraft: boolean = false): Promise<void> => {
   router.push({ name: routeNames.MY_ITEMS });
 };
 
-const uploadItemImages = async () => {
-  const formData = new FormData();
-  sources.value?.forEach((s) => {
-    formData.append("files", s.origin);
-  });
-  try {
-    formState.value.img = await ItemService.uploadItemImages(formData);
-    message.success("Item images uploaded successfully");
-  } catch (error) {
-    console.log(error);
-  }
-};
+// const uploadItemImages = async () => {
+//   const formData = new FormData();
+//   sources.value?.forEach((s) => {
+//     formData.append("files", s.origin);
+//   });
+//   try {
+//     formState.value.img = await ItemService.uploadItemImages(formData);
+//     message.success("Item images uploaded successfully");
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 const uploading = ref<boolean>(false);
 </script>
 <style>

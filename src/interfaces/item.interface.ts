@@ -24,12 +24,12 @@ export interface ItemCategory {
 }
 
 export interface CreateItemDto {
-  itemName: string | undefined;
-  itemDescription: string | undefined;
-  categoryId: number | undefined;
-  conditionId: number | undefined;
-  price: number | undefined;
-  img?: ItemImage[];
+  itemName?: string;
+  itemDescription?: string;
+  categoryId?: number;
+  conditionId?: number;
+  price?: number;
+  images: any[];
   locationId?: number | undefined;
   status?: ItemStatus;
 }

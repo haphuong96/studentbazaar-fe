@@ -20,7 +20,7 @@
             <shop-outlined /> <span> Your List </span>
           </div>
         </a-menu-item>
-        <a-menu-item key="favorites">
+        <a-menu-item :key="routeNames.MY_FAVORITES">
           <div
             class="link"
             @click="() => router.push({ name: routeNames.MY_FAVORITES })"
@@ -90,6 +90,7 @@ const toggleCollapsed = () => {
 };
 
 onMounted(() => {
+  console.log('route ', route.name)
   selectedKeys.value = [route.name as string];
 });
 </script>
