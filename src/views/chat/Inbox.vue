@@ -101,7 +101,7 @@ onMounted(async () => {
         />
       </div>
     </div>
-    <div class="right-panel">
+    <div class="right-panel" v-if="selectedConversationId">
       <router-view
         v-model:conversationId="selectedConversationId"
       ></router-view>

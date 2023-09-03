@@ -7,22 +7,22 @@ import { AuthService } from "./services/auth.service";
 
 export const state = ref({
   connected: false,
-  fooEvents: [],
-  barEvents: [],
 });
 
 const URL = envConfigs.BASE_API;
 
 export const socket = io(URL, {
-  auth: {
-    token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
+  auth: (cb) => {
+    cb({
+      token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
+    });
   },
-  // testing purpose for now
   extraHeaders: {
-    "Authorization": `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
-  }
-
-  // autoConnect: true,
+    Authorization: `Bearer ${localStorage.getItem(
+      localStorageKeys.ACCESS_TOKEN
+    )}`,
+  },
+  autoConnect: false,
 });
 
 socket.on("connect", () => {
@@ -31,27 +31,28 @@ socket.on("connect", () => {
 });
 
 socket.on("disconnect", async (reason) => {
-  console.log("socket disconnected");
+  console.log("socket disconnected. Reason: ", reason);
   state.value.connected = false;
-  if (reason === "io server disconnect") {
-    await AuthService.refreshToken();
-    socket.auth = {
-      token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
-    };
-    socket.connect();
-  }
 });
 
 // socket.on("message", (data) => {
 //     console.log("message: ", data)
 // })
 
-socket.on("exception", (response) => {
-  if ((response === ErrorCode.UNAUTHORIZED)) {
-    console.log("exception: ", response);
+socket.on("exception", async (response) => {
+  console.log("exception: ", response);
+  if (response === ErrorCode.UNAUTHORIZED) {
+    await AuthService.refreshToken();
+    socket.auth = (cb) => {
+      cb({
+        token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
+      });
+
+      console.log("exception: ", response);
+    };
   }
 });
 
 socket.onAny((event, ...args) => {
-    console.log(event, args)
-})
+  console.log(event, args);
+});

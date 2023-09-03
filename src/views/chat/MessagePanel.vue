@@ -120,6 +120,7 @@ const sendMessage = (_event: any) => {
   if (!text.value?.trim()?.length) {
     return;
   }
+
   socket.emit("message", {
     conversationId: props.conversationId,
     message: text.value?.trim(),

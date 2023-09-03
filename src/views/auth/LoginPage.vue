@@ -90,8 +90,9 @@ const login = async () => {
           user.university.id.toString()
         );
       }
-      //login successfully, connect to socket
-      // socket.connect();
+      // login successfully, connect to socket
+      console.log('auth ',socket.auth);
+      socket.connect();
 
       router.push({ name: routeNames.MARKETPLACE_HOME });
     } catch (err) {

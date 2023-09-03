@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ComputedRef, computed } from "vue";
+import { ComputedRef, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { socket } from "./socket";
+import { localStorageKeys } from "./common/storage-keys";
 
 // https://router.vuejs.org/guide/advanced/composition-api.html#accessing-the-router-and-current-route-inside-setup
 // set appropriate layout based on route meta
@@ -9,6 +11,11 @@ const layout: ComputedRef<string | undefined> | any = computed(() => {
   return route.meta.layout || undefined;
 });
 
+onMounted(() => {
+  if (localStorage.getItem(localStorageKeys.ACCESS_TOKEN)) {
+    socket.connect();
+  }
+});
 </script>
 
 <template>
