@@ -70,16 +70,18 @@ const getOneItemCategory = async (search: {
 
 const uploadItem = async (item: CreateItemDto): Promise<void> => {
   const formData = new FormData();
-  
+
   (Object.keys(item) as Array<keyof CreateItemDto>).forEach((key) => {
     if (key === "images") {
       for (const image of item[key]) {
         formData.append("images", image);
       }
     } else {
-      formData.append(key, item[key] as any);
+      if (item[key]) {
+        formData.append(key, item[key] as any);
+      }
     }
-  })
+  });
 
   await axiosInstance.post("items", formData, {
     headers: {

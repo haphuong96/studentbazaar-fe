@@ -4,15 +4,17 @@
       <div class="name">
         {{ conversation.participants[0].username }}
       </div>
-      <div class="last-message">
-        {{ conversation.lastMessage?.[0].message }}
-      </div>
+      <!-- <div class="d-flex"> -->
+        <div class="last-message">{{ conversation.lastMessage?.[0].message }} · {{ formatFromNow(conversation.lastMessage?.[0].createdDatetime as string) }}</div>
+        <!-- <div class="ml-16">{{ formatFromNow(conversation.lastMessage?.[0].createdDatetime as string) }}</div> -->
+      <!-- </div> -->
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Conversation } from "../../../interfaces/chat.interface";
+import { formatFromNow } from "../../../utils/datetime.util";
 
 defineProps({
   conversation: {
@@ -53,10 +55,14 @@ const onClick = () => {
 }
 
 .last-message {
+  /* display: flex;
+  flex-grow: 1; */
   color: #92959e;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: inline-block;
+  /* width: 100px; */
 }
 
 .selected > .name {

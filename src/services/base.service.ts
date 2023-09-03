@@ -8,11 +8,11 @@ import router from "../router";
 import { UserService } from "./user.service";
 
 export const axiosInstanceLogin = axios.create({
-  baseURL: envConfigs.BASE_API,
+  baseURL: envConfigs.BASE_API + '/api',
 });
 
 export const axiosInstance = axios.create({
-  baseURL: envConfigs.BASE_API,
+  baseURL: envConfigs.BASE_API + '/api',
 });
 
 // Add a request interceptor, attach token to authorization header
@@ -67,7 +67,7 @@ const handleResponseError = async (error: any) => {
     } else if (
       error.response.data.errorCode === ErrorCode.UNAUTHORIZED_REFRESH_TOKEN
     ) {
-      AuthService.logOut();
+      localStorage.clear();
     }
   }
   return Promise.reject(error);

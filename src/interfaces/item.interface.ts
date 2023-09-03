@@ -45,7 +45,7 @@ export interface Item {
   condition: ItemCondition;
   status: ItemStatus;
   itemName: string;
-  itemDescription: string;
+  itemDescription?: string;
   itemPrice: number;
   createdDatetime: string;
   lastUpdatedDatetime: string;

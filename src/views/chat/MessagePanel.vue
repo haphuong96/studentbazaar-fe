@@ -1,5 +1,5 @@
 <template>
-  <div class="message-panel">
+  <div class="message-panel" v-if="conversation && messages.length">
     <div id="message-container" class="message-panel__messages-container">
       <div
         v-for="message in messages"
@@ -18,7 +18,7 @@
 
     <div class="message-panel__current-user-container">
       <div class="current-user-name" v-if="me">
-        {{ me?.fullname }} ({{ me?.username }})
+        {{ oppositeUser?.username }} <span v-if="oppositeUser?.fullname">({{ oppositeUser.fullname }})</span>
       </div>
       <InfoCircleFilled
         v-if="me"
@@ -28,7 +28,7 @@
     </div>
     <div class="message-panel__chat-input-container">
       <a-input
-        placeholder="Enter you message"
+        placeholder="Enter your message"
         class="message-panel__chat-input-container__input"
         v-model:value="text"
         @pressEnter="sendMessage"
@@ -62,7 +62,7 @@
 <script setup lang="ts">
 // import { socket } from "../../../socket";
 import {
-  FileImageFilled,
+  // FileImageFilled,
   InfoCircleFilled,
   SendOutlined,
   SmileFilled,
@@ -70,36 +70,51 @@ import {
 import { h, onMounted, ref, watch } from "vue";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
-import { Message as IMessage } from "../../interfaces/chat.interface";
+import {
+  Conversation,
+  Message as IMessage,
+} from "../../interfaces/chat.interface";
 import { User } from "../../interfaces/user.interface";
 import router from "../../router";
-import { routeNames } from "../../router/route-names";
-import { ItemService } from "../../services/item.service";
+// import { routeNames } from "../../router/route-names";
 import { socket } from "../../socket";
-import InvisibleImagePicker from "./components/InvisibleImagePicker.vue";
+// import InvisibleImagePicker from "./components/InvisibleImagePicker.vue";
 import Message from "./components/Message.vue";
+import { ChatService } from "../../services/inbox.service";
+import { UserService } from "../../services/user.service";
 const props = defineProps({
   conversationId: {
-    type: Number,
+    type: String,
     required: true,
   },
-  messages: {
-    type: Object as () => IMessage[] | undefined,
-    required: true,
-  },
-  me: {
-    type: Object as () => User | undefined,
-    required: true,
-  },
+  // me: {
+  //   type: Object as () => User | undefined,
+  //   required: true,
+  // },
 });
+
+// const emit = defineEmits(["update:conversationId"]);
+
+const me = ref<User>();
+const messages = ref<IMessage[]>([]);
+const conversation = ref<Conversation>();
+const oppositeUser = ref<User>();
 
 const text = ref<string>("");
 
 onMounted(() => {
+  // emit("update:conversationId", props.conversationId);
+  getMyProfile();
+  getConversationById();
+  getConversationMessages();
   setTimeout(() => {
     scrollToBottom();
   }, 200);
 });
+
+const getMyProfile = async () => {
+  me.value = await UserService.getMyProfile();
+};
 
 const sendMessage = (_event: any) => {
   if (!text.value?.trim()?.length) {
@@ -112,22 +127,41 @@ const sendMessage = (_event: any) => {
   text.value = "";
 };
 
-const sendImageMessage = (url: string) => {
-  if (!url) {
-    return;
+socket.on("message", (message: IMessage) => {
+  console.log(
+    "===========> ",
+    message.conversation.id
+  );
+  if (+props.conversationId === message?.conversation?.id) {
+    messages?.value.push(message);
   }
-  socket.emit("message", {
-    conversationId: props.conversationId,
-    message: url,
-    messageType: "image",
-  });
-  text.value = "";
-};
+
+});
+// const sendImageMessage = (url: string) => {
+//   if (!url) {
+//     return;
+//   }
+//   socket.emit("message", {
+//     conversationId: props.conversationId,
+//     message: url,
+//     messageType: "image",
+//   });
+//   text.value = "";
+// };
 
 watch(
-  () => props.messages?.length,
+  () => messages?.value.length,
   () => {
     scrollToBottom();
+  }
+);
+
+watch(
+  () => props.conversationId,
+  () => {
+    // emit("update:conversationId", props.conversationId);
+    getConversationById();
+    getConversationMessages();
   }
 );
 
@@ -151,17 +185,35 @@ const onSelectEmoji = (emoji: any) => {
   text.value += emoji.i;
 };
 
-const onImageSelected = async (image: any) => {
-  const formData = new FormData();
-  formData.append("files", image.origin);
-  try {
-    const imageResults = await ItemService.uploadItemImages(formData);
-    const rs = imageResults[0];
-    if (!rs) return;
-    await sendImageMessage(rs.image.imgPath);
-  } catch (error) {
-    console.log(error);
-  }
+// const onImageSelected = async (image: any) => {
+//   const formData = new FormData();
+//   formData.append("files", image.origin);
+//   try {
+//     const imageResults = await ItemService.uploadItemImages(formData);
+//     const rs = imageResults[0];
+//     if (!rs) return;
+//     await sendImageMessage(rs.image.imgPath);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+const getConversationById = async () => {
+  console.log("id ", props.conversationId);
+  conversation.value = await ChatService.getConversationById(
+    +props.conversationId
+  );
+  oppositeUser.value = conversation.value.participants.find(
+    (user: User) => user.id !== me.value?.id
+  );
+  return conversation;
+};
+
+const getConversationMessages = async () => {
+  messages.value = await ChatService.getConversationMessagesById(
+    +props.conversationId
+  );
+  return messages;
 };
 </script>
 

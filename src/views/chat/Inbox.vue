@@ -15,20 +15,12 @@ import { useRoute } from "vue-router";
 
 const route: RouteLocationNormalizedLoaded = useRoute();
 
-// const connected = computed(() => state.value.connected);
 const me = ref<IUser>();
 const conversations = ref<Conversation[]>([]);
-
-const selectedConversation = ref<{
-  id: number | undefined;
-  messages: Message[] | undefined;
-}>({
-  id: undefined,
-  messages: undefined,
-});
+const selectedConversationId = ref<string>("");
 
 watch(
-  () => route.params.conversationId,
+  () => route.params,
   async () => {
     if (route.params.conversationId) {
       await setSelectedConversation();
@@ -37,18 +29,13 @@ watch(
 );
 
 const setSelectedConversation = async () => {
-  selectedConversation.value.id = +route.params.conversationId;
-  selectedConversation.value.messages =
-    await ChatService.getConversationMessagesById(
-      selectedConversation.value.id
-    );
+  selectedConversationId.value = route.params.conversationId as string;
+  console.log("setSelectedConversation ", selectedConversationId.value);
 };
 
 const onSelectConversation = async (conversationId: number) => {
-  // selectedConversation.value.messages = await ChatService.getConversationMessagesById(
-  //   conversation.id
-  // );
-  // selectedConversation.value.id = conversation.id;
+  console.log("onSelectConversation ", conversationId);
+  selectedConversationId.value = route.params.conversationId as string;
   router.push({
     name: routeNames.INBOX_CONVERSATION,
     params: { conversationId },
@@ -58,12 +45,12 @@ const onSelectConversation = async (conversationId: number) => {
 socket.on("message", (message: Message) => {
   console.log(
     "===========> ",
-    selectedConversation.value.id,
+    selectedConversationId.value,
     message.conversation.id
   );
-  if (selectedConversation.value.id === message?.conversation?.id) {
-    selectedConversation.value.messages?.push(message);
-  }
+  // if (+selectedConversationId.value === message?.conversation?.id) {
+  //   selectedConversation.value.messages?.push(message);
+  // }
   conversations?.value?.forEach((c) => {
     if (c.id === message?.conversation?.id) {
       c.lastMessage = [message];
@@ -80,7 +67,7 @@ const getMyProfile = async () => {
 };
 
 onMounted(async () => {
-  console.log("mounted ", selectedConversation.value.id);
+  console.log("mounted ", selectedConversationId.value);
   await Promise.all([getConversations(), getMyProfile()]);
 
   // if no conversation is selected, select the first conversation
@@ -94,7 +81,8 @@ onMounted(async () => {
     if (conversation?.isNew) {
       conversations.value?.unshift(conversation);
     }
-    await setSelectedConversation();
+    // await setSelectedConversation();
+    await onSelectConversation(+route.params.conversationId);
   }
 });
 </script>
@@ -108,15 +96,14 @@ onMounted(async () => {
           v-for="conversation in conversations"
           :key="conversation.id"
           :conversation="conversation"
-          :selected="selectedConversation.id === conversation.id"
+          :selected="+selectedConversationId === conversation.id"
           @select="onSelectConversation(conversation.id)"
         />
       </div>
     </div>
     <div class="right-panel">
       <router-view
-        :messages="selectedConversation.messages"
-        :me="me"
+        v-model:conversationId="selectedConversationId"
       ></router-view>
     </div>
   </div>
@@ -139,7 +126,7 @@ onMounted(async () => {
 
 .left-panel {
   width: 280px;
-  overflow: hidden;
+  /* overflow: hidden; */
   color: white;
   border-right: 1px solid lightgray;
 }
