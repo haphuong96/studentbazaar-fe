@@ -68,6 +68,7 @@ const handleResponseError = async (error: any) => {
       error.response.data.errorCode === ErrorCode.UNAUTHORIZED_REFRESH_TOKEN
     ) {
       localStorage.clear();
+      router.push({ name: routeNames.LOGIN });
     }
   }
   return Promise.reject(error);

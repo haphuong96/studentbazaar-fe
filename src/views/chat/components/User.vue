@@ -5,8 +5,13 @@
         {{ conversation.participants[0].username }}
       </div>
       <!-- <div class="d-flex"> -->
-        <div class="last-message">{{ conversation.lastMessage?.[0].message }} · {{ formatFromNow(conversation.lastMessage?.[0].createdDatetime as string) }}</div>
-        <!-- <div class="ml-16">{{ formatFromNow(conversation.lastMessage?.[0].createdDatetime as string) }}</div> -->
+      <div class="last-message">
+        {{ conversation.lastMessage?.[0].message }} ·
+        <span v-if="conversation?.lastMessage?.length">{{
+          formatFromNow(conversation.lastMessage?.[0].createdDatetime as string)
+        }}</span>
+      </div>
+      <!-- <div class="ml-16">{{ formatFromNow(conversation.lastMessage?.[0].createdDatetime as string) }}</div> -->
       <!-- </div> -->
     </div>
   </div>

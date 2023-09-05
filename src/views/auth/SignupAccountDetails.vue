@@ -75,11 +75,12 @@ const register = async () => {
     message.success(`Registered successfully!`);
   } catch (e) {
     if (e instanceof AxiosError) {
-      const err = e.response?.data;
-      if (e.response?.status === 403) {
-        switch (err.errorCode) {
+      const err = e.response;
+      if (err?.status === 403) {
+        switch (err.data.errorCode) {
           case ErrorCode.FORBIDDEN_INVALID_USERNAME:
-            signUpFormErr.value.username = err.errMessage;
+            signUpFormErr.value.username = err.data.message;
+            console.log('signUpFormErr ', signUpFormErr.value)
             break;
           default:
             console.log(e);

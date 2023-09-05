@@ -1,6 +1,6 @@
 <template>
-  <div class="message-panel" v-if="conversation && messages.length">
-    <div id="message-container" class="message-panel__messages-container">
+  <div class="message-panel">
+    <div id="message-container" class="message-panel__messages-container" v-if="conversation && messages.length">
       <div
         v-for="message in messages"
         :class="`d-flex ${message.sender.id === me?.id ? 'justify-right' : ''}`"
@@ -20,11 +20,11 @@
       <div class="current-user-name" v-if="me">
         {{ oppositeUser?.username }} <span v-if="oppositeUser?.fullname">({{ oppositeUser.fullname }})</span>
       </div>
-      <InfoCircleFilled
+      <!-- <InfoCircleFilled
         v-if="me"
         class="user-info-button"
         @click="viewUserProfile"
-      ></InfoCircleFilled>
+      ></InfoCircleFilled> -->
     </div>
     <div class="message-panel__chat-input-container">
       <a-input
@@ -75,7 +75,7 @@ import {
   Message as IMessage,
 } from "../../interfaces/chat.interface";
 import { User } from "../../interfaces/user.interface";
-import router from "../../router";
+// import router from "../../router";
 // import { routeNames } from "../../router/route-names";
 import { socket } from "../../socket";
 // import InvisibleImagePicker from "./components/InvisibleImagePicker.vue";
@@ -174,13 +174,13 @@ const scrollToBottom = () => {
   }, 100);
 };
 
-const viewUserProfile = () => {
-  if (!props.me) return;
-  router.push({
-    name: routeNames.USER_PROFILE,
-    params: { userId: props.me.id },
-  });
-};
+// const viewUserProfile = () => {
+//   if (!props.me) return;
+//   router.push({
+//     name: routeNames.USER_PROFILE,
+//     params: { userId: props.me.id },
+//   });
+// };
 
 const onSelectEmoji = (emoji: any) => {
   text.value += emoji.i;

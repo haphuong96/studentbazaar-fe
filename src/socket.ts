@@ -41,15 +41,15 @@ socket.on("disconnect", async (reason) => {
 
 socket.on("exception", async (response) => {
   console.log("exception: ", response);
-  if (response === ErrorCode.UNAUTHORIZED) {
-    await AuthService.refreshToken();
-    socket.auth = (cb) => {
-      cb({
-        token: `Bearer ${localStorage.getItem(localStorageKeys.ACCESS_TOKEN)}`,
-      });
+});
 
-      console.log("exception: ", response);
-    };
+socket.on("connect_error", async (response) => {
+  console.log("connect_error: ", response);
+  if (response.message === ErrorCode.UNAUTHORIZED || response.message === 'xhr poll error') {
+    const isRefreshSuccess: boolean = await AuthService.refreshToken();
+    if (isRefreshSuccess) {
+      socket.connect();
+    }
   }
 });
 
