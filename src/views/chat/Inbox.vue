@@ -33,12 +33,20 @@ const setSelectedConversation = async () => {
   console.log("setSelectedConversation ", selectedConversationId.value);
 };
 
-const onSelectConversation = async (conversationId: number) => {
-  console.log("onSelectConversation ", conversationId);
+const onSelectConversation = async (conversation: Conversation) => {
+  console.log("onSelectConversation ", conversation);
+  console.log("conversation ", conversation)
   selectedConversationId.value = route.params.conversationId as string;
+
+  // mark the conversation as read
+  socket.emit("read_message", {
+    messageId: conversation.lastMessage?.[0]?.id,
+  })
+  conversation.isRead = true;
+
   router.push({
     name: routeNames.INBOX_CONVERSATION,
-    params: { conversationId },
+    params: { conversationId: conversation.id },
   });
 };
 
@@ -54,6 +62,7 @@ socket.on("message", (message: Message) => {
   conversations?.value?.forEach((c) => {
     if (c.id === message?.conversation?.id) {
       c.lastMessage = [message];
+      c.isRead = message.sender.id === me.value?.id ? true : false;
     }
   });
 });
@@ -72,7 +81,7 @@ onMounted(async () => {
 
   // if no conversation is selected, select the first conversation
   if (conversations.value?.length && !route.params.conversationId) {
-    onSelectConversation(conversations.value[0].id);
+    onSelectConversation(conversations.value[0]);
   } else if (route.params.conversationId) {
     // check if it is a new conversation. If yes, add it to the list
     const conversation: Conversation = await ChatService.getConversationById(
@@ -82,7 +91,7 @@ onMounted(async () => {
       conversations.value?.unshift(conversation);
     }
     // await setSelectedConversation();
-    await onSelectConversation(+route.params.conversationId);
+    await onSelectConversation(conversation);
   }
 });
 </script>
@@ -97,7 +106,7 @@ onMounted(async () => {
           :key="conversation.id"
           :conversation="conversation"
           :selected="+selectedConversationId === conversation.id"
-          @select="onSelectConversation(conversation.id)"
+          @select="onSelectConversation(conversation)"
         />
       </div>
     </div>

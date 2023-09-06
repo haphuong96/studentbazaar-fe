@@ -14,11 +14,11 @@
     <a-col :span="12">
       <h2>List your item</h2>
       <a-form layout="vertical" :model="formState">
-        <a-form-item label="Name">
-          <a-input v-model:value="formState.itemName" placeholder="name" />
+        <a-form-item label="Title">
+          <a-input v-model:value="formState.itemName" placeholder="e.g Introduction to Computer Science textbook" show-count :maxlength="100"/>
         </a-form-item>
         <a-form-item label="Price">
-          <a-input v-model:value="formState.price" placeholder="price" />
+          <a-input-number v-model:value="formState.price" prefix="£" style="width: 100%" def/>
         </a-form-item>
 
         <a-form-item label="Category">
@@ -52,10 +52,10 @@
           >
           </a-select>
         </a-form-item>
-        <a-form-item label="Description">
+        <a-form-item label="Description (Optional)">
           <a-textarea
             v-model:value="formState.itemDescription"
-            placeholder="Write some description"
+            placeholder="Write some description..."
           />
         </a-form-item>
         <a-form-item label="Pickup Point">
@@ -199,7 +199,7 @@ const me = ref<{
 const formState: Ref<CreateItemDto> = ref({
   itemName: undefined,
   itemDescription: undefined,
-  price: undefined,
+  price: 0,
   categoryId: undefined,
   conditionId: undefined,
   images: [],

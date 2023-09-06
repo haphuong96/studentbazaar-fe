@@ -5,7 +5,7 @@
         {{ conversation.participants[0].username }}
       </div>
       <!-- <div class="d-flex"> -->
-      <div class="last-message">
+      <div :class="`last-message ${conversation.isRead ? '' : 'unread-conversation'}`">
         {{ conversation.lastMessage?.[0].message }} ·
         <span v-if="conversation?.lastMessage?.length">{{
           formatFromNow(conversation.lastMessage?.[0].createdDatetime as string)
@@ -59,7 +59,7 @@ const onClick = () => {
   font-weight: 600;
 }
 
-.last-message {
+.last-message, .unread-conversation {
   /* display: flex;
   flex-grow: 1; */
   color: #92959e;
@@ -68,6 +68,11 @@ const onClick = () => {
   text-overflow: ellipsis;
   display: inline-block;
   /* width: 100px; */
+}
+
+.unread-conversation {
+  color: black;
+  font-weight: 600;
 }
 
 .selected > .name {

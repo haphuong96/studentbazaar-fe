@@ -7,7 +7,7 @@
         :show-campus="false"
         :show-avatar="true"
         :space="8"
-        avatar-size='small'
+        avatar-size="small"
       />
     </div>
     <div
@@ -58,7 +58,6 @@ import router from "../../../router";
 import { routeNames } from "../../../router/route-names";
 import UserInfo from "./UserInfo.vue";
 import { HeartOutlined, HeartTwoTone } from "@ant-design/icons-vue";
-
 defineProps({
   item: {
     type: Object as () => Item,
@@ -93,6 +92,6 @@ defineProps({
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #d7d7d740;
+  background-color: #b7b7b70f;
 }
 </style>

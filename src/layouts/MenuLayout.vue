@@ -27,12 +27,14 @@
         </div>
         <div class="d-flex header-menu">
           <a><bell-outlined /></a>
-          <router-link :to="{ name: routeNames.INBOX }"
-            ><message-outlined
-          /></router-link>
-          <!-- <a @click="() => $router.push({ name: routeNames.LIST_ITEM })"
-            ><tags-two-tone />
-          </a> -->
+          <router-link :to="{ name: routeNames.INBOX }">
+            <a-badge
+              :count="unreadConversationNotification.length"
+              class="message-badge"
+            >
+              <message-outlined />
+            </a-badge>
+          </router-link>
           <router-link :to="{ name: routeNames.MY_FAVORITES }"
             ><heart-outlined
           /></router-link>
@@ -41,7 +43,7 @@
             <a-dropdown placement="bottomRight">
               <!-- #f56a00 -->
               <router-link :to="{ name: routeNames.MY_PROFILE }">
-                <a-avatar style="color: #D6763C; background-color: #fde3cf">{{
+                <a-avatar style="color: #d6763c; background-color: #fde3cf">{{
                   userFullname?.charAt(0).toUpperCase()
                 }}</a-avatar></router-link
               >
@@ -113,6 +115,9 @@ import { localStorageKeys } from "../common/storage-keys";
 import { AuthService } from "../services/auth.service";
 import { ItemCategory } from "../interfaces/item.interface";
 import { ItemService } from "../services/item.service";
+import { ChatService } from "../services/inbox.service";
+import { ConversationParticipant as Conversation } from "../interfaces/chat.interface";
+import { socket } from "../socket";
 // import { MenuProps } from "ant-design-vue";
 
 const route = useRoute();
@@ -140,6 +145,7 @@ const getItemCategories = async () => {
 
 onMounted(() => {
   getItemCategories();
+  getNotificationUnreadConversation();
 });
 
 const searchInCategory = ref<ItemCategory>();
@@ -164,6 +170,40 @@ const onSearch = (value: string, _event: any) => {
     query: { q: value, category: searchInCategory.value?.id },
   });
 };
+
+// get notification unread conversation
+const unreadConversationNotification: Ref<Conversation[]> = ref<Conversation[]>(
+  []
+);
+
+const getNotificationUnreadConversation = async (): Promise<void> => {
+  unreadConversationNotification.value =
+    await ChatService.getUnreadConversations();
+    console.log("unreadConversationNotification", unreadConversationNotification.value);
+};
+
+socket.on("message_notification", (conversation: Conversation) => {
+  console.log("message_notification", conversation);
+  // if user is in conversation, no notification.
+  // if notification for conversation is already exist, no new notification.
+  if (
+    (route.name === routeNames.INBOX_CONVERSATION &&
+    +route.params.conversationId === conversation.id) ||
+    unreadConversationNotification.value.find((unreadConversation) =>
+    unreadConversation.id === conversation.id)
+  ) {
+    return;
+  }
+  unreadConversationNotification.value.push(conversation);
+});
+
+socket.on("read_message", (conversation: Conversation) => {
+  console.log("read_message", conversation);
+  // create a new array without conversation already read
+  unreadConversationNotification.value = unreadConversationNotification.value.filter(
+    (unreadConversation) => unreadConversation.id !== conversation.id
+  );
+});
 </script>
 <style scoped>
 .menu-layout-container {
@@ -185,11 +225,16 @@ const onSearch = (value: string, _event: any) => {
 /* 48px  is total padding top and bottom */
 /* 5px is scroll horizontal height */
 
-.header-menu > a {
+.header-menu > a,
+.message-badge {
   margin-left: 15px;
   font-size: 20px;
-  color: #D6763C;
+  color: #d6763c;
   /* #f56a00; */
+}
+
+.message-badge {
+  margin-left: 0px;
 }
 
 .logo {

@@ -14,4 +14,12 @@ export interface Conversation {
   participants: User[];
   lastMessage?: Message[];
   isNew?: boolean;
+  isRead?: boolean;
+}
+
+export interface ConversationParticipant {
+  id: number;
+  conversation: Conversation;
+  participant: User;
+  lastReadMessage: Message;
 }

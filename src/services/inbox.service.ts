@@ -1,5 +1,5 @@
 // import { localStorageKeys } from "../common/storage-keys";
-import { Conversation, Message } from "../interfaces/chat.interface";
+import { Conversation, ConversationParticipant, Message } from "../interfaces/chat.interface";
 
 import { axiosInstance } from "./base.service";
 
@@ -19,9 +19,14 @@ const getConversationByTargetUser = async(toReceiverId: number) : Promise<Conver
   return (await axiosInstance.get(`conversations/to/${toReceiverId}`)).data;
 }
 
+const getUnreadConversations = async(): Promise<ConversationParticipant[]> => {
+  return (await axiosInstance.get("conversations/me/unread")).data;
+}
+
 export const ChatService = {
   getMyConversations,
   getConversationMessagesById,
   getConversationByTargetUser,
-  getConversationById
+  getConversationById,
+  getUnreadConversations
 };
