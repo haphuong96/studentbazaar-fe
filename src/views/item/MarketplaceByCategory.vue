@@ -12,12 +12,22 @@ import { getCategoryPath, Route } from "../../utils/get-category-path.util";
 import ItemPost from "./components/ItemPost.vue";
 import { paginationHelper } from "../../utils/pagination.util";
 import { DEFAULT_PAGE_SIZE } from "../../common/pagination-constants";
+import LocationModal from "./components/LocationModal.vue";
+import { Campus, University } from "../../interfaces/market.interface";
 
 const emit = defineEmits(["browse-category"]);
 const props = defineProps({
   categoryPath: String,
   categoryId: Number,
   searchKeyword: String,
+});
+
+const locationFilter = ref<{
+  campusLocation: Campus | undefined;
+  university: University | undefined;
+}>({
+  campusLocation: undefined,
+  university: undefined,
 });
 
 const itemList: Ref<GetItemsLimitOffset | undefined> = ref();
@@ -30,6 +40,8 @@ const searchItems = async (query?: { page?: number; pageSize?: number }) => {
     const data = (await ItemService.getItems({
       categoryId: props.categoryId || itemCategory.value?.id,
       q: props.searchKeyword,
+      campusId: locationFilter.value.campusLocation?.id,
+      universityId: locationFilter.value.university?.id,
       limit,
       offset,
     })) as GetItemsLimitOffset;
@@ -86,6 +98,19 @@ const routes: ComputedRef<Route[]> = computed(() => {
 const onPageChange = (page: number, pageSize: number) => {
   searchItems({ page, pageSize });
 };
+
+const applyFilterByLocation = async (location: {
+  campusLocationSelect: Campus;
+  universitySelect: University;
+}) => {
+  try {
+    locationFilter.value.campusLocation = location.campusLocationSelect;
+    locationFilter.value.university = location.universitySelect;
+    await searchItems();
+  } catch (err) {
+    console.log(err);
+  }
+};
 </script>
 <template>
   <a-breadcrumb v-if="itemCategory?.id">
@@ -119,13 +144,28 @@ const onPageChange = (page: number, pageSize: number) => {
     </a-row>
     <a-divider />
   </div>
+  <div class="d-flex justify-right">
+    <LocationModal
+      :campusLocationFilter="locationFilter.campusLocation"
+      :universityFilter="locationFilter.university"
+      @onFilter="applyFilterByLocation"
+    ></LocationModal>
+  </div>
   <div v-if="props.searchKeyword" class="pb-32">
     <search-outlined></search-outlined>
     Search results for keyword: {{ props.searchKeyword }}
   </div>
   <div v-if="itemList && itemList.items.length">
-    <a-row :gutter="[48, 16]">
-      <a-col :span="6" v-for="item in itemList.items">
+    <a-row :gutter="[48, 48]">
+      <a-col
+        :xs="24"
+        :sm="12"
+        :md="8"
+        :lg="8"
+        :xl="6"
+        :xxl="4"
+        v-for="item in itemList.items"
+      >
         <ItemPost :item="item"></ItemPost>
       </a-col>
     </a-row>
