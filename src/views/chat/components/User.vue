@@ -5,10 +5,16 @@
         {{ conversation.participants[0].username }}
       </div>
       <!-- <div class="d-flex"> -->
-      <div :class="`last-message ${conversation.isRead ? '' : 'unread-conversation'}`">
-        {{ conversation.lastMessage?.[0].message }} ·
-        <span v-if="conversation?.lastMessage?.length">{{
-          formatFromNow(conversation.lastMessage?.[0].createdDatetime as string)
+      <div
+        :class="`last-message ${
+          conversation.isRead ? '' : 'unread-conversation'
+        }`"
+        v-if="conversation.lastMessage"
+      >
+        <span v-if="(conversation.lastMessage[0].sender as unknown as number) === meId">You: </span
+        >{{ conversation.lastMessage[0].message }} ·
+        <span v-if="conversation.lastMessage?.length">{{
+          formatFromNow(conversation.lastMessage[0].createdDatetime as string)
         }}</span>
       </div>
       <!-- <div class="ml-16">{{ formatFromNow(conversation.lastMessage?.[0].createdDatetime as string) }}</div> -->
@@ -28,6 +34,10 @@ defineProps({
   },
   selected: {
     type: Boolean,
+    required: true,
+  },
+  meId: {
+    type: Number,
     required: true,
   },
 });
@@ -59,7 +69,8 @@ const onClick = () => {
   font-weight: 600;
 }
 
-.last-message, .unread-conversation {
+.last-message,
+.unread-conversation {
   /* display: flex;
   flex-grow: 1; */
   color: #92959e;

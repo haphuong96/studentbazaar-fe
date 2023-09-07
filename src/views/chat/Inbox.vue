@@ -35,13 +35,13 @@ const setSelectedConversation = async () => {
 
 const onSelectConversation = async (conversation: Conversation) => {
   console.log("onSelectConversation ", conversation);
-  console.log("conversation ", conversation)
+  console.log("conversation ", conversation);
   selectedConversationId.value = route.params.conversationId as string;
 
   // mark the conversation as read
   socket.emit("read_message", {
     messageId: conversation.lastMessage?.[0]?.id,
-  })
+  });
   conversation.isRead = true;
 
   router.push({
@@ -59,12 +59,24 @@ socket.on("message", (message: Message) => {
   // if (+selectedConversationId.value === message?.conversation?.id) {
   //   selectedConversation.value.messages?.push(message);
   // }
-  conversations?.value?.forEach((c) => {
-    if (c.id === message?.conversation?.id) {
-      c.lastMessage = [message];
-      c.isRead = message.sender.id === me.value?.id ? true : false;
+
+  for (let i = 0; i < conversations.value?.length; i++) {
+    if (conversations.value[i].id === message?.conversation?.id) {
+      // update last message and mark unread if conversation is selected
+      conversations.value[i].lastMessage = [message];
+      conversations.value[i].isRead =
+        message.conversation.id === +selectedConversationId.value
+          ? true
+          : false;
+
+      // bring conversation on top
+      const conversationShift: Conversation = conversations.value?.splice(
+        i,
+        1
+      )[0];
+      conversations.value?.unshift(conversationShift);
     }
-  });
+  }
 });
 
 const getConversations = async () => {
@@ -100,12 +112,13 @@ onMounted(async () => {
   <div class="d-flex inbox">
     <div class="left-panel">
       <h2 class="ml-16 my-16">Chat</h2>
-      <div class="inbox__list-user">
+      <div class="inbox__list-user" v-if="me">
         <User
           v-for="conversation in conversations"
           :key="conversation.id"
           :conversation="conversation"
           :selected="+selectedConversationId === conversation.id"
+          :meId="me.id"
           @select="onSelectConversation(conversation)"
         />
       </div>
