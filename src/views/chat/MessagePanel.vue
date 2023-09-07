@@ -1,6 +1,10 @@
 <template>
   <div class="message-panel">
-    <div id="message-container" class="message-panel__messages-container" v-if="conversation && messages.length">
+    <div
+      id="message-container"
+      class="message-panel__messages-container"
+      v-if="conversation && messages.length"
+    >
       <div
         v-for="message in messages"
         :class="`d-flex ${message.sender.id === me?.id ? 'justify-right' : ''}`"
@@ -18,7 +22,8 @@
 
     <div class="message-panel__current-user-container">
       <div class="current-user-name" v-if="me">
-        {{ oppositeUser?.username }} <span v-if="oppositeUser?.fullname">({{ oppositeUser.fullname }})</span>
+        {{ oppositeUser?.username }}
+        <span v-if="oppositeUser?.fullname">({{ oppositeUser.fullname }})</span>
       </div>
       <!-- <InfoCircleFilled
         v-if="me"
@@ -61,12 +66,7 @@
 
 <script setup lang="ts">
 // import { socket } from "../../../socket";
-import {
-  // FileImageFilled,
-  InfoCircleFilled,
-  SendOutlined,
-  SmileFilled,
-} from "@ant-design/icons-vue";
+import { SendOutlined, SmileFilled } from "@ant-design/icons-vue";
 import { h, onMounted, ref, watch } from "vue";
 import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
@@ -79,9 +79,9 @@ import { User } from "../../interfaces/user.interface";
 // import { routeNames } from "../../router/route-names";
 import { socket } from "../../socket";
 // import InvisibleImagePicker from "./components/InvisibleImagePicker.vue";
-import Message from "./components/Message.vue";
 import { ChatService } from "../../services/inbox.service";
 import { UserService } from "../../services/user.service";
+import Message from "./components/Message.vue";
 const props = defineProps({
   conversationId: {
     type: String,
@@ -129,14 +129,10 @@ const sendMessage = (_event: any) => {
 };
 
 socket.on("message", (message: IMessage) => {
-  console.log(
-    "===========> ",
-    message.conversation.id
-  );
+  console.log("===========> ", message.conversation.id);
   if (+props.conversationId === message?.conversation?.id) {
     messages?.value.push(message);
   }
-
 });
 // const sendImageMessage = (url: string) => {
 //   if (!url) {

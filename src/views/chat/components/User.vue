@@ -11,14 +11,17 @@
         }`"
         v-if="conversation.lastMessage"
       >
-        <span v-if="(conversation.lastMessage[0].sender as unknown as number) === meId">You: </span
-        >{{ conversation.lastMessage[0].message }} ·
-        <span v-if="conversation.lastMessage?.length">{{
-          formatFromNow(conversation.lastMessage[0].createdDatetime as string)
-        }}</span>
+        {{
+          `${
+            (conversation.lastMessage[0].sender.id as unknown as number) ===
+            meId
+              ? "You:"
+              : ""
+          } ${conversation.lastMessage[0].message} · ${formatFromNow(
+            conversation.lastMessage[0].createdDatetime as string
+          )}`
+        }}
       </div>
-      <!-- <div class="ml-16">{{ formatFromNow(conversation.lastMessage?.[0].createdDatetime as string) }}</div> -->
-      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -74,11 +77,10 @@ const onClick = () => {
   /* display: flex;
   flex-grow: 1; */
   color: #92959e;
+  width: calc(280px - 32px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: inline-block;
-  /* width: 100px; */
 }
 
 .unread-conversation {

@@ -75,7 +75,7 @@
   
   const onEditMode = () => {
     formState.value.emailAddress = myProfile.value?.emailAddress;
-    formState.value.campusId = myProfile.value?.campus.id;
+    formState.value.campusId = myProfile.value?.campus?.id;
     formState.value.fullName = myProfile.value?.fullname;
     formState.value.aboutMe = myProfile.value?.aboutMe;
   };
