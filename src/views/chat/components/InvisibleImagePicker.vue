@@ -13,12 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import { onMounted, ref } from "vue";
 const id = ref<string>("");
 const emits = defineEmits(["imageSelected"]);
 onMounted(() => {
-  id.value = uuidv4();
+  id.value = 'uuidv4();'
 });
 
 const handleImageChange = (event: any) => {
@@ -32,7 +32,7 @@ const handleImageChange = (event: any) => {
           const image = {
             data: reader.result,
             name: file.name,
-            id: uuidv4(),
+            id: 'uuidv4();',
             origin: file,
           };
           emits("imageSelected", image);

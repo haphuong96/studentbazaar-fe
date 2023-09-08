@@ -1,9 +1,7 @@
 import { RouteLocationNormalized } from "vue-router";
-import {
-  localStorageKeys,
-} from "../../common/storage-keys";
-import { routeNames } from "../route-names";
+import { localStorageKeys } from "../../common/storage-keys";
 import { UserStatus } from "../../common/user-status";
+import { routeNames } from "../route-names";
 // import { message } from "ant-design-vue";
 
 export const globalGuard = (
@@ -18,7 +16,8 @@ export const globalGuard = (
       return { name: routeNames.MARKETPLACE_HOME };
     } else if (
       localStorage.getItem(localStorageKeys.USER_STATUS) ===
-        UserStatus.VERIFIED && to.name != routeNames.WELCOME_PAGE
+        UserStatus.VERIFIED &&
+      to.name != routeNames.WELCOME_PAGE
     ) {
       return { name: routeNames.WELCOME_PAGE };
     }
