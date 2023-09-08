@@ -6,6 +6,7 @@
     :model="formState"
     :labelCol="{ span: 4 }"
     labelAlign="left"
+    v-if="!isLoading"
   >
     <a-form-item label="Email Address">
       <div>{{ formState.emailAddress }}</div>
@@ -31,20 +32,27 @@
         }}</a-select-option>
       </a-select>
     </a-form-item>
+    <a-form-item label="Default Pick Up Location">
+      <SelectPickUpPointModal
+        :deliveryLocationSelect="formState.defaultPickUpPoint"
+        @onSelect="onSelectPickUpPoint"
+      ></SelectPickUpPointModal>
+    </a-form-item>
     <a-form-item>
       <!-- :wrapper-col="buttonItemLayout.wrapperCol" -->
-      <a-button type="primary" @click="updateMyProfile"
+      <a-button type="primary" @click="updateMyProfile" :disabled="isNoChange"
         >Update Profile</a-button
       >
     </a-form-item>
   </a-form>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, Ref } from "vue";
+import { ref, onMounted, Ref, computed } from "vue";
 import { UserService } from "../../services/user.service";
 import { User } from "../../interfaces/user.interface";
-import { Campus } from "../../interfaces/market.interface";
+import { Campus, PickUpLocation } from "../../interfaces/market.interface";
 import { message } from "ant-design-vue";
+import SelectPickUpPointModal from "../item/components/SelectPickUpPointModal.vue";
 
 const myProfile = ref<User>();
 const campuses = ref<Campus[]>([]);
@@ -64,6 +72,7 @@ const updateMyProfile = async () => {
       fullname: formState.value.fullName,
       campusId: formState.value.campusId,
       aboutMe: formState.value.aboutMe,
+      defaultPickUpPointId: formState.value.defaultPickUpPoint?.id,
     });
     onEditMode();
 
@@ -78,12 +87,28 @@ const onEditMode = () => {
   formState.value.campusId = myProfile.value?.campus?.id;
   formState.value.fullName = myProfile.value?.fullname;
   formState.value.aboutMe = myProfile.value?.aboutMe;
+  formState.value.defaultPickUpPoint = myProfile.value?.defaultPickUpPoint;
 };
 
+const isLoading = ref<boolean>(true);
 onMounted(async () => {
   await getMyProfile();
   onEditMode();
+  isLoading.value = false;
 });
+
+const onSelectPickUpPoint = (pickUpPoint: PickUpLocation) => {
+  formState.value.defaultPickUpPoint = pickUpPoint;
+};
+
+const isNoChange = computed<boolean>(() => {
+  return (
+    formState.value.fullName === myProfile.value?.fullname &&
+    formState.value.campusId === myProfile.value?.campus?.id &&
+    formState.value.aboutMe === myProfile.value?.aboutMe &&
+    formState.value.defaultPickUpPoint === myProfile.value?.defaultPickUpPoint
+  );
+})
 
 interface FormState {
   fullName: string | undefined;
@@ -91,15 +116,17 @@ interface FormState {
   emailAddress: string | undefined;
   campusId: number | undefined;
   aboutMe: string | undefined;
+  defaultPickUpPoint: PickUpLocation | undefined;
 }
 
 const formState: Ref<FormState> = ref({
   layout: "horizontal",
   fieldB: "",
-  fullName: undefined,
+  fullName: "",
   emailAddress: "",
   campusId: undefined,
-  aboutMe: undefined,
+  aboutMe: "",
+  defaultPickUpPoint: undefined,
 });
 </script>
 <style></style>

@@ -47,8 +47,13 @@
     </div>
     <div class="signup-form">
       <h2>Welcome back!</h2>
-      <div style="text-align: center;">🛒🛍️ 🛒👚 🛍️🛒</div>
-      <div class="mt-16" style="text-align: justify;">Sign in now and start selling your unused items.</div>
+      <div style="text-align: center;">
+        <!-- 🛒🛍️ 🛒👚 🛍️🛒 -->
+        🌻🌻🌻🌻🌻🌻
+        <!-- 🌳🌳🌳🌳🌳🌳 -->
+      </div>
+      <div class="mt-16" style="text-align: justify;">Sign in now and start selling your unused item.</div>
+
       <a-button
         class="mt-16"
         type="default"
@@ -58,7 +63,7 @@
             router.push({ name: routeNames.SIGNUP_ACCOUNT_DETAILS });
           }
         "
-        >No account yet? Signup</a-button
+        >No account yet? Sign Up!</a-button
       >
     </div>
   </div>

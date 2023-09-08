@@ -60,7 +60,7 @@
         </a-descriptions-item>
       </a-descriptions>
       <div class="my-32" v-if="!isOwner">
-        <span> <a-button @click="() => {}">Ask seller</a-button></span>
+        <span> <a-button @click="startConversation(itemDetails.owner.id)">Ask seller</a-button></span>
         <span class="ml-32">
           <a-button @click="toggleFavorite"
             ><span v-if="!itemDetails.isFavorite">Add to Favorites</span>
@@ -118,6 +118,9 @@ import router from "../../router";
 import { UserService } from "../../services/user.service";
 import UserInfo from "./components/UserInfo.vue";
 import { Modal } from "ant-design-vue";
+import { Conversation } from "../../interfaces/chat.interface";
+import { ChatService } from "../../services/inbox.service";
+import { routeNames } from "../../router/route-names";
 
 const props = defineProps({
   itemId: Number,
@@ -226,6 +229,20 @@ const onDeleteItem = async () => {
     } catch (error) {
       message.success("Delete item failed!");
     }
+  }
+};
+
+const startConversation = async (userId: number) => {
+  if (userId) {
+    const conversation: Conversation =
+      await ChatService.getConversationByTargetUser(userId);
+
+    router.push({
+      name: routeNames.INBOX_CONVERSATION,
+      params: {
+        conversationId: conversation.id,
+      },
+    });
   }
 };
 </script>

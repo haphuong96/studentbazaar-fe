@@ -45,7 +45,7 @@
           </InvisibleImagePicker> -->
           <!-- <a-popover trigger="click" placement="topLeft">
             <template #content>
-              <!-- <EmojiPicker :native="true" @select="onSelectEmoji" /> -->
+              <EmojiPicker :native="true" @select="onSelectEmoji" /> 
             </template>
             <SmileFilled class="emoji-button"></SmileFilled>
           </a-popover> -->

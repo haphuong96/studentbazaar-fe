@@ -50,7 +50,7 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item @click="AuthService.logOut">
-                    Logout
+                    <UserOutlined></UserOutlined> Logout
                   </a-menu-item>
                 </a-menu>
               </template>
@@ -107,6 +107,7 @@ import {
   // TagsTwoTone,
   SearchOutlined,
   PlusOutlined,
+  UserOutlined
 } from "@ant-design/icons-vue";
 import { routeNames } from "../router/route-names";
 import router from "../router";

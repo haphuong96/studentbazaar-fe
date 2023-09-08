@@ -1,5 +1,5 @@
 <template>
-  <h3>Favorites</h3>
+  <h3 class="mb-16">Favorites</h3>
   <!-- <div v-if="itemList?.length"> -->
   <a-row :gutter="[48, 48]" v-if="itemList?.length">
     <a-col

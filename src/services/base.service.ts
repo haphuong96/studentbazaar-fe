@@ -8,11 +8,11 @@ import router from "../router";
 import { UserService } from "./user.service";
 
 export const axiosInstanceLogin = axios.create({
-  baseURL: envConfigs.BASE_API + '/api',
+  baseURL: envConfigs.BASE_API + "/api",
 });
 
 export const axiosInstance = axios.create({
-  baseURL: envConfigs.BASE_API + '/api',
+  baseURL: envConfigs.BASE_API + "/api",
 });
 
 // Add a request interceptor, attach token to authorization header
@@ -39,6 +39,12 @@ const handleResponseSuccess = (
 };
 /**
  * User cannot access system without logging in first.
+ * 
+ * If errorCode is UNAUTHORIZED_REFRESH_TOKEN, it means refresh token expires and must login again.
+ * If errorCode is UNAUTHORIZED_LOGIN, it means user provides invalid credentials to login.
+ * If errorCode UNAUTHORIZED:
+    - If no access token yet, route to login page
+    - If access token, refresh token and call request again.
  * @param error
  * @returns
  */
@@ -47,11 +53,6 @@ const handleResponseError = async (error: any) => {
   const originalRequest = error.config;
 
   if (error.response.status === 401) {
-    // if errorCode is UNAUTHORIZED_REFRESH_TOKEN, it means refresh token expires and must login again.
-    // if errorCode is UNAUTHORIZED_LOGIN, it means user provides invalid credentials to login.
-    // only errorCode UNAUTHORIZED:
-    // - If no access token yet, route to login page
-    // - If access token, refresh token and call request again.
     if (error.response.data.errorCode === ErrorCode.UNAUTHORIZED) {
       if (localStorage.getItem(localStorageKeys.ACCESS_TOKEN)) {
         //meaning expired token, now refresh
