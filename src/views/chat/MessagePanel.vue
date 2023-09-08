@@ -45,7 +45,7 @@
           </InvisibleImagePicker> -->
           <a-popover trigger="click" placement="topLeft">
             <template #content>
-              <EmojiPicker :native="true" @select="onSelectEmoji" />
+              <!-- <EmojiPicker :native="true" @select="onSelectEmoji" /> -->
             </template>
             <SmileFilled class="emoji-button"></SmileFilled>
           </a-popover>
@@ -68,7 +68,7 @@
 // import { socket } from "../../../socket";
 import { SendOutlined, SmileFilled } from "@ant-design/icons-vue";
 import { h, onMounted, ref, watch } from "vue";
-import EmojiPicker from "vue3-emoji-picker";
+// import EmojiPicker from "vue3-emoji-picker";
 import "vue3-emoji-picker/css";
 import {
   Conversation,
@@ -178,9 +178,9 @@ const scrollToBottom = () => {
 //   });
 // };
 
-const onSelectEmoji = (emoji: any) => {
-  text.value += emoji.i;
-};
+// const onSelectEmoji = (emoji: any) => {
+//   text.value += emoji.i;
+// };
 
 // const onImageSelected = async (image: any) => {
 //   const formData = new FormData();

@@ -57,7 +57,7 @@ import { Item } from "../../../interfaces/item.interface";
 import router from "../../../router";
 import { routeNames } from "../../../router/route-names";
 import UserInfo from "./UserInfo.vue";
-import { HeartOutlined, HeartTwoTone } from "@ant-design/icons-vue";
+import { HeartTwoTone } from "@ant-design/icons-vue";
 defineProps({
   item: {
     type: Object as () => Item,

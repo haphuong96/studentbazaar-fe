@@ -80,7 +80,7 @@ const register = async () => {
         switch (err.data.errorCode) {
           case ErrorCode.FORBIDDEN_INVALID_USERNAME:
             signUpFormErr.value.username = err.data.message;
-            console.log('signUpFormErr ', signUpFormErr.value)
+            console.log("signUpFormErr ", signUpFormErr.value);
             break;
           default:
             console.log(e);
@@ -94,28 +94,29 @@ const register = async () => {
 </script>
 
 <template>
-  <div v-if="!emailValidation.isVerified">
-    <div class="pb-32">Enter your university email address</div>
+  <div class="signup-form">
+    <h2>Sign Up</h2>
+    <div v-if="!emailValidation.isVerified">
+      <div class="pb-32">Enter your university email address</div>
+      <a-input-search
+        v-model:value="emailValidation.inputEmail"
+        placeholder="Your university email address"
+        size="large"
+        @search="onEmailValidationSubmit"
+        @pressEnter="onEmailValidationSubmit"
+        @change="
+          () => {
+            if (emailValidation.inputEmailErr)
+              emailValidation.inputEmailErr = undefined;
+          }
+        "
+      >
+        <template #enterButton>
+          <a-button><arrow-right-outlined /></a-button>
+        </template>
+      </a-input-search>
 
-    <a-input-search
-      v-model:value="emailValidation.inputEmail"
-      placeholder="Your university email address"
-      size="large"
-      @search="onEmailValidationSubmit"
-      @pressEnter="onEmailValidationSubmit"
-      @change="
-        () => {
-          if (emailValidation.inputEmailErr)
-            emailValidation.inputEmailErr = undefined;
-        }
-      "
-    >
-      <template #enterButton>
-        <a-button><arrow-right-outlined /></a-button>
-      </template>
-    </a-input-search>
-
-    <!-- <a-input
+      <!-- <a-input
       v-model:value="emailValidation.inputEmail"
       @pressEnter="onSubmit"
       @change="
@@ -125,76 +126,95 @@ const register = async () => {
       "
       placeholder="Your university email address"
     /> -->
-    <div v-if="emailValidation.inputEmailErr" class="error-label">
-      {{ emailValidation.inputEmailErr.message }}
+      <div v-if="emailValidation.inputEmailErr" class="error-label">
+        {{ emailValidation.inputEmailErr.message }}
+      </div>
+      <div class="my-32">
+        Already have an account? Click
+        <a type="link" @click="() => router.push({ name: routeNames.LOGIN })"
+          >here</a
+        >
+        to sign in!
+      </div>
     </div>
-    <div class="pt-80">
-      Already have an account? Click
-      <a type="link" @click="() => router.push({ name: routeNames.LOGIN })"
-        >here</a
+    <div v-else>
+      <div>Your account details ...</div>
+      <a-descriptions
+        class="mt-32"
+        :labelStyle="{ 'font-weight': 'bold' }"
+        layout="vertical"
+        :colon="false"
       >
-      to login!
-    </div>
-  </div>
-  <div v-else>
-    <div class="pb-32">Your account details ...</div>
-    <a-descriptions
-      :labelStyle="{ 'font-weight': 'bold' }"
-      layout="vertical"
-      :colon="false"
-    >
-      <a-descriptions-item label="Email Address" span="2">{{
-        emailValidation.inputEmail
-      }}</a-descriptions-item>
-      <a-descriptions-item label="University" span="2">{{
-        emailValidation.universityVerified
-      }}</a-descriptions-item>
-    </a-descriptions>
+        <a-descriptions-item label="Email Address" span="2">{{
+          emailValidation.inputEmail
+        }}</a-descriptions-item>
+        <a-descriptions-item label="University" span="2">{{
+          emailValidation.universityVerified
+        }}</a-descriptions-item>
+      </a-descriptions>
 
-    <a-form
-      :labelStyle="{ 'font-weight': 'bold' }"
-      layout="vertical"
-      :model="signUpForm"
-    >
-      <a-form-item>
-        <div class="my-16"><b>Full Name</b></div>
-        <a-input v-model:value="signUpForm.fullname" placeholder="Full Name" />
-      </a-form-item>
-      <a-form-item>
-        <div class="my-16"><b>Username</b></div>
-        <a-input
-          v-model:value="signUpForm.username"
-          placeholder="Username"
-          @change="
-            () => {
-              if (signUpFormErr.username) signUpFormErr.username = undefined;
-            }
-          "
-        />
-        <div v-if="signUpFormErr.username" class="error-label">
-          {{ signUpFormErr.username }}
-        </div>
-      </a-form-item>
-      <a-form-item>
-        <div class="my-16"><b>Password</b></div>
-        <a-input-password
-          v-model:value="signUpForm.password"
-          placeholder="Password"
-        />
-      </a-form-item>
-      <a-form-item>
-        <div class="my-16">
-          <a-button type="primary" html-type="submit" @click="register"
-            >Register!</a-button
-          >
-        </div>
-      </a-form-item>
-    </a-form>
-    <div class="d-flex justify-right">
-      <a-button type="link" @click="goBackToCheckEmailAddress"
-        ><arrow-left-outlined />Back</a-button
+      <a-form
+        :labelStyle="{ 'font-weight': 'bold' }"
+        layout="vertical"
+        :model="signUpForm"
       >
+        <a-form-item>
+          <div class="mt-16 mb-8"><b>Full Name</b></div>
+          <a-input
+            v-model:value="signUpForm.fullname"
+            placeholder="Full Name"
+            size="large"
+          />
+        </a-form-item>
+        <a-form-item>
+          <div class="mt-16 mb-8"><b>Username</b></div>
+          <a-input
+            v-model:value="signUpForm.username"
+            placeholder="Username"
+            @change="
+              () => {
+                if (signUpFormErr.username) signUpFormErr.username = undefined;
+              }
+            "
+            size="large"
+          />
+          <div v-if="signUpFormErr.username" class="error-label">
+            {{ signUpFormErr.username }}
+          </div>
+        </a-form-item>
+        <a-form-item>
+          <div class="mt-16 mb-8"><b>Password</b></div>
+          <a-input-password
+            v-model:value="signUpForm.password"
+            placeholder="Password"
+            size="large"
+          />
+        </a-form-item>
+        <a-button
+          class="mt-16"
+          type="primary"
+          html-type="submit"
+          @click="register"
+          style="width: 100%"
+          size="large"
+          >Register!</a-button
+        >
+      </a-form>
+      <div class="d-flex justify-right mt-16">
+        <a-button type="link" @click="goBackToCheckEmailAddress"
+          ><arrow-left-outlined />Back</a-button
+        >
+      </div>
     </div>
   </div>
 </template>
-<style></style>
+<style scoped>
+.signup-form {
+  border: 1px solid lightgray;
+  padding: 32px 32px 32px 32px;
+  width: 360px;
+  height: fit-content;
+  align-items: center;
+  width: 40%;
+}
+</style>

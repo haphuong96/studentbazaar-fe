@@ -1,51 +1,64 @@
 <template>
-  <div class="p-80 d-flex flex-col align-center login__container">
-    <h2>Login</h2>
-    <div v-if="credentialsError" class="error-label">
-      {{ credentialsError }}
-    </div>
-    <a-form layout="vertical" :model="loginDto">
-      <a-form-item label="Username or email" name="Username or email">
-        <a-input
-          v-model:value="loginDto.usernameOrEmail"
-          @change="
-            () => {
-              if (credentialsError) credentialsError = undefined;
-            }
-          "
-        />
-      </a-form-item>
+  <div class="login__container">
+    <div class="login-form">
+      <h2 style="text-align: center">Sign In</h2>
+      <div v-if="credentialsError" class="error-label">
+        {{ credentialsError }}
+      </div>
+      <a-form layout="vertical" :model="loginDto">
+        <a-form-item label="Username or email" name="Username or email">
+          <a-input
+            v-model:value="loginDto.usernameOrEmail"
+            @change="
+              () => {
+                if (credentialsError) credentialsError = undefined;
+              }
+            "
+            size="large"
+          />
+        </a-form-item>
 
-      <a-form-item label="Password" name="Password">
-        <a-input-password
-          v-model:value="loginDto.password"
-          @change="
-            () => {
-              if (credentialsError) credentialsError = undefined;
-            }
-          "
-        />
-      </a-form-item>
+        <a-form-item label="Password" name="Password">
+          <a-input-password
+            v-model:value="loginDto.password"
+            @change="
+              () => {
+                if (credentialsError) credentialsError = undefined;
+              }
+            "
+            size="large"
+          />
+        </a-form-item>
 
-      <a-form-item name="remember">
-        <a-checkbox v-model:checked="loginDto.remember">Remember me</a-checkbox>
-      </a-form-item>
-
-      <a-form-item>
-        <a-button type="primary" html-type="submit" @click="login"
+        <a-form-item name="remember">
+          <a-checkbox v-model:checked="loginDto.remember"
+            >Remember me</a-checkbox
+          >
+        </a-form-item>
+        <a-button
+          type="primary"
+          html-type="submit"
+          @click="login"
+          size="large"
+          class="login-form__login-button"
           >Submit</a-button
         >
-      </a-form-item>
-    </a-form>
-    <div>
-      Don't have an account yet?
-      <a
+      </a-form>
+    </div>
+    <div class="signup-form">
+      <h2>Welcome back!</h2>
+      <div style="text-align: center;">🛒🛍️ 🛒👚 🛍️🛒</div>
+      <div class="mt-16" style="text-align: justify;">Sign in now and start selling your unused items.</div>
+      <a-button
+        class="mt-16"
+        type="default"
+        size="large"
         @click="
           () => {
             router.push({ name: routeNames.SIGNUP_ACCOUNT_DETAILS });
           }
         "
-        >Sign Up!</a
+        >No account yet? Signup</a-button
       >
     </div>
   </div>
@@ -91,7 +104,7 @@ const login = async () => {
         );
       }
       // login successfully, connect to socket
-      console.log('auth ',socket.auth);
+      console.log("auth ", socket.auth);
       socket.connect();
 
       router.push({ name: routeNames.MARKETPLACE_HOME });
@@ -115,9 +128,40 @@ const login = async () => {
   }
 };
 </script>
-<style>
-/* .login__container { */
-/* min-width: 450px;
-  max-width: 50%; */
-/* } */
+<style scoped>
+.login__container {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  padding-top: calc((100vh - 480px) * 0.2);
+}
+
+.login-form {
+  border: 1px solid lightgray;
+  padding: 32px;
+  width: 360px;
+  height: 480px;
+  align-items: center;
+}
+
+.login-form__login-button {
+  width: 100%;
+}
+
+.signup-form {
+  border: 1px solid lightgray;
+  padding: 32px;
+  width: 360px;
+  height: 480px;
+  background-image: linear-gradient(to bottom right, #369eff, #5aafff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+}
+
+.signup-form > h2 {
+  text-align: center;
+  color: white;
+}
 </style>
