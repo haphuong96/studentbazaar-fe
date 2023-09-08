@@ -1,13 +1,21 @@
 <template>
   <h3>Favorites</h3>
   <!-- <div v-if="itemList?.length"> -->
-    <a-row :gutter="[48, 16]" v-if="itemList?.length">
-      <a-col :span="6" v-for="item in itemList" v-if="itemList">
-        <ItemPost :item="item" />
-      </a-col>
-    </a-row>
+  <a-row :gutter="[48, 48]" v-if="itemList?.length">
+    <a-col
+      :xs="24"
+      :sm="24"
+      :md="12"
+      :lg="8"
+      :xl="6"
+      v-for="item in itemList"
+      v-if="itemList"
+    >
+      <ItemPost :item="item" />
+    </a-col>
+  </a-row>
   <!-- </div> -->
-    <a-empty v-else></a-empty>
+  <a-empty v-else></a-empty>
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from "vue";

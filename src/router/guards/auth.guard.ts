@@ -1,7 +1,6 @@
 import { RouteLocationNormalized } from "vue-router";
 import {
   localStorageKeys,
-  sessionStorageKeys,
 } from "../../common/storage-keys";
 import { routeNames } from "../route-names";
 import { UserStatus } from "../../common/user-status";
@@ -44,7 +43,7 @@ export const emailSendGuard = (
 };
 
 export const WelcomeGuard = (
-  to: RouteLocationNormalized,
+  _to: RouteLocationNormalized,
   _from: RouteLocationNormalized
 ) => {
   const userStatus: string | null = localStorage.getItem(

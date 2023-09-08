@@ -22,13 +22,29 @@ const props = defineProps({
 
 const emit = defineEmits(["onFilter"]);
 
+const locationFilter = computed(() => {
+  // set user's new search campus location and university to local storage
+  localStorage.setItem(
+    localStorageKeys.USER_SEARCH_CAMPUS_LOCATION,
+    props.campusLocationFilter?.id?.toString() || ""
+  );
+
+  localStorage.setItem(
+    localStorageKeys.USER_SEARCH_UNIVERSITY,
+    props.universityFilter?.id?.toString() || ""
+  );
+  return {
+    campusLocation: props.campusLocationFilter,
+    university: props.universityFilter,
+  };
+});
+
 onMounted(async () => {
   // fetch all location options
   await getLocationOptions();
 
   // load campus location and university from local storage and emit filter
   await loadLocation();
-
 });
 
 const locationModal = ref<{
@@ -88,8 +104,9 @@ const loadLocation = async () => {
 };
 
 const showLocationModal = () => {
-  locationModal.value.campusLocationSelect = props.campusLocationFilter;
-  locationModal.value.universitySelect = props.universityFilter;
+  locationModal.value.campusLocationSelect =
+    locationFilter.value.campusLocation;
+  locationModal.value.universitySelect = locationFilter.value.university;
   locationModal.value.visible = true;
 };
 
@@ -115,15 +132,8 @@ const applyFilterByLocation = async () => {
     });
     locationModal.value.visible = false;
 
-    // set user's new search campus location and university to local storage
-    localStorage.setItem(
-      localStorageKeys.USER_SEARCH_CAMPUS_LOCATION,
-      props.campusLocationFilter?.id?.toString() || ""
-    );
-    localStorage.setItem(
-      localStorageKeys.USER_SEARCH_UNIVERSITY,
-      props.universityFilter?.id?.toString() || ""
-    );
+    console.log("unifilter ", props.universityFilter);
+    console.log("filterloc ", locationFilter.value.university);
   } catch (err) {
     console.log(err);
   }
@@ -137,9 +147,10 @@ const applyFilterByLocation = async () => {
     class="mb-16"
     :style="{ padding: '0px' }"
   >
-    <environment-filled /><span>{{ campusLocationFilter.campusName }} </span
+    <environment-filled /><span
+      >{{ locationFilter.campusLocation?.campusName }} </span
     ><span v-if="universityFilter">
-      &nbsp;· {{ universityFilter.universityName }}</span
+      &nbsp;· {{ locationFilter.university?.universityName }}</span
     ></a-button
   >
   <a-modal

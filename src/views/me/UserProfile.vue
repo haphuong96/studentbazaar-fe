@@ -36,14 +36,18 @@
       <p>{{ userProfile?.aboutMe }}</p>
     </a-col>
   </a-row>
-  <a-row class="py-16">
-    <a-col :span="24" class="user-profile__address">Listed recently</a-col>
-    <a-col :span="24">
-      <div class="d-flex user-profile__items">
-        <div class="user-profile__item" v-for="item in userItems?.items">
-          <ItemPost :item="item" :showOwner="false"></ItemPost>
-        </div>
-      </div>
+  <h2>Listed recently</h2>
+  <a-row :gutter="[48, 48]" :wrap="true">   
+    <a-col
+      :xs="24"
+      :sm="12"
+      :md="8"
+      :lg="8"
+      :xl="6"
+      :xxl="4"
+      v-for="item in userItems?.items"
+    >
+      <ItemPost :item="item" :showOwner="false"/>
     </a-col>
   </a-row>
 </template>

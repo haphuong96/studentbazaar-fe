@@ -1,7 +1,7 @@
 <template>
   <h3>Listed recently</h3>
-  <a-row :gutter="[48, 16]">
-    <a-col :span="6">
+  <a-row :gutter="[48, 48]">
+    <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" :xxl="4">
       <div class="py-16">
         <a-button
           type="dashed"
@@ -13,7 +13,16 @@
         </a-button>
       </div></a-col
     >
-    <a-col :span="6" v-for="item in itemList.items" v-if="itemList">
+    <a-col
+      :xs="24"
+      :sm="24"
+      :md="12"
+      :lg="8"
+      :xl="6"
+      :xxl="4"
+      v-for="item in itemList.items"
+      v-if="itemList"
+    >
       <ItemPost :item="item" :show-owner="false" />
     </a-col>
   </a-row>

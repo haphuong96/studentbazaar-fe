@@ -1,18 +1,28 @@
 <template>
   <div
-    class="d-flex align-center link"
-    @click="
-      () =>
-        router.push({
-          name: routeNames.USER_PROFILE,
-          params: { userId: user.id },
-        })
-    "
+    class="user-info_container"
+
   >
-    <a-avatar v-if="showAvatar" :size="avatarSize">
-      <template #icon><UserOutlined /></template
-    ></a-avatar>
-    <div :class="showAvatar ? `pl-${space}` : ''">
+    <div
+      @click="
+        () =>
+          router.push({
+            name: routeNames.USER_PROFILE,
+            params: { userId: user.id },
+          })
+      "
+    >
+      <a-avatar v-if="showAvatar" :size="avatarSize">
+        <template #icon><UserOutlined /></template
+      ></a-avatar>
+    </div>
+    <div :class="`${showAvatar ? `pl-${space}` : ''}`" @click="
+        () =>
+          router.push({
+            name: routeNames.USER_PROFILE,
+            params: { userId: user.id },
+          })
+      ">
       <div>
         {{ user.username }}
       </div>
@@ -59,4 +69,12 @@ defineProps({
   },
 });
 </script>
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+.user-info_container {
+  display: flex;
+  align-items: center;
+}
+.user-info_container div {
+  cursor: pointer;
+} 
+</style>
