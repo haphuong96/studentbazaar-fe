@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { ItemService } from "../../services/item.service";
 import ItemPost from "./components/ItemPost.vue";
 import { DEFAULT_PAGE_SIZE } from "../../common/pagination-constants";
@@ -7,7 +7,8 @@ import { GetItemsCursorBased } from "../../interfaces/item.interface";
 import { Campus, University } from "../../interfaces/market.interface";
 import LocationModal from "./components/LocationModal.vue";
 
-// const onCampus = ref
+const isOnPageLoading = ref<boolean>(false);
+
 const itemList = ref<GetItemsCursorBased | undefined>();
 
 const filter = ref<{
@@ -19,6 +20,7 @@ const filter = ref<{
 });
 
 const getItems = async () => {
+  isOnPageLoading.value = true;
   try {
     const data = (await ItemService.getItems({
       limit: DEFAULT_PAGE_SIZE,
@@ -29,6 +31,8 @@ const getItems = async () => {
     console.log("itemList", itemList.value);
   } catch (err) {
     console.log(err);
+  } finally {
+    isOnPageLoading.value = false;
   }
 };
 
@@ -36,38 +40,54 @@ const applyFilterByLocation = async (location: {
   campusLocationSelect: Campus;
   universitySelect: University;
 }) => {
+  isOnPageLoading.value = true;
   try {
     filter.value.campusLocation = location.campusLocationSelect;
     filter.value.university = location.universitySelect;
-    await getItems();
+    // await getItems();
   } catch (err) {
     console.log(err);
+  } finally {
+    isOnPageLoading.value = false;
   }
 };
+
+watch(filter.value, async () => {
+  await getItems();
+});
 </script>
 <template>
-  <h2>Listed recently</h2>
-  <div class="d-flex justify-right">
-    <LocationModal
-      :campusLocationFilter="filter.campusLocation"
-      :universityFilter="filter.university"
-      @onFilter="applyFilterByLocation"
-    ></LocationModal>
-  </div>
-  <a-row :gutter="[48, 48]" :wrap="true">
-    <a-col
-      :xs="24"
-      :sm="12"
-      :md="8"
-      :lg="8"
-      :xl="6"
-      :xxl="4"
-      v-for="item in itemList.items"
-      v-if="itemList"
-    >
-      <ItemPost :item="item" />
-    </a-col>
-  </a-row>
+  <a-spin :spinning="isOnPageLoading" :delay="500">
+    <h2>Listed recently</h2>
+    <div class="d-flex justify-right">
+      <LocationModal
+        :campusLocationFilter="filter.campusLocation"
+        :universityFilter="filter.university"
+        @onFilter="applyFilterByLocation"
+      ></LocationModal>
+    </div>
+    <a-row :gutter="[48, 48]" :wrap="true" v-if="!isOnPageLoading">
+      <a-col
+        :xs="24"
+        :sm="12"
+        :md="8"
+        :lg="8"
+        :xl="6"
+        :xxl="4"
+        v-for="item in itemList.items"
+        v-if="itemList"
+      >
+        <ItemPost :item="item" />
+      </a-col>
+    </a-row>
+  </a-spin>
 </template>
-<style></style>
+<style>
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>
 <!-- class="logo" -->

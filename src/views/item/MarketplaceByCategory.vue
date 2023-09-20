@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ItemService } from "../../services/item.service";
-import { ComputedRef, Ref, computed, onMounted, ref, watch } from "vue";
+import { ComputedRef, Ref, computed, ref, watch } from "vue";
 import {
   GetItemsLimitOffset,
   ItemCategory,
@@ -14,6 +14,8 @@ import { paginationHelper } from "../../utils/pagination.util";
 import { DEFAULT_PAGE_SIZE } from "../../common/pagination-constants";
 import LocationModal from "./components/LocationModal.vue";
 import { Campus, University } from "../../interfaces/market.interface";
+
+const isOnPageLoading = ref<boolean>(true);
 
 const emit = defineEmits(["browse-category"]);
 const props = defineProps({
@@ -82,14 +84,16 @@ const getSelectedItemCategory = async () => {
 };
 
 const dataLoad = async () => {
-  Promise.all([getSelectedItemCategory()]).then(() => {
-    searchItems();
-  });
+  isOnPageLoading.value = true;
+  await getSelectedItemCategory();
+  await searchItems();
+  isOnPageLoading.value = false;
 };
 
-watch(props, dataLoad);
+// onMounted(dataLoad);
 
-onMounted(dataLoad);
+watch([props, locationFilter.value], dataLoad);
+
 
 const routes: ComputedRef<Route[]> = computed(() => {
   return getCategoryPath(itemCategory.value);
@@ -106,79 +110,90 @@ const applyFilterByLocation = async (location: {
   try {
     locationFilter.value.campusLocation = location.campusLocationSelect;
     locationFilter.value.university = location.universitySelect;
-    await searchItems();
   } catch (err) {
     console.log(err);
   }
 };
+
 </script>
 <template>
-  <a-breadcrumb v-if="itemCategory?.id">
-    <span v-for="route in routes">
-      <span v-if="routes.indexOf(route) === routes.length - 1">
-        <a-breadcrumb-item>{{ route.breadcrumbName }}</a-breadcrumb-item></span
-      >
-      <span v-else class="link" @click="router.push(route.path)"
-        ><a-breadcrumb-item>{{ route.breadcrumbName }}</a-breadcrumb-item></span
-      >
-    </span>
-  </a-breadcrumb>
-  <h2>{{ itemCategory?.categoryName }}</h2>
+  <a-spin :spinning="isOnPageLoading" :delay="500">
+    <a-breadcrumb v-if="itemCategory?.id">
+      <span v-for="route in routes">
+        <span v-if="routes.indexOf(route) === routes.length - 1">
+          <a-breadcrumb-item>{{
+            route.breadcrumbName
+          }}</a-breadcrumb-item></span
+        >
+        <span v-else class="link" @click="router.push(route.path)"
+          ><a-breadcrumb-item>{{
+            route.breadcrumbName
+          }}</a-breadcrumb-item></span
+        >
+      </span>
+    </a-breadcrumb>
+    <h2>{{ itemCategory?.categoryName }}</h2>
 
-  <a-divider />
-  <div v-if="itemCategory && itemCategory?.children.length > 0">
-    <a-row>
-      <a-col :span="8" v-for="category in itemCategory?.children" class="py-8">
-        <a
-          @click="
-            () => {
-              router.push({
-                name: routeNames.MARKETPLACE_BY_CATEGORY,
-                params: { categoryPath: category.path },
-              });
-            }
-          "
-          >{{ category.categoryName }}</a
-        ></a-col
-      >
-    </a-row>
     <a-divider />
-  </div>
-  <div class="d-flex justify-right">
-    <LocationModal
-      :campusLocationFilter="locationFilter.campusLocation"
-      :universityFilter="locationFilter.university"
-      @onFilter="applyFilterByLocation"
-    ></LocationModal>
-  </div>
-  <div v-if="props.searchKeyword" class="pb-32">
-    <search-outlined></search-outlined>
-    Search results for keyword: {{ props.searchKeyword }}
-  </div>
-  <div v-if="itemList && itemList.items.length">
-    <a-row :gutter="[48, 48]">
-      <a-col
-        :xs="24"
-        :sm="12"
-        :md="8"
-        :lg="8"
-        :xl="6"
-        :xxl="4"
-        v-for="item in itemList.items"
-      >
-        <ItemPost :item="item"></ItemPost>
-      </a-col>
-    </a-row>
-    <div class="my-32">
-      <a-pagination
-        v-model:pageSize="DEFAULT_PAGE_SIZE"
-        :total="itemList?.total"
-        @change="onPageChange"
-      />
+    <div v-if="itemCategory && itemCategory?.children.length > 0">
+      <a-row>
+        <a-col
+          :span="8"
+          v-for="category in itemCategory?.children"
+          class="py-8"
+        >
+          <a
+            @click="
+              () => {
+                router.push({
+                  name: routeNames.MARKETPLACE_BY_CATEGORY,
+                  params: { categoryPath: category.path },
+                });
+              }
+            "
+            >{{ category.categoryName }}</a
+          ></a-col
+        >
+      </a-row>
+      <a-divider />
     </div>
-  </div>
-  <div v-else>
-    <a-empty></a-empty>
-  </div>
+    <div class="d-flex justify-right">
+      <LocationModal
+        :campusLocationFilter="locationFilter.campusLocation"
+        :universityFilter="locationFilter.university"
+        @onFilter="applyFilterByLocation"
+      ></LocationModal>
+    </div>
+    <div v-if="props.searchKeyword" class="pb-32">
+      <search-outlined></search-outlined>
+      Search results for keyword: {{ props.searchKeyword }}
+    </div>
+    <span v-if="!isOnPageLoading">
+      <div v-if="itemList && itemList.items.length">
+        <a-row :gutter="[48, 48]">
+          <a-col
+            :xs="24"
+            :sm="12"
+            :md="8"
+            :lg="8"
+            :xl="6"
+            :xxl="4"
+            v-for="item in itemList.items"
+          >
+            <ItemPost :item="item"></ItemPost>
+          </a-col>
+        </a-row>
+        <div class="my-32">
+          <a-pagination
+            v-model:pageSize="DEFAULT_PAGE_SIZE"
+            :total="itemList?.total"
+            @change="onPageChange"
+          />
+        </div>
+      </div>
+      <div v-else>
+        <a-empty></a-empty></div
+    ></span>
+  </a-spin>
 </template>
 <style></style>
